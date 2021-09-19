@@ -11,4 +11,13 @@
   </parent>
 
   <artifactId>common</artifactId>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.wcdevs.blog.core</groupId>
+      <artifactId>persistence</artifactId>
+      <version>${version}</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
 </project>
