@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>2.5.4</version>
+    <relativePath/> <!-- lookup parent from repository -->
+  </parent>
+
+  <groupId>com.wcdevs.blog.core</groupId>
+  <artifactId>core</artifactId>
+  <version>0.0.1</version>
+  <packaging>pom</packaging>
+
+  <description>Core resources for com.wcdevs.blog</description>
+
+  <properties>
+    <java.version>11</java.version>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
+    <!--versions-->
+    <version-org.apache.maven.plugins-maven-checkstyle-plugin>
+      3.1.2
+    </version-org.apache.maven.plugins-maven-checkstyle-plugin>
+    <version-com.puppycrawl.tools-checkstyle>
+      8.44
+    </version-com.puppycrawl.tools-checkstyle>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+    </dependencies>
+  </dependencyManagement>
+
+  <modules>
+    <module>persistence</module>
+    <module>common</module>
+  </modules>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>${version-org.apache.maven.plugins-maven-checkstyle-plugin}</version>
+        <dependencies>
+          <!-- upgrade checkstyle version at runtime-->
+          <!-- https://maven.apache.org/plugins/maven-checkstyle-plugin/examples/upgrading-checkstyle.html -->
+          <dependency>
+            <groupId>com.puppycrawl.tools</groupId>
+            <artifactId>checkstyle</artifactId>
+            <version>${version-com.puppycrawl.tools-checkstyle}</version>
+          </dependency>
+        </dependencies>
+        <configuration>
+          <configLocation>google_checks.xml</configLocation>
+          <encoding>UTF-8</encoding>
+          <logViolationsToConsole>true</logViolationsToConsole>
+          <consoleOutput>true</consoleOutput>
+          <failsOnError>true</failsOnError>
+          <failOnViolation>true</failOnViolation>
+          <violationSeverity>warning</violationSeverity>
+          <linkXRef>false</linkXRef>
+        </configuration>
+        <executions>
+          <execution>
+            <id>check-code-style</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
