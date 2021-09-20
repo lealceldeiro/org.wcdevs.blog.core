@@ -40,6 +40,6 @@
       </plugin>
     </plugins>
 
-    <finalName>${groupId}-${artifactId}-${project.version}</finalName>
+    <finalName>${project.groupId}-${project.artifactId}-${project.version}</finalName>
   </build>
 </project>

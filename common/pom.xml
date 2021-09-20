@@ -17,11 +17,10 @@
       <groupId>com.wcdevs.blog.core</groupId>
       <artifactId>persistence</artifactId>
       <version>${project.version}</version>
-      <scope>compile</scope>
     </dependency>
   </dependencies>
 
   <build>
-    <finalName>${groupId}-${artifactId}-${project.version}</finalName>
+    <finalName>${project.groupId}-${project.artifactId}-${project.version}</finalName>
   </build>
 </project>
