@@ -11,17 +11,10 @@ import javax.validation.constraints.Size;
  * Data transfer object which contains a user information.
  */
 public class UserDto {
-  private static final String A_DIGIT = "[0-9]";
-  private static final String A_LOWER_CASE = "[a-z]";
-  private static final String AN_UPPER_CASE = "[A-Z]";
-  private static final String A_SPECIAL_CHAR = "[!@#$%^&*]";
-  private static final String AT_LEAST_ONE_REQUIRED = "["
-                                                      + A_DIGIT
-                                                      + A_LOWER_CASE
-                                                      + AN_UPPER_CASE
-                                                      + A_SPECIAL_CHAR
-                                                      + "]++";
-  private static final String ANYTHING = ".*";
+  private static final String PSW_DESCRIPTION = "The password must be between 8 and 500 characters "
+                                                + "and must contain at least: one digit, one lower "
+                                                + "case letter, one upper case letter, and one of "
+                                                + "each of the following characters: !@#$%^&*";
   private Long id;
 
   @NotNull
@@ -38,22 +31,10 @@ public class UserDto {
   @NotNull
   @NotBlank
   @Size(min = 8, max = 500)
-  @Pattern(
-      regexp = "("
-               + ANYTHING
-               + AT_LEAST_ONE_REQUIRED
-               + ANYTHING
-               + AT_LEAST_ONE_REQUIRED
-               + ANYTHING
-               + AT_LEAST_ONE_REQUIRED
-               + ANYTHING
-               + AT_LEAST_ONE_REQUIRED
-               + ANYTHING
-               + "){8,500}",
-      message = "The password must be between 8 and 500 characters and must contain at least: "
-                + "one digit, one lower case letter, one upper case letter, and one of each "
-                + "of the following characters: !@#$%^&*"
-  )
+  @Pattern(regexp = ".*[0-9]+.*", message = PSW_DESCRIPTION)
+  @Pattern(regexp = ".*[a-z]+.*", message = PSW_DESCRIPTION)
+  @Pattern(regexp = ".*[A-Z]+.*", message = PSW_DESCRIPTION)
+  @Pattern(regexp = ".*[!@#$%^&*]+.*", message = PSW_DESCRIPTION)
   private String password;
 
   @NotBlank
