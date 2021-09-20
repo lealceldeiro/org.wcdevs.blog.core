@@ -34,11 +34,6 @@
     <checkstyle-skip>false</checkstyle-skip>
   </properties>
 
-  <dependencyManagement>
-    <dependencies>
-    </dependencies>
-  </dependencyManagement>
-
   <modules>
     <module>persistence</module>
     <module>common</module>
