@@ -1,4 +1,5 @@
 module com.wcdevs.blog.core.persistance {
+  requires java.sql;
   requires java.persistence;
   requires java.validation;
   requires spring.data.jpa;

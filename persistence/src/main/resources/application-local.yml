@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    password: wcdevspwd
+    username: wcdevsu
+    url: jdbc:postgresql://localhost:5432/wcdevsdb
