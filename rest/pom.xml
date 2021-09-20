@@ -26,5 +26,7 @@
         <artifactId>spring-boot-maven-plugin</artifactId>
       </plugin>
     </plugins>
+
+    <finalName>${groupId}-${artifactId}-${project.version}</finalName>
   </build>
 </project>

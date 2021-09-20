@@ -27,4 +27,8 @@
       <artifactId>validation-api</artifactId>
     </dependency>
   </dependencies>
+
+  <build>
+    <finalName>${groupId}-${artifactId}-${project.version}</finalName>
+  </build>
 </project>
