@@ -1,0 +1,50 @@
+version: "3.9"
+
+services:
+
+  wcdevs_db:
+    image: postgres:13.4-alpine
+    ports:
+      - "5432:5432"
+    deploy:
+      restart_policy:
+        condition: on-failure
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: "512M"
+    volumes:
+      - wcdevs_db_data:/var/lib/postgresql/data
+    networks:
+      - wcdevs_net
+    environment:
+      # https://github.com/docker-library/docs/blob/master/postgres/README.md#environment-variables
+      # overridden later by config by environment -- safe to use in local env
+      POSTGRES_PASSWORD: wcdevspwd
+      POSTGRES_USER: wcdevsu
+      POSTGRES_DB: wcdevsdb
+
+  wcdevs_app:
+    image: lealceldeiro/com.wcdevs.blog:core-latest
+    ports:
+      - "80:8080"
+    deploy:
+      restart_policy:
+        max_attempts: 10
+        condition: on-failure
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.40"
+          memory: "256M"
+    networks:
+      - wcdevs_net
+    depends_on:
+      - wcdevs_db
+
+networks:
+  wcdevs_net:
+
+volumes:
+  wcdevs_db_data:
