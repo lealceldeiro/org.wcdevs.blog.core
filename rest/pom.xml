@@ -17,6 +17,19 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
+
+    <!-- use sibling modules as compile time dependencies-->
+    <!-- they'll be copied as modules at build time-->
+    <dependency>
+      <groupId>com.wcdevs.blog.core</groupId>
+      <artifactId>common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.wcdevs.blog.core</groupId>
+      <artifactId>persistence</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 
   <build>
