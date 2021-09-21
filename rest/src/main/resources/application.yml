@@ -1,7 +1,7 @@
 spring:
   # configured using https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.external-config
   datasource:
-    driver-class-name: org.postgresql.Driver
+    driver-class-name: ${APP_DB_DRIVER}
     url: ${APP_DB_URL}
     password: ${APP_DB_PASSWORD}
     username: ${APP_DB_USER}
