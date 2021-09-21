@@ -17,7 +17,8 @@ spring:
     enabled: true
     driver-class-name: ${spring.datasource.driver-class-name}
     encoding: UTF-8
-    default-schema: wcdevsblog
+    schemas: public
+    default-schema: public
     password: ${spring.datasource.password}
     user: ${spring.datasource.username}
     url: ${spring.datasource.url}
