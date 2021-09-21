@@ -45,6 +45,7 @@ services:
       APP_DB_URL: jdbc:postgresql://wcdevs_db:5432/wcdevsdb
       APP_DB_PASSWORD: wcdevspwd
       APP_DB_USER: wcdevsu
+      APP_DB_DRIVER: org.postgresql.Driver
 
 volumes:
   wcdevs_db_data:
