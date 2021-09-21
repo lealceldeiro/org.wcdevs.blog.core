@@ -16,7 +16,7 @@ public class UserServiceImpl implements UserService {
   }
 
   public UserDto getUserInfoByEmailOrUserName(String usernameOrEmail) {
-    return userRepository.findOneByEmailOrUsername(usernameOrEmail, usernameOrEmail)
+    return userRepository.findByEmailOrUsernameAllIgnoreCase(usernameOrEmail, usernameOrEmail)
                          .orElseThrow(UserNotFoundException::new);
   }
 }

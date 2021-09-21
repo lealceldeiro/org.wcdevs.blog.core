@@ -3,4 +3,5 @@ open module com.wcdevs.blog.core.common {
   requires spring.context;
 
   exports com.wcdevs.blog.core.common.user;
+  exports com.wcdevs.blog.core.common.exception;
 }
