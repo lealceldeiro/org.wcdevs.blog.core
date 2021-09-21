@@ -26,7 +26,7 @@ services:
       POSTGRES_DB: wcdevsdb
 
   wcdevs_app:
-    image: lealceldeiro/com.wcdevs.blog:core-latest
+    image: lealceldeiro/com.wcdevs.blog:core-${WCD_APP_VERSION}
     ports:
       - "80:8080"
     deploy:
@@ -42,6 +42,8 @@ services:
       - wcdevs_net
     depends_on:
       - wcdevs_db
+    environment:
+      WCD_APP_VERSION: 0.0.1
 
 networks:
   wcdevs_net:
