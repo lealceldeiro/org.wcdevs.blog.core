@@ -15,7 +15,8 @@ public class UserServiceImpl implements UserService {
     this.userRepository = userRepository;
   }
 
-  public void createUser(UserDto userDto) {
-    userRepository.save(UserTransformer.dtoToEntity(userDto));
+  public UserDto getUserInfoByEmailOrUserName(String usernameOrEmail) {
+    return userRepository.findOneByEmailOrUsername(usernameOrEmail, usernameOrEmail)
+                         .orElseThrow(UserNotFoundException::new);
   }
 }
