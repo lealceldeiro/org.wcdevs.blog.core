@@ -39,7 +39,7 @@ services:
     depends_on:
       - wcdevs_db
     environment:
-      APP_DB_URL: jdbc:postgresql://127.0.0.1:5432/wcdevsdb
+      APP_DB_URL: jdbc:postgresql://wcdevs_db:5432/wcdevsdb
       APP_DB_PASSWORD: wcdevspwd
       APP_DB_USER: wcdevsu
 
