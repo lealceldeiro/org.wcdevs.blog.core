@@ -1,2 +1,34 @@
+spring:
+  # configured using https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.external-config
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${APP_DB_URL}
+    password: ${APP_DB_PASSWORD}
+    username: ${APP_DB_USER}
+  jpa:
+    generate-ddl: false
+    open-in-view: false
+    show-sql: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        globally_quoted_identifiers: "true"
+  flyway:
+    connect-retries: 5
+    create-schemas: true
+    enabled: true
+    driver-class-name: ${spring.datasource.driver-class-name}
+    encoding: UTF-8
+    schemas: public
+    default-schema: public
+    password: ${spring.datasource.password}
+    user: ${spring.datasource.username}
+    url: ${spring.datasource.url}
+    locations: classpath:db/migration/{vendor}
+  sql:
+    init:
+      mode: never
+
 server:
   port: ${APP_LISTEN_PORT}
