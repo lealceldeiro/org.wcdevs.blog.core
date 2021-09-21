@@ -16,8 +16,6 @@ services:
           memory: "512M"
     volumes:
       - wcdevs_db_data:/var/lib/postgresql/data
-    networks:
-      - wcdevs_net
     environment:
       # https://github.com/docker-library/docs/blob/master/postgres/README.md#environment-variables
       # overridden later by config by environment -- safe to use in local env
@@ -38,18 +36,12 @@ services:
         limits:
           cpus: "0.90"
           memory: "512M"
-    networks:
-      - wcdevs_net
     depends_on:
       - wcdevs_db
     environment:
-      POSTGRES_PASSWORD: wcdevspwd
-      POSTGRES_USER: wcdevsu
-      POSTGRES_DB: wcdevsdb
-
-networks:
-  wcdevs_net:
-    driver: bridge
+      APP_DB_URL: jdbc:postgresql://127.0.0.1:5432/wcdevsdb
+      APP_DB_PASSWORD: wcdevspwd
+      APP_DB_USER: wcdevsu
 
 volumes:
   wcdevs_db_data:
