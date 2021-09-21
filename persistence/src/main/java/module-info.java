@@ -7,5 +7,5 @@ open module com.wcdevs.blog.core.persistance {
   requires org.hibernate.orm.core;
   requires spring.boot.autoconfigure;
 
-  exports com.wcdevs.blog.core.persistence.user to com.wcdevs.blog.core.common;
+  exports com.wcdevs.blog.core.persistence.user;
 }
