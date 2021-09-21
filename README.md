@@ -19,7 +19,7 @@ Run:
 
 ### Docker Compose
 
-From the application root directory, start the app using `docker-compose up -d`.
+Run `docker-compose up -d`.
 
 It can be stopped then using `docker-compose down`.
 
