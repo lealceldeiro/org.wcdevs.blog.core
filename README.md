@@ -10,6 +10,13 @@ Holds `com.wcdevs.blog.core`, the core application where all the back-end web-se
 
 ## Local Development
 
+### Build application image locally
+
+Run:
+
+- `./mvnw clean verify package`
+- `docker build -t lealceldeiro/com.wcdevs.blog:core-0.0.1 .` (*notice the dot (**.**) at the end*)
+
 ### Docker Compose
 
 From the application root directory, start the app using `docker-compose up -d`.
