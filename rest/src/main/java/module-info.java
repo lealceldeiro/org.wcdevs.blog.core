@@ -5,6 +5,7 @@ open module com.wcdevs.blog.core.rest {
   requires spring.beans;
   requires spring.core;
   requires spring.web;
+  requires spring.webmvc;
 
   requires com.wcdevs.blog.core.common;
 }
