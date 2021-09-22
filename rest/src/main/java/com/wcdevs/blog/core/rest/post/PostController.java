@@ -1,8 +1,9 @@
-package com.wcdevs.blog.core.rest;
+package com.wcdevs.blog.core.rest.post;
 
 import com.wcdevs.blog.core.common.post.PostService;
 import com.wcdevs.blog.core.persistence.post.PartialPostDto;
 import com.wcdevs.blog.core.persistence.post.PostDto;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -24,8 +25,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class PostController {
   private final PostService postService;
 
-  public PostController(final PostService postService) {
+  public PostController(PostService postService) {
     this.postService = postService;
+  }
+
+  @GetMapping("/")
+  public ResponseEntity<List<PartialPostDto>> getPosts() {
+    return new ResponseEntity<>(postService.getPosts(), HttpStatus.OK);
   }
 
   @PostMapping("/")
