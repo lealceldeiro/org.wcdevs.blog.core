@@ -37,7 +37,9 @@ final class PostTransformer {
 
   static PartialPostDto slugInfo(Post post) {
     PartialPostDto info = new PartialPostDto();
-    info.setSlug(post.getSlug());
+    if (isNotNull(post)) {
+      info.setSlug(post.getSlug());
+    }
     return info;
   }
 
