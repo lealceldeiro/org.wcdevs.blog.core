@@ -33,14 +33,15 @@ public class PostServiceImpl implements PostService {
 
   @Override
   public PostDto getPost(String postSlug) {
-    return PostTransformer.dtoFromEntity(postRepository.findBySlug(postSlug)
-                                                       .orElseThrow(PostNotFoundException::new));
+    Post post = postRepository.findBySlug(postSlug).orElseThrow(PostNotFoundException::new);
+    return PostTransformer.dtoFromEntity(post);
   }
 
   @Override
   public PartialPostDto updatePost(String postSlug, PartialPostDto newPost) {
     Post post = postRepository.findBySlug(postSlug).orElseThrow(PostNotFoundException::new);
     PostTransformer.updatePostWithNonNullValues(post, newPost);
+
     return PostTransformer.slugInfo(post);
   }
 
