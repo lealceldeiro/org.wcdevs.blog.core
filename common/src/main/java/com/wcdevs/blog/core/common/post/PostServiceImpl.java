@@ -4,6 +4,7 @@ import com.wcdevs.blog.core.persistence.post.PartialPostDto;
 import com.wcdevs.blog.core.persistence.post.Post;
 import com.wcdevs.blog.core.persistence.post.PostDto;
 import com.wcdevs.blog.core.persistence.post.PostRepository;
+import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,11 @@ public class PostServiceImpl implements PostService {
 
   public PostServiceImpl(PostRepository postRepository) {
     this.postRepository = postRepository;
+  }
+
+  @Override
+  public List<PartialPostDto> getPosts() {
+    return postRepository.getPosts();
   }
 
   @Override

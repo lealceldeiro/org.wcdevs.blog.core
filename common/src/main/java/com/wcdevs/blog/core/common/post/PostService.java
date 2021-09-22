@@ -3,6 +3,7 @@ package com.wcdevs.blog.core.common.post;
 import com.wcdevs.blog.core.persistence.post.PartialPostDto;
 import com.wcdevs.blog.core.persistence.post.Post;
 import com.wcdevs.blog.core.persistence.post.PostDto;
+import java.util.List;
 
 /**
  * Provides services to handle the business logic concerning the {@link Post}s data.
@@ -15,4 +16,6 @@ public interface PostService {
   PartialPostDto updatePost(String postSlug, PartialPostDto newPostDto);
 
   void deletePost(String postSlug);
+
+  List<PartialPostDto> getPosts();
 }
