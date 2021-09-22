@@ -13,6 +13,14 @@ public class PartialPostDto {
   private String body;
   private LocalDateTime publishedOn;
 
+  public PartialPostDto() {
+  }
+
+  public PartialPostDto(String title, String slug) {
+    this.title = title;
+    this.slug = slug;
+  }
+
   public String getTitle() {
     return title;
   }
