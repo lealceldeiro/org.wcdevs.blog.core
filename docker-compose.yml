@@ -10,7 +10,6 @@ services:
       restart_policy:
         condition: on-failure
         max_attempts: 10
-        delay: 7s
       replicas: 1
       resources:
         limits:
@@ -33,7 +32,6 @@ services:
       restart_policy:
         max_attempts: 10
         condition: on-failure
-        delay: 8s
       replicas: 1
       resources:
         limits:
