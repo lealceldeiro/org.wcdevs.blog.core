@@ -4,6 +4,6 @@ open module com.wcdevs.blog.core.common {
   requires spring.tx;
   requires spring.aop;
 
-  exports com.wcdevs.blog.core.common.user;
+  exports com.wcdevs.blog.core.common.post;
   exports com.wcdevs.blog.core.common.exception;
 }

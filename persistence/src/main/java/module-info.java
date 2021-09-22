@@ -6,6 +6,7 @@ open module com.wcdevs.blog.core.persistance {
   requires spring.context;
   requires org.hibernate.orm.core;
   requires spring.boot.autoconfigure;
+  requires com.fasterxml.jackson.annotation;
 
-  exports com.wcdevs.blog.core.persistence.user;
+  exports com.wcdevs.blog.core.persistence.post;
 }
