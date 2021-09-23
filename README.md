@@ -1,4 +1,4 @@
-# com.wcdevs.blog.core
+# org.wcdevs.blog.core
 
 Holds `org.wcdevs.blog.core`, the core application where all the back-end web-services live in.
 
