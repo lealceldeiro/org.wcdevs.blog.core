@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.wcdevs.blog.core</groupId>
+    <groupId>org.wcdevs.blog.core</groupId>
     <artifactId>core</artifactId>
     <version>0.0.1</version>
   </parent>
@@ -21,12 +21,12 @@
     <!-- use sibling modules as compile time dependencies-->
     <!-- they'll be copied as modules at build time-->
     <dependency>
-      <groupId>com.wcdevs.blog.core</groupId>
+      <groupId>org.wcdevs.blog.core</groupId>
       <artifactId>common</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.wcdevs.blog.core</groupId>
+      <groupId>org.wcdevs.blog.core</groupId>
       <artifactId>persistence</artifactId>
       <version>${project.version}</version>
     </dependency>

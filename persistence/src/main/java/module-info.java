@@ -1,4 +1,4 @@
-open module com.wcdevs.blog.core.persistance {
+open module org.wcdevs.blog.core.persistance {
   requires java.sql;
   requires java.persistence;
   requires java.validation;
@@ -8,5 +8,5 @@ open module com.wcdevs.blog.core.persistance {
   requires spring.boot.autoconfigure;
   requires com.fasterxml.jackson.annotation;
 
-  exports com.wcdevs.blog.core.persistence.post;
+  exports org.wcdevs.blog.core.persistence.post;
 }

@@ -1,6 +1,6 @@
 FROM openjdk:11-jre-slim
 
-ARG app_jar_name="com.wcdevs.blog.core-rest-0.0.1.jar"
+ARG app_jar_name="org.wcdevs.blog.core-rest-0.0.1.jar"
 ARG app_version="0.0.1"
 ARG app_port=8080
 

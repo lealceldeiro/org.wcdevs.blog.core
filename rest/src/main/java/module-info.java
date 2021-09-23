@@ -1,4 +1,4 @@
-open module com.wcdevs.blog.core.rest {
+open module org.wcdevs.blog.core.rest {
   requires spring.boot;
   requires spring.boot.autoconfigure;
   requires spring.context;
@@ -7,5 +7,5 @@ open module com.wcdevs.blog.core.rest {
   requires spring.web;
   requires spring.webmvc;
 
-  requires com.wcdevs.blog.core.common;
+  requires org.wcdevs.blog.core.common;
 }

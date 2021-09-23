@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.wcdevs.blog.core</groupId>
+    <groupId>org.wcdevs.blog.core</groupId>
     <artifactId>core</artifactId>
     <version>0.0.1</version>
   </parent>
