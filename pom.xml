@@ -11,7 +11,7 @@
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
 
-  <groupId>org.wcdevs.blog.core</groupId>
+  <groupId>org.wcdevs.blog</groupId>
   <artifactId>core</artifactId>
   <version>0.0.1</version>
   <packaging>pom</packaging>
