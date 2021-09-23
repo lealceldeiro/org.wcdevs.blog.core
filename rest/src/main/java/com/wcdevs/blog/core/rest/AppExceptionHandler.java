@@ -1,7 +1,8 @@
 package com.wcdevs.blog.core.rest;
 
 import com.wcdevs.blog.core.common.exception.NotFoundException;
-import java.time.LocalDateTime;
+import com.wcdevs.blog.core.rest.util.ErrorMessage;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -13,17 +14,6 @@ import org.springframework.web.context.request.WebRequest;
  */
 @RestControllerAdvice
 public class AppExceptionHandler {
-  static class ErrorMessage {
-    public final String message;
-    public final String context;
-    public final LocalDateTime dateTime;
-
-    private ErrorMessage(String message, String context, LocalDateTime dateTime) {
-      this.message = message;
-      this.context = context;
-      this.dateTime = dateTime;
-    }
-  }
 
   /**
    * Handles {@link NotFoundException}s.
@@ -35,8 +25,12 @@ public class AppExceptionHandler {
    */
   @ExceptionHandler(NotFoundException.class)
   public ResponseEntity<ErrorMessage> handleNotFound(NotFoundException e, WebRequest req) {
-    ErrorMessage errorMsg = new ErrorMessage(e.getMessage(), req.getContextPath(),
-                                             LocalDateTime.now());
-    return new ResponseEntity<>(errorMsg, HttpStatus.NOT_FOUND);
+    return new ResponseEntity<>(ErrorMessage.from(e, req), HttpStatus.NOT_FOUND);
+  }
+
+  @ExceptionHandler(DataIntegrityViolationException.class)
+  public ResponseEntity<ErrorMessage> handleViolation(DataIntegrityViolationException violation,
+                                                      WebRequest request) {
+    return new ResponseEntity<>(ErrorMessage.from(violation, request), HttpStatus.CONFLICT);
   }
 }
