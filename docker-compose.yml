@@ -19,13 +19,12 @@ services:
       - wcdevs_db_data:/var/lib/postgresql/data
     environment:
       # https://github.com/docker-library/docs/blob/master/postgres/README.md#environment-variables
-      # overridden later by config by environment -- safe to use in local env
       POSTGRES_PASSWORD: wcdevspwd
       POSTGRES_USER: wcdevsu
       POSTGRES_DB: wcdevsdb
 
   wcdevs_app:
-    image: lealceldeiro/org.wcdevs.blog:core-0.0.1
+    image: org.wcdevs.blog:core
     ports:
       - "80:8080"
     deploy:
