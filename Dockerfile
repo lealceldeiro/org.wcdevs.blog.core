@@ -5,11 +5,11 @@ ARG app_version="0.0.1"
 ARG app_port=8080
 
 ENV JAR_TO_RUN=${app_jar_name}-${app_version}.jar
-ENV APP_LISTEN_PORT=${app_port}
+ENV CORE_APP_LISTEN_PORT=${app_port}
 
 LABEL author="Asiel Leal Celdeiro"
 LABEL version=${app_version}
-EXPOSE ${APP_LISTEN_PORT}
+EXPOSE ${CORE_APP_LISTEN_PORT}
 
 RUN mkdir -p "/wcd_app"
 
