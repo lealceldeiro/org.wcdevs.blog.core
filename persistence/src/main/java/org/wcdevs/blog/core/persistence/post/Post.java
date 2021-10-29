@@ -91,7 +91,7 @@ public class Post {
   // endregion
 
   @Override
-  public boolean equals(final Object other) {
+  public boolean equals(Object other) {
     if (this == other) {
       return true;
     }
@@ -102,11 +102,12 @@ public class Post {
     Post otherPost = (Post) other;
     boolean titleEquals = getTitle().equals(otherPost.getTitle());
     boolean slugEquals = getSlug().equals(otherPost.getSlug());
+    var uuidEquals = getUuid() != null && getUuid().equals(otherPost.getUuid());
 
     if (getUuid() == null && otherPost.getUuid() == null && !titleEquals && !slugEquals) {
       return false;  // two newly created entities
     }
-    return titleEquals && slugEquals && getUuid() != null && getUuid().equals(otherPost.getUuid());
+    return uuidEquals && titleEquals && slugEquals;
   }
 
   @Override
