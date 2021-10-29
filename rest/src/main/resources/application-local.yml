@@ -3,5 +3,6 @@ spring:
     password: wcdevspwd
     username: wcdevsu
     url: jdbc:postgresql://localhost:5432/wcdevsdb
+    driver-class-name: org.postgresql.Driver
   jpa:
     show-sql: true
