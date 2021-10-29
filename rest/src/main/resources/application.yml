@@ -32,3 +32,11 @@ spring:
 
 server:
   port: ${CORE_APP_LISTEN_PORT}
+
+# https://docs.awspring.io/spring-cloud-aws/docs/2.3.2/reference/html/index.html#amazon-sdk-configuration
+logging:
+  level:
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: error
