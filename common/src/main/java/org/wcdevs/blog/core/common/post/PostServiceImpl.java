@@ -21,6 +21,7 @@ public class PostServiceImpl implements PostService {
   }
 
   @Override
+  @Transactional(readOnly = true)
   public List<PartialPostDto> getPosts() {
     return postRepository.getPosts();
   }
@@ -32,6 +33,7 @@ public class PostServiceImpl implements PostService {
   }
 
   @Override
+  @Transactional(readOnly = true)
   public PostDto getPost(String postSlug) {
     Post post = postRepository.findBySlug(postSlug).orElseThrow(PostNotFoundException::new);
     return PostTransformer.dtoFromEntity(post);
