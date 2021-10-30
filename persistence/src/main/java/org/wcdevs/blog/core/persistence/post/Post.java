@@ -100,18 +100,12 @@ public class Post {
     }
 
     Post otherPost = (Post) other;
-    boolean titleEquals = getTitle().equals(otherPost.getTitle());
-    boolean slugEquals = getSlug().equals(otherPost.getSlug());
-    var uuidEquals = getUuid() != null && getUuid().equals(otherPost.getUuid());
-
-    if (getUuid() == null && otherPost.getUuid() == null && !titleEquals && !slugEquals) {
-      return false;  // two newly created entities
-    }
-    return uuidEquals && titleEquals && slugEquals;
+    return Objects.equals(this.getTitle(), otherPost.getTitle())
+           && Objects.equals(this.getSlug(), otherPost.getSlug());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(getUuid(), getTitle(), getSlug());
+    return Objects.hash(getTitle(), getSlug());
   }
 }
