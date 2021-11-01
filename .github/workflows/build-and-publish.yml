@@ -61,7 +61,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
         env:
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-          AWS_REGION: ${{ secrets.AWS_DEPLOY_REGION }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
           DOCKER_IMAGE_TAG: ${{ steps.dockerImageTag.outputs.tag }}
           ECR_REPO_NAME: ${{ secrets.ECR_REPO_NAME }}
         run: |
@@ -73,7 +73,7 @@ jobs:
           echo Images:
           docker image ls
           echo "AWS CLI Info: $(aws --version)"
-          docker login -u AWS -p $(aws ecr get-login-password --region ${AWS_REGION}) ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+          aws ecr get-login-password --region ${AWS_REGION} | docker login -u AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
           docker tag org-wcdevs-blog-core ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO_NAME}:${DOCKER_IMAGE_TAG}
           docker tag org-wcdevs-blog-core ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO_NAME}:latest
           docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO_NAME}:${DOCKER_IMAGE_TAG}
