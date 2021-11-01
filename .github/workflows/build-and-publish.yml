@@ -1,0 +1,85 @@
+name: Build and Publish
+
+on:
+  push:
+    paths:
+      - '.mvn/**'
+      - 'common/src/**'
+      - 'common/pom.xml'
+      - 'persistence/src/**'
+      - 'persistence/pom.xml'
+      - 'rest/src/**'
+      - 'rest/pom.xml'
+      - 'pom.xml'
+      - 'docker-compose.yml'
+      - 'Dockerfile'
+      - 'mvnw'
+      - 'mvnw.cmd'
+      - '.github/workflows/build-and-publish.yml'
+    branches: [ main ]
+  pull_request:
+    paths:
+      - '.mvn/**'
+      - 'common/src/**'
+      - 'common/pom.xml'
+      - 'persistence/src/**'
+      - 'persistence/pom.xml'
+      - 'rest/src/**'
+      - 'rest/pom.xml'
+      - 'pom.xml'
+      - 'docker-compose.yml'
+      - 'Dockerfile'
+      - 'mvnw'
+      - 'mvnw.cmd'
+      - '.github/workflows/build-and-publish.yml'
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+          cache: maven
+
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
+
+      - name: Create Docker image tag
+        id: dockerImageTag
+        run: echo "::set-output name=tag::$(date +'%Y%m%d%H%M%S')-${GITHUB_SHA}"
+
+      - name: Publish Docker image to ECR registry
+        if: github.ref == 'refs/heads/main'
+        env:
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          AWS_REGION: ${{ secrets.AWS_DEPLOY_REGION }}
+          DOCKER_IMAGE_TAG: ${{ steps.dockerImageTag.outputs.tag }}
+        run: |
+          docker build -t org-wcdevs-blog-core .
+          docker tag org-wcdevs-blog-core ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO_NAME}:${DOCKER_IMAGE_TAG}
+          docker tag org-wcdevs-blog-core ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO_NAME}:latest
+          aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+          docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO_NAME}:${DOCKER_IMAGE_TAG}
+          docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO_NAME}:latest
+
+      - name: Send Deployment event to queue
+        if: github.ref == 'refs/heads/main'
+        env:
+          DOCKER_IMAGE_TAG: ${{ steps.dockerImageTag.outputs.tag }}
+          # see https://github.com/lealceldeiro/org.wcdevs.blog.awsdeployer/blob/main/deployment-sequencer-lambda/src/index.ts#L65
+          run: |
+            export EVENT_PAYLOAD="{\"commitSha\": \"$GITHUB_SHA\", \"ref\": \"main\", \"owner\": \"lealceldeiro\", \"repo\": \"org.wcdevs.blog.awsdeployer\", \"workflowId\": \"deploy-app.yml\", \"environmentName\": \"staging\", \"applicationName\": \"org-wcdevs-blog-core\", \"dockerImageTag\": \"$DOCKER_IMAGE_TAG\"}"
+            aws sqs send-message \
+              --queue-url=https://sqs.${AWS_REGION}.amazonaws.com/${AWS_ACCOUNT_ID}/orgwcdevsblogcore-deploymentsQueue.fifo \
+              --message-group-id default \
+              --message-deduplication-id $GITHUB_SHA \
+              --message-body "$EVENT_PAYLOAD"
