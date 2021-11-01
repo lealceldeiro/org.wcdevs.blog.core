@@ -13,6 +13,8 @@
   <artifactId>common</artifactId>
 
   <dependencies>
+    <!-- https://docs.awspring.io/spring-cloud-aws/docs/2.3.2/reference/html/index.html#spring-cloud-aws-maven-dependency-management -->
+
     <dependency>
       <groupId>org.wcdevs.blog</groupId>
       <artifactId>persistence</artifactId>
