@@ -1,5 +1,7 @@
 # org.wcdevs.blog:core
 
+[![License: Apache](https://img.shields.io/badge/License-Apache%202.0-blue)](https://opensource.org/licenses/Apache-2.0) [![Build and Publish](https://github.com/lealceldeiro/org.wcdevs.blog.core/actions/workflows/build-and-publish.yml/badge.svg)](https://github.com/lealceldeiro/org.wcdevs.blog.core/actions/workflows/build-and-publish.yml)
+
 Holds `org.wcdevs.blog:core`, the core application where all the back-end web-services live in.
 
 - Root (parent) module: `org.wcdevs.blog:core`
