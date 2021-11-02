@@ -1,5 +1,5 @@
 spring:
-  # configured using https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.external-config
+  # see https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.external-config
   datasource:
     driver-class-name: ${CORE_APP_DB_DRIVER}
     url: ${CORE_APP_DB_URL}
