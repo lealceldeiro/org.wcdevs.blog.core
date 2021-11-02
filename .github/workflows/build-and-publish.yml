@@ -89,7 +89,7 @@ jobs:
           DOCKER_IMAGE_TAG: ${{ steps.dockerImageTag.outputs.tag }}
           # see https://github.com/lealceldeiro/org.wcdevs.blog.awsdeployer/blob/main/deployment-sequencer-lambda/src/index.ts#L65
         run: |
-          export EVENT_PAYLOAD="{\"commitSha\": \"$GITHUB_SHA\", \"ref\": \"main\", \"owner\": \"lealceldeiro\", \"repo\": \"org.wcdevs.blog.awsdeployer\", \"workflowId\": \"deploy-app.yml\", \"environmentName\": \"staging\", \"applicationName\": \"orgwcdevsblogcore\", \"dockerImageTag\": \"$DOCKER_IMAGE_TAG\"}"
+          export EVENT_PAYLOAD="{\"commitSha\": \"$GITHUB_SHA\", \"ref\": \"main\", \"owner\": \"lealceldeiro\", \"repo\": \"org.wcdevs.blog.awsdeployer\", \"workflowId\": \"core-app-deployment.yml\", \"environmentName\": \"staging\", \"applicationName\": \"orgwcdevsblogcore\", \"dockerImageTag\": \"$DOCKER_IMAGE_TAG\"}"
           aws sqs send-message \
             --queue-url=https://sqs.${AWS_DEFAULT_REGION}.amazonaws.com/${AWS_ACCOUNT_ID}/orgwcdevsblogcore-deploymentsQueue.fifo \
             --message-group-id default \
