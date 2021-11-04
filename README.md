@@ -1,8 +1,10 @@
-# org.wcdevs.blog:core
+# org.wcdevs.blog.core
 
 [![License: Apache](https://img.shields.io/badge/License-Apache%202.0-blue)](https://opensource.org/licenses/Apache-2.0) [![Build and Publish](https://github.com/lealceldeiro/org.wcdevs.blog.core/actions/workflows/build-and-publish.yml/badge.svg)](https://github.com/lealceldeiro/org.wcdevs.blog.core/actions/workflows/build-and-publish.yml)
 
-Holds `org.wcdevs.blog:core`, the core application where all the back-end web-services live in.
+Holds `org.wcdevs.blog:core`, the core application (API) where all the back-end web-services live in.
+
+## Project structure
 
 - Root (parent) module: `org.wcdevs.blog:core`
 - Submodules:
@@ -10,9 +12,18 @@ Holds `org.wcdevs.blog:core`, the core application where all the back-end web-se
   * `org.wcdevs.blog:persistence`: contains all resources holding the logic to communicate with the persistence layer.
   * `org.wcdevs.blog:rest`: contains the exposed webservices.
 
-## Local Development
+## Local development
 
-### Build application image locally
+### Requirements
+
+- [Git](https://git-scm.com/)
+- [Java](https://jdk.java.net/) 11 (we use [SDKMAN](https://sdkman.io/) for Java versions management)
+- [Maven](https://maven.apache.org/index.html)
+- [Docker](https://www.docker.com/) ([Docker Compose](https://docs.docker.com/compose/))
+- An IDE (such as [Intellij IDEA](https://www.jetbrains.com/idea/) or Eclipse)
+
+### Build the application image locally
+(scripts explained from a Unix environment perspective)
 
 Run:
 
@@ -21,7 +32,7 @@ Run:
 
 For more info about docker run `docker --help`.
 
-### Docker Compose
+### Running the whole stack with docker compose
 
 Run `docker-compose up -d`.
 
