@@ -16,7 +16,6 @@ on:
       - 'mvnw'
       - 'mvnw.cmd'
       - '.github/workflows/build-and-publish.yml'
-    branches: [ main ]
   pull_request:
     paths:
       - '.mvn/**'
@@ -32,7 +31,6 @@ on:
       - 'mvnw'
       - 'mvnw.cmd'
       - '.github/workflows/build-and-publish.yml'
-    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -54,6 +52,7 @@ jobs:
         run: mvn -B package --file pom.xml
 
       - name: Create Docker image tag
+        if: github.ref == 'refs/heads/main'
         id: dockerImageTag
         run: echo "::set-output name=tag::$(date +'%Y%m%d%H%M%S')-${GITHUB_SHA}"
 
