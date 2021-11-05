@@ -1,18 +1,16 @@
 package org.wcdevs.blog.core.common.post;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Locale;
 import java.util.Objects;
 import org.wcdevs.blog.core.persistence.post.PartialPostDto;
 import org.wcdevs.blog.core.persistence.post.Post;
 import org.wcdevs.blog.core.persistence.post.PostDto;
+import org.wcdevs.blog.core.persistence.util.ClockUtil;
 
 /**
  * Transformer for classes User and UserDto.
  */
 final class PostTransformer {
-  private static final ZoneId BASE_ZONE_ID = ZoneId.of("UTC");
   private static final String SLUG_REPLACEMENT = "-";
   private static final String SLUG_REPLACE_REGEX = "[^a-z0-9]++";
 
@@ -21,33 +19,28 @@ final class PostTransformer {
   }
 
   static Post entityFromDto(PostDto dto) {
-    String slug = dto.getSlug() != null ? dto.getSlug() : slugFromTitle(dto.getTitle());
-    LocalDateTime publishedOn = dto.getPublishedOn() != null
-                                ? dto.getPublishedOn()
-                                : LocalDateTime.now(BASE_ZONE_ID);
+    var now = ClockUtil.utcNow();
 
-    return new Post(dto.getTitle(), slug, dto.getBody(), publishedOn);
+    var slug = dto.getSlug() != null ? dto.getSlug() : slugFromTitle(dto.getTitle());
+    var publishedOn = dto.getPublishedOn() != null ? dto.getPublishedOn() : now;
+    var updatedOn = dto.getUpdatedOn() != null ? dto.getUpdatedOn() : now;
+
+    return new Post(dto.getTitle(), slug, dto.getBody(), publishedOn, updatedOn);
   }
 
-  static PartialPostDto slugInfo(String slug) {
-    PartialPostDto info = new PartialPostDto();
-    info.setSlug(slug);
-    return info;
+  static PostDto slugInfo(String slug) {
+    return PostDto.builder().slug(slug).build();
   }
 
-  static PartialPostDto slugInfo(Post post) {
-    PartialPostDto info = new PartialPostDto();
-    if (isNotNull(post)) {
-      info.setSlug(post.getSlug());
-    }
-    return info;
+  static PostDto slugInfo(Post post) {
+    return slugInfo(post.getSlug());
   }
 
   private static String slugFromTitle(String title) {
-    String sanitized = Objects.requireNonNull(title)
-                              .toLowerCase(Locale.ENGLISH)
-                              .strip()
-                              .replaceAll(SLUG_REPLACE_REGEX, SLUG_REPLACEMENT);
+    var sanitized = Objects.requireNonNull(title)
+                           .toLowerCase(Locale.ENGLISH)
+                           .strip()
+                           .replaceAll(SLUG_REPLACE_REGEX, SLUG_REPLACEMENT);
     return sanitized
            + (!sanitized.endsWith(SLUG_REPLACEMENT) ? SLUG_REPLACEMENT : "")
            + Objects.hash(sanitized);
@@ -67,7 +60,11 @@ final class PostTransformer {
   }
 
   static PostDto dtoFromEntity(Post postEntity) {
-    return new PostDto(postEntity.getTitle(), postEntity.getSlug(), postEntity.getBody(),
-                       postEntity.getPublishedOn());
+    return PostDto.builder()
+                  .title(postEntity.getTitle())
+                  .slug(postEntity.getSlug())
+                  .body(postEntity.getBody())
+                  .publishedOn(postEntity.getPublishedOn())
+                  .build();
   }
 }
