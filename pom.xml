@@ -29,7 +29,6 @@
     <version-com.puppycrawl.tools-checkstyle>
       8.44
     </version-com.puppycrawl.tools-checkstyle>
-    <version-lombok>1.18.22</version-lombok>
 
     <!-- custom props -->
     <checkstyle-skip>false</checkstyle-skip>
@@ -88,7 +87,7 @@
             <path>
               <groupId>org.projectlombok</groupId>
               <artifactId>lombok</artifactId>
-              <version>${version-lombok}</version>
+              <version>${lombok.version}</version>
             </path>
           </annotationProcessorPaths>
         </configuration>
