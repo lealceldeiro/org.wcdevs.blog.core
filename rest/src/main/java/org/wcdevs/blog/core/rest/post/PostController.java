@@ -1,6 +1,7 @@
 package org.wcdevs.blog.core.rest.post;
 
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -22,20 +23,17 @@ import org.wcdevs.blog.core.persistence.post.PostDto;
  */
 @RestController
 @RequestMapping("post")
+@RequiredArgsConstructor
 public class PostController {
   private final PostService postService;
 
-  public PostController(PostService postService) {
-    this.postService = postService;
-  }
-
   @GetMapping("/")
-  public ResponseEntity<List<PartialPostDto>> getPosts() {
+  public ResponseEntity<List<PostDto>> getPosts() {
     return new ResponseEntity<>(postService.getPosts(), HttpStatus.OK);
   }
 
   @PostMapping("/")
-  public ResponseEntity<PartialPostDto> createPost(@Validated @RequestBody PostDto postDto) {
+  public ResponseEntity<PostDto> createPost(@Validated @RequestBody PostDto postDto) {
     return new ResponseEntity<>(postService.createPost(postDto), HttpStatus.CREATED);
   }
 
@@ -45,8 +43,8 @@ public class PostController {
   }
 
   @PutMapping("/{postSlug}")
-  public ResponseEntity<PartialPostDto> updatePost(@PathVariable String postSlug,
-                                                   @Validated @RequestBody PartialPostDto newDto) {
+  public ResponseEntity<PostDto> updatePost(@PathVariable String postSlug,
+                                            @Validated @RequestBody PartialPostDto newDto) {
     return new ResponseEntity<>(postService.updatePost(postSlug, newDto), HttpStatus.OK);
   }
 
