@@ -65,6 +65,7 @@ final class PostTransformer {
                   .slug(postEntity.getSlug())
                   .body(postEntity.getBody())
                   .publishedOn(postEntity.getPublishedOn())
+                  .updatedOn(postEntity.getUpdatedOn())
                   .build();
   }
 }

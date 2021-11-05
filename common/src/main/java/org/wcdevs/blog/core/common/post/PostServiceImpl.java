@@ -8,6 +8,7 @@ import org.wcdevs.blog.core.persistence.post.PartialPostDto;
 import org.wcdevs.blog.core.persistence.post.Post;
 import org.wcdevs.blog.core.persistence.post.PostDto;
 import org.wcdevs.blog.core.persistence.post.PostRepository;
+import org.wcdevs.blog.core.persistence.util.ClockUtil;
 
 /**
  * Default {@link PostService} implementation.
@@ -41,6 +42,7 @@ public class PostServiceImpl implements PostService {
   public PostDto updatePost(String postSlug, PartialPostDto newPostData) {
     Post post = postRepository.findBySlug(postSlug).orElseThrow(PostNotFoundException::new);
     PostTransformer.updatePostWithNonNullValues(post, newPostData);
+    post.setUpdatedOn(ClockUtil.utcNow());
 
     return PostTransformer.slugInfo(post);
   }
