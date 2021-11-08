@@ -10,4 +10,4 @@ Regarding these actions, it must be taken into consideration that:
 is unique for that resource, the result will be a list, but with only one item **always** because
 there will be always only one element which has that attribute.
 
-include::post/index.adoc[]
+include::__resource_post_index.adoc[]

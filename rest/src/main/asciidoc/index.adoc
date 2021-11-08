@@ -7,8 +7,8 @@ Asiel Leal Celdeiro <lealceldeiro@gmail.com>
 :toclevels: 4
 :sectlinks:
 
-include::introduction.adoc[]
+include::__introduction.adoc[]
 
-include::overview/index.adoc[]
+include::__overview_index.adoc[]
 
-include::resources/index.adoc[]
+include::_resource_index.adoc[]

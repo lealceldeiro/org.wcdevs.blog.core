@@ -3,18 +3,18 @@
 
 A `DELETE` request deletes a post.
 
-include::../../util/H-REQUEST.adoc[]
+include::__H_REQUEST.adoc[]
 
-include::../../util/H-REQUEST-PATH-PARAMS.adoc[]
+include::__H_REQUEST_PATH_PARAMS.adoc[]
 
 include::{snippets}/delete_post/path-parameters.adoc[]
 
-include::../../util/H-EXAMPLE.adoc[]
+include::__H_EXAMPLE.adoc[]
 
 include::{snippets}/delete_post/http-request.adoc[]
 
-include::../../util/H-RESPONSE.adoc[]
+include::__H_RESPONSE.adoc[]
 
-include::../../util/H-EXAMPLE-BARE.adoc[]
+include::__H_EXAMPLE_BARE.adoc[]
 
 include::{snippets}/delete_post/http-response.adoc[]
