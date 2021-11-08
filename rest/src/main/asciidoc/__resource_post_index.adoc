@@ -6,6 +6,8 @@ a "Post".
 
 include::__resource_post_create.adoc[]
 
+include::__resource_post_create_err_db.adoc[]
+
 include::__resource_post_full_update.adoc[]
 
 include::__resource_post_partial_update.adoc[]
@@ -13,5 +15,7 @@ include::__resource_post_partial_update.adoc[]
 include::__resource_post_list.adoc[]
 
 include::__resource_post_get.adoc[]
+
+include::__resource_post_get_not_found.adoc[]
 
 include::__resource_post_delete.adoc[]

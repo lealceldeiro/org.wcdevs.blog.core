@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
@@ -33,13 +34,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.wcdevs.blog.core.common.post.PostNotFoundException;
 import org.wcdevs.blog.core.common.post.PostService;
 import org.wcdevs.blog.core.persistence.post.PartialPostDto;
 import org.wcdevs.blog.core.persistence.post.PostDto;
+import org.wcdevs.blog.core.rest.AppExceptionHandler;
 import static org.wcdevs.blog.core.rest.post.TestsUtil.MAPPER;
+import static org.wcdevs.blog.core.rest.post.TestsUtil.nextPostSlugSample;
 
 @EnableWebMvc
-@SpringBootTest(classes = PostController.class)
+@SpringBootTest(classes = {PostController.class, AppExceptionHandler.class})
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 class PostControllerTest {
   private static final String BASE_URL = "/post";
@@ -56,6 +60,10 @@ class PostControllerTest {
       = responseFields(
       fieldWithPath("slug")
           .description("Post slug. This value can be used to retrieve the post later"));
+  private static final ResponseFieldsSnippet ERROR_RESPONSE_FIELDS
+      = responseFields(fieldWithPath("message").description("Error message"),
+                       fieldWithPath("context").description("Request context"),
+                       fieldWithPath("dateTime").description("Request date time"));
 
   @Autowired
   private WebApplicationContext context;
@@ -113,6 +121,24 @@ class PostControllerTest {
   }
 
   @Test
+  void createPostDBError() throws Exception {
+    var postDto = TestsUtil.nextPostTitleBodySample();
+    var err = String.format("There's already a post with title %s", postDto.getSlug());
+    when(postService.createPost(postDto)).thenThrow(new DataIntegrityViolationException(err));
+    mockMvc.perform(post(BASE_URL + "/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(MAPPER.writeValueAsString(postDto)))
+           .andExpect(status().isConflict())
+           .andDo(document("create_post_db_error",
+                           requestFields(fieldWithPath("title")
+                                             .description("Post title. It must be unique"),
+                                         fieldWithPath("body").description("Body of the post")),
+                           ERROR_RESPONSE_FIELDS
+                          )
+                 );
+  }
+
+  @Test
   void getPost() throws Exception {
     var postDto = TestsUtil.nextPostSlugSample();
     mockMvc.perform(get(BASE_URL + "/{postSlug}", postDto.getSlug()))
@@ -133,6 +159,15 @@ class PostControllerTest {
                                          )
                           )
                  );
+  }
+
+  @Test
+  void getPostNotFound() throws Exception {
+    var slug = nextPostSlugSample().getSlug();
+    when(postService.getPost(slug)).thenThrow(new PostNotFoundException());
+    mockMvc.perform(get(BASE_URL + "/{postSlug}", slug))
+           .andExpect(status().isNotFound())
+           .andDo(document("get_post_not_found", SLUG_PATH_PARAMETER, ERROR_RESPONSE_FIELDS));
   }
 
   @Test
