@@ -22,6 +22,7 @@ public final class TestsUtil {
   public static final ObjectMapper MAPPER = JsonMapper.builder()
                                                       .addModule(new JavaTimeModule())
                                                       .build();
+
   static {
     try {
       SAMPLE_SLUG_DATA = read("sample-post-slugs.json");
