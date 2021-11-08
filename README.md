@@ -46,7 +46,7 @@ To check the application is running you can hit this endpoint, which should retu
 Example request:
 ```http request
 GET /manage/health HTTP/1.1
-Host: localhost:8082
+Host: localhost:82
 ```
 
 Example response:
