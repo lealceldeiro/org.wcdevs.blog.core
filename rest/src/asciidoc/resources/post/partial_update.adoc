@@ -1,0 +1,28 @@
+[[resource-post-partial-update]]
+==== Updating a post
+
+A `PATCH` (partial and full update) request updates a post.
+
+include::../../util/H-REQUEST.adoc[]
+
+include::../../util/H-REQUEST-PATH-PARAMS.adoc[]
+
+include::{snippets}/partial_update_post/path-parameters.adoc[]
+
+include::../../util/H-REQUEST-FIELDS.adoc[]
+
+include::{snippets}/partial_update_post/request-fields.adoc[]
+
+include::../../util/H-EXAMPLE.adoc[]
+
+include::{snippets}/partial_update_post/http-request.adoc[]
+
+include::../../util/H-RESPONSE.adoc[]
+
+include::../../util/H-RESPONSE-FIELDS.adoc[]
+
+include::{snippets}/partial_update_post/response-fields.adoc[]
+
+include::../../util/H-EXAMPLE-BARE.adoc[]
+
+include::{snippets}/partial_update_post/http-response.adoc[]

@@ -1,0 +1,20 @@
+[[resource-post-list]]
+==== Listing posts
+
+A `GET` request retrieves a list of the post titles and slug values.
+
+include::../../util/H-REQUEST.adoc[]
+
+include::../../util/H-EXAMPLE.adoc[]
+
+include::{snippets}/get_posts/http-request.adoc[]
+
+include::../../util/H-RESPONSE.adoc[]
+
+include::../../util/H-RESPONSE-FIELDS.adoc[]
+
+include::{snippets}/get_posts/response-fields.adoc[]
+
+include::../../util/H-EXAMPLE-BARE.adoc[]
+
+include::{snippets}/get_posts/http-response.adoc[]

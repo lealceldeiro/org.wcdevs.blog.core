@@ -1,0 +1,24 @@
+[[resource-post-get]]
+==== Getting a post info
+
+A `GET` request returns a post information.
+
+include::../../util/H-REQUEST.adoc[]
+
+include::../../util/H-REQUEST-PATH-PARAMS.adoc[]
+
+include::{snippets}/get_post/path-parameters.adoc[]
+
+include::../../util/H-EXAMPLE.adoc[]
+
+include::{snippets}/get_post/http-request.adoc[]
+
+include::../../util/H-RESPONSE.adoc[]
+
+include::../../util/H-RESPONSE-FIELDS.adoc[]
+
+include::{snippets}/get_post/response-fields.adoc[]
+
+include::../../util/H-EXAMPLE-BARE.adoc[]
+
+include::{snippets}/get_post/http-response.adoc[]
