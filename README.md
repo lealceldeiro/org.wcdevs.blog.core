@@ -40,8 +40,10 @@ It can be stopped then using `docker-compose down`.
 
 For more info about docker compose run `docker-compose --help`.
 
-To check the application is running you can hit this endpoint, which should return `UP`:
-`<base_url>/manage/health`
+#### Health check
+
+To check the application is running you can hit this endpoint, which should return
+`{"status": "UP"}`: `<base_url>/manage/health`
 
 Example request:
 ```http request
@@ -57,4 +59,12 @@ Content-Type: application/json
 {
   "status": "UP"
 }
+```
+
+#### API Docs
+
+The API documentation can be seen once the app is up and running by navigating to
+`<base_url>/docs/index.html`. Example:
+```
+http://localhost/docs/index.html
 ```
