@@ -39,3 +39,22 @@ Run `docker-compose up -d`.
 It can be stopped then using `docker-compose down`.
 
 For more info about docker compose run `docker-compose --help`.
+
+To check the application is running you can hit this endpoint, which should return `UP`:
+`<base_url>/manage/health`
+
+Example request:
+```http request
+GET /manage/health HTTP/1.1
+Host: localhost:8082
+```
+
+Example response:
+```
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "status": "UP"
+}
+```

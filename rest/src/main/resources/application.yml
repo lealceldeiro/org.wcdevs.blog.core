@@ -33,6 +33,13 @@ spring:
 server:
   port: ${CORE_APP_LISTEN_PORT}
 
+management:
+  server:
+    port: 8082
+  endpoints:
+    web:
+      base-path: "/manage"
+
 # see https://docs.awspring.io/spring-cloud-aws/docs/2.3.2/reference/html/index.html#amazon-sdk-configuration
 logging:
   level:
