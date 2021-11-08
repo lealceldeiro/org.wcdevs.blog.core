@@ -55,6 +55,11 @@ final class PostTransformer {
     }
   }
 
+  static void updatePost(Post post, PostDto newPostDto) {
+    post.setTitle(newPostDto.getTitle());
+    post.setBody(newPostDto.getBody());
+  }
+
   private static boolean isNotNull(Object o) {
     return null != o;
   }

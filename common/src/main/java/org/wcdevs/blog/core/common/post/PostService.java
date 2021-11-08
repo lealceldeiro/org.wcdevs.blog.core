@@ -13,7 +13,9 @@ public interface PostService {
 
   PostDto getPost(String postSlug);
 
-  PostDto updatePost(String postSlug, PartialPostDto newPostDto);
+  PostDto partialUpdate(String postSlug, PartialPostDto newPostDto);
+
+  PostDto fullUpdate(String postSlug, PostDto newPostDto);
 
   void deletePost(String postSlug);
 

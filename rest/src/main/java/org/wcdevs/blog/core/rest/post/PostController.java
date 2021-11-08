@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -42,10 +43,16 @@ public class PostController {
     return new ResponseEntity<>(postService.getPost(postSlug), HttpStatus.OK);
   }
 
+  @PatchMapping("/{postSlug}")
+  public ResponseEntity<PostDto> partialUpdatePost(@PathVariable String postSlug,
+                                                   @Validated @RequestBody PartialPostDto newDto) {
+    return new ResponseEntity<>(postService.partialUpdate(postSlug, newDto), HttpStatus.OK);
+  }
+
   @PutMapping("/{postSlug}")
-  public ResponseEntity<PostDto> updatePost(@PathVariable String postSlug,
-                                            @Validated @RequestBody PartialPostDto newDto) {
-    return new ResponseEntity<>(postService.updatePost(postSlug, newDto), HttpStatus.OK);
+  public ResponseEntity<PostDto> fullyUpdatePost(@PathVariable String postSlug,
+                                                 @Validated @RequestBody PostDto newDto) {
+    return new ResponseEntity<>(postService.fullUpdate(postSlug, newDto), HttpStatus.OK);
   }
 
   @DeleteMapping("/{postSlug}")

@@ -39,9 +39,18 @@ public class PostServiceImpl implements PostService {
   }
 
   @Override
-  public PostDto updatePost(String postSlug, PartialPostDto newPostData) {
+  public PostDto partialUpdate(String postSlug, PartialPostDto newPostData) {
     Post post = postRepository.findBySlug(postSlug).orElseThrow(PostNotFoundException::new);
     PostTransformer.updatePostWithNonNullValues(post, newPostData);
+    post.setUpdatedOn(ClockUtil.utcNow());
+
+    return PostTransformer.slugInfo(post);
+  }
+
+  @Override
+  public PostDto fullUpdate(String postSlug, PostDto newPostData) {
+    Post post = postRepository.findBySlug(postSlug).orElseThrow(PostNotFoundException::new);
+    PostTransformer.updatePost(post, newPostData);
     post.setUpdatedOn(ClockUtil.utcNow());
 
     return PostTransformer.slugInfo(post);

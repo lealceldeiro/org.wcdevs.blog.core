@@ -11,7 +11,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -95,7 +94,7 @@ class PostServiceImplTest {
   void updatePostNotFound() {
     when(postRepository.findBySlug(anyString())).thenReturn(Optional.empty());
 
-    Executable updatePost = () -> postService.updatePost(aString(), mock(PartialPostDto.class));
+    Executable updatePost = () -> postService.partialUpdate(aString(), mock(PartialPostDto.class));
     assertThrows(PostNotFoundException.class, updatePost);
   }
 
@@ -110,7 +109,7 @@ class PostServiceImplTest {
     try (var mockedPostTransformer = mockStatic(PostTransformer.class)) {
       mockedPostTransformer.when(() -> PostTransformer.slugInfo(postMock)).thenReturn(slugInfoMock);
 
-      var actual = postService.updatePost(slug, argMock);
+      var actual = postService.partialUpdate(slug, argMock);
 
       assertEquals(slugInfoMock, actual);
 
