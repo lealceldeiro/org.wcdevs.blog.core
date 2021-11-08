@@ -19,7 +19,7 @@ Holds `org.wcdevs.blog:core`, the core application (API) where all the back-end 
 - [Git](https://git-scm.com/)
 - [Java](https://jdk.java.net/) 11 (we use [SDKMAN](https://sdkman.io/) for Java versions management)
 - [Maven](https://maven.apache.org/index.html)
-- [Docker](https://www.docker.com/) ([Docker Compose](https://docs.docker.com/compose/))
+- [Docker](https://www.docker.com/) (and [Docker Compose](https://docs.docker.com/compose/))
 - An IDE (such as [Intellij IDEA](https://www.jetbrains.com/idea/) or Eclipse)
 
 ### Build the application image locally
@@ -27,7 +27,7 @@ Holds `org.wcdevs.blog:core`, the core application (API) where all the back-end 
 
 Run:
 
-- `./mvnw clean verify package`
+- `./mvnw clean package`
 - `docker build -t org.wcdevs.blog:core .` (*notice the dot (**.**) at the end*)
 
 For more info about docker run `docker --help`.
@@ -52,10 +52,7 @@ Host: localhost:82
 ```
 
 Example response:
-```
-HTTP/1.1 200 OK
-Content-Type: application/json
-
+```json
 {
   "status": "UP"
 }
