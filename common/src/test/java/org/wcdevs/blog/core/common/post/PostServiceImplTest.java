@@ -99,7 +99,7 @@ class PostServiceImplTest {
   }
 
   @Test
-  void updatePost() {
+  void partiallyUpdatePost() {
     var argMock = mock(PartialPostDto.class);
     var slug = aString();
     var postMock = mock(Post.class);
@@ -118,6 +118,30 @@ class PostServiceImplTest {
 
       mockedPostTransformer
           .verify(() -> PostTransformer.updatePostWithNonNullValues(postMock, argMock), times(1));
+      mockedPostTransformer.verify(() -> PostTransformer.slugInfo(postMock), times(1));
+    }
+  }
+
+  @Test
+  void fullyUpdatePost() {
+    var argMock = mock(PostDto.class);
+    var slug = aString();
+    var postMock = mock(Post.class);
+    var slugInfoMock = mock(PostDto.class);
+
+    when(postRepository.findBySlug(slug)).thenReturn(Optional.of(postMock));
+    try (var mockedPostTransformer = mockStatic(PostTransformer.class)) {
+      mockedPostTransformer.when(() -> PostTransformer.slugInfo(postMock)).thenReturn(slugInfoMock);
+
+      var actual = postService.fullUpdate(slug, argMock);
+
+      assertEquals(slugInfoMock, actual);
+
+      verify(postRepository, times(1)).findBySlug(slug);
+      verify(postMock, times(1)).setUpdatedOn(any(LocalDateTime.class));
+
+      mockedPostTransformer
+          .verify(() -> PostTransformer.updatePost(postMock, argMock), times(1));
       mockedPostTransformer.verify(() -> PostTransformer.slugInfo(postMock), times(1));
     }
   }

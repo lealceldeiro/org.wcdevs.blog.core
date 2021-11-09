@@ -88,6 +88,16 @@ class PostTransformerTest {
   }
 
   @Test
+  void updatePostUpdatesAllValuesFromDto() {
+    var postMock = mock(Post.class);
+    var dtoWithValues = buildDto();
+
+    PostTransformer.updatePost(postMock, dtoWithValues);
+    verify(postMock, times(1)).setTitle(dtoWithValues.getTitle());
+    verify(postMock, times(1)).setBody(dtoWithValues.getBody());
+  }
+
+  @Test
   void dtoFromEntity() {
     var title = aString();
     var slug = aString();
