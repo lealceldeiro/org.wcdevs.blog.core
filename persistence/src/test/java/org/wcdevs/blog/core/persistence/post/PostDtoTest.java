@@ -90,4 +90,29 @@ class PostDtoTest {
     assertTrue(toString.contains("updatedOn="));
   }
 
+
+  @Test
+  void dtoIsEqualToItself() {
+    var dto = PostDto.builder().build();
+    assertEquals(dto, dto);
+  }
+
+  private static Stream<Arguments> dtoIsNotEqualToAnotherWithDifferentSlugOrTiTleArgs() {
+    var titleA = aString() + "_titleA";
+    var titleB = aString() + "_titleB";
+    var slugA = aString() + "_slugA";
+    var slugB = aString() + "_slugB";
+    return Stream.of(arguments(titleA, titleA, slugA, slugA, true),   // same title/slug: equal DTOs
+                     arguments(titleA, titleA, slugA, slugB, false),  // different slugs
+                     arguments(titleA, titleB, slugA, slugA, false)); // different titles
+  }
+
+  @ParameterizedTest
+  @MethodSource("dtoIsNotEqualToAnotherWithDifferentSlugOrTiTleArgs")
+  void dtoEqualityDependsOnTitleAndSlug(String title1, String title2, String slug1,
+                                        String slug2, boolean shouldTheyBeEqual) {
+    var dto1 = PostDto.builder().title(title1).slug(slug1).build();
+    var dto2 = PostDto.builder().title(title2).slug(slug2).build();
+    assertEquals(shouldTheyBeEqual, dto1.equals(dto2));
+  }
 }

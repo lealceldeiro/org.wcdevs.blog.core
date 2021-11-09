@@ -4,10 +4,10 @@ import java.time.LocalDateTime;
 import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import static org.wcdevs.blog.core.persistence.TestsUtil.aString;
@@ -79,5 +79,30 @@ class PartialPostDtoTest {
     assertTrue(toString.contains("slug="));
     assertTrue(toString.contains("publishedOn="));
     assertTrue(toString.contains("updatedOn="));
+  }
+
+  @Test
+  void dtoIsEqualToItself() {
+    var dto = PartialPostDto.builder().build();
+    assertEquals(dto, dto);
+  }
+
+  private static Stream<Arguments> dtoIsNotEqualToAnotherWithDifferentSlugOrTiTleArgs() {
+    var titleA = aString() + "_titleA";
+    var titleB = aString() + "_titleB";
+    var slugA = aString() + "_slugA";
+    var slugB = aString() + "_slugB";
+    return Stream.of(arguments(titleA, titleA, slugA, slugA, true),   // same title/slug: equal DTOs
+                     arguments(titleA, titleA, slugA, slugB, false),  // different slugs
+                     arguments(titleA, titleB, slugA, slugA, false)); // different titles
+  }
+
+  @ParameterizedTest
+  @MethodSource("dtoIsNotEqualToAnotherWithDifferentSlugOrTiTleArgs")
+  void dtoEqualityDependsOnTitleAndSlug(String title1, String title2, String slug1,
+                                        String slug2, boolean shouldTheyBeEqual) {
+    var dto1 = PartialPostDto.builder().title(title1).slug(slug1).build();
+    var dto2 = PartialPostDto.builder().title(title2).slug(slug2).build();
+    assertEquals(shouldTheyBeEqual, dto1.equals(dto2));
   }
 }

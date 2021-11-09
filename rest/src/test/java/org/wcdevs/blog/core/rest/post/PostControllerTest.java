@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -136,6 +137,26 @@ class PostControllerTest {
                            ERROR_RESPONSE_FIELDS
                           )
                  );
+  }
+
+  @Test
+  void createPostDBErrorWithRootCause() throws Exception {
+    var postDto = TestsUtil.nextPostTitleBodySample();
+
+    var cause = mock(Throwable.class);
+    when(cause.getMessage()).thenReturn("PK constraint violation");
+    var errMessage = String.format("There's already a post with title %s", postDto.getSlug());
+
+    var ex = mock(DataIntegrityViolationException.class);
+    when(ex.getMessage()).thenReturn(errMessage);
+    when(ex.getRootCause()).thenReturn(cause);
+
+    when(postService.createPost(postDto)).thenThrow(ex);
+
+    mockMvc.perform(post(BASE_URL + "/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(MAPPER.writeValueAsString(postDto)))
+           .andExpect(status().isConflict());
   }
 
   @Test
