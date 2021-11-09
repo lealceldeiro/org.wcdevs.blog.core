@@ -2,6 +2,7 @@ package org.wcdevs.blog.core.common.post;
 
 import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,8 @@ import static org.wcdevs.blog.core.common.TestsUtil.aString;
 import static org.wcdevs.blog.core.common.TestsUtil.buildDto;
 import static org.wcdevs.blog.core.common.TestsUtil.buildPartialDto;
 import static org.wcdevs.blog.core.common.TestsUtil.dtoBuilder;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.wcdevs.blog.core.persistence.post.PartialPostDto;
 import org.wcdevs.blog.core.persistence.post.Post;
 import org.wcdevs.blog.core.persistence.util.ClockUtil;
@@ -34,6 +37,17 @@ class PostTransformerTest {
       assertEquals(now, entity.getPublishedOn());
       assertEquals(now, entity.getUpdatedOn());
     }
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"!@#$%^&*()_+", "1234567890", " @#0hy", "%&dfr ", " #^Y&$($ ", "aText"})
+  void entityFromDtoWithComplexPostTitle(String title) {
+      var dto = dtoBuilder().slug(null).title(title).build();
+
+      var entity = PostTransformer.entityFromDto(dto);
+
+      assertNotNull(entity.getSlug());
+      assertFalse(entity.getSlug().contains("--"));
   }
 
   @Test

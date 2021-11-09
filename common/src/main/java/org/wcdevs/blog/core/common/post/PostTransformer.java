@@ -43,7 +43,7 @@ final class PostTransformer {
                            .replaceAll(SLUG_REPLACE_REGEX, SLUG_REPLACEMENT);
     return sanitized
            + (!sanitized.endsWith(SLUG_REPLACEMENT) ? SLUG_REPLACEMENT : "")
-           + Objects.hash(sanitized);
+           + Math.abs(Objects.hash(sanitized));
   }
 
   static void updatePostWithNonNullValues(Post post, PartialPostDto newPostDto) {
