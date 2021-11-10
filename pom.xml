@@ -26,7 +26,7 @@
     <org.apache.maven.plugins-maven-checkstyle-plugin.version>
       3.1.2
     </org.apache.maven.plugins-maven-checkstyle-plugin.version>
-    <com.puppycrawl.tools-checkstyle.version>8.44</com.puppycrawl.tools-checkstyle.version>
+    <com.puppycrawl.tools-checkstyle.version>8.45.1</com.puppycrawl.tools-checkstyle.version>
 
     <!-- custom props -->
     <checkstyle-skip>false</checkstyle-skip>
