@@ -27,6 +27,7 @@ services:
     image: org.wcdevs.blog:core
     ports:
       - "80:8080"
+      - "82:8082"
     deploy:
       restart_policy:
         max_attempts: 10
@@ -34,8 +35,8 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: "0.70"
-          memory: "512M"
+          cpus: "1"
+          memory: "1024M"
     depends_on:
       - wcdevs_db
     environment:
@@ -43,6 +44,8 @@ services:
       CORE_APP_DB_PASSWORD: wcdevspwd
       CORE_APP_DB_USER: wcdevsu
       CORE_APP_DB_DRIVER: org.postgresql.Driver
+      CORE_APP_LISTEN_PORT: 8080
+      CORE_APP_MANAGEMENT_PORT: 8082
 
 volumes:
   wcdevs_db_data:

@@ -1,0 +1,20 @@
+[[resource-post-delete]]
+==== Deleting a post
+
+A `DELETE` request deletes a post.
+
+include::__H_REQUEST.adoc[]
+
+include::__H_REQUEST_PATH_PARAMS.adoc[]
+
+include::{snippets}/delete_post/path-parameters.adoc[]
+
+include::__H_EXAMPLE.adoc[]
+
+include::{snippets}/delete_post/http-request.adoc[]
+
+include::__H_RESPONSE.adoc[]
+
+include::__H_EXAMPLE_BARE.adoc[]
+
+include::{snippets}/delete_post/http-response.adoc[]

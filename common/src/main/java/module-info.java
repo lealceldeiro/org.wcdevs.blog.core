@@ -3,6 +3,7 @@ open module org.wcdevs.blog.core.common {
   requires spring.context;
   requires transitive spring.tx;
   requires spring.aop;
+  requires lombok;
 
   exports org.wcdevs.blog.core.common.post;
   exports org.wcdevs.blog.core.common.exception;

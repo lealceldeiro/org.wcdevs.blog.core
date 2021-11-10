@@ -11,9 +11,8 @@ import org.springframework.data.jpa.repository.Query;
  * Repository to handle the DB interaction with the "post" table.
  */
 public interface PostRepository extends JpaRepository<Post, UUID> {
-  @Query("select new org.wcdevs.blog.core.persistence.post.PartialPostDto(p.title, p.slug) "
-         + "from Post p")
-  List<PartialPostDto> getPosts();
+  @Query("select new org.wcdevs.blog.core.persistence.post.PostDto(p.title, p.slug) from Post p")
+  List<PostDto> getPosts();
 
   Optional<Post> findBySlug(String slug);
 

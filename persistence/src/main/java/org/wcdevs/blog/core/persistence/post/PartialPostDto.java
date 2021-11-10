@@ -1,55 +1,37 @@
 package org.wcdevs.blog.core.persistence.post;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import java.time.LocalDateTime;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 
 /**
  * Data transfer object which contains optional post information.
  */
+@Getter
+@Builder
+@ToString
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonDeserialize(builder = PartialPostDto.PartialPostDtoBuilder.class)
 public class PartialPostDto {
+  /**
+   * {@link PartialPostDto} builder.
+   */
+  @JsonPOJOBuilder(withPrefix = "")
+  public static class PartialPostDtoBuilder {
+  }
+
+  @EqualsAndHashCode.Include
   private String title;
+  @EqualsAndHashCode.Include
   private String slug;
+  @ToString.Exclude
   private String body;
   private LocalDateTime publishedOn;
-
-  public PartialPostDto() {
-  }
-
-  public PartialPostDto(String title, String slug) {
-    this.title = title;
-    this.slug = slug;
-  }
-
-  public String getTitle() {
-    return title;
-  }
-
-  public void setTitle(String title) {
-    this.title = title;
-  }
-
-  public String getSlug() {
-    return slug;
-  }
-
-  public void setSlug(String slug) {
-    this.slug = slug;
-  }
-
-  public String getBody() {
-    return body;
-  }
-
-  public void setBody(String body) {
-    this.body = body;
-  }
-
-  public LocalDateTime getPublishedOn() {
-    return publishedOn;
-  }
-
-  public void setPublishedOn(LocalDateTime publishedOn) {
-    this.publishedOn = publishedOn;
-  }
+  private LocalDateTime updatedOn;
 }

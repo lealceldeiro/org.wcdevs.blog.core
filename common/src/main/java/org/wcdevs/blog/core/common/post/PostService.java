@@ -9,13 +9,15 @@ import org.wcdevs.blog.core.persistence.post.PostDto;
  * Provides services to handle the business logic concerning the {@link Post}s data.
  */
 public interface PostService {
-  PartialPostDto createPost(PostDto postDto);
+  PostDto createPost(PostDto postDto);
 
   PostDto getPost(String postSlug);
 
-  PartialPostDto updatePost(String postSlug, PartialPostDto newPostDto);
+  PostDto partialUpdate(String postSlug, PartialPostDto newPostDto);
+
+  PostDto fullUpdate(String postSlug, PostDto newPostDto);
 
   void deletePost(String postSlug);
 
-  List<PartialPostDto> getPosts();
+  List<PostDto> getPosts();
 }

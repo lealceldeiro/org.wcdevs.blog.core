@@ -7,6 +7,9 @@ open module org.wcdevs.blog.core.persistance {
   requires org.hibernate.orm.core;
   requires spring.boot.autoconfigure;
   requires com.fasterxml.jackson.annotation;
+  requires com.fasterxml.jackson.databind;
+  requires lombok;
 
   exports org.wcdevs.blog.core.persistence.post;
+  exports org.wcdevs.blog.core.persistence.util;
 }

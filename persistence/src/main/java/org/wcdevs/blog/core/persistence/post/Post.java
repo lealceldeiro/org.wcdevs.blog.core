@@ -9,22 +9,34 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import org.hibernate.Hibernate;
 
 /**
  * Entity class that represents a DB table abstraction containing a post information.
  */
 @Entity
 @Table(name = "post")
+@Getter
+@Setter
+@ToString(onlyExplicitlyIncluded = true)
+@NoArgsConstructor
 public class Post {
   @Id
   @GeneratedValue
   @Column(name = "uuid", unique = true, nullable = false)
+  @ToString.Include
   private UUID uuid;
 
   @Column(name = "title", unique = true, nullable = false, length = 200)
+  @ToString.Include
   private String title;
 
   @Column(name = "slug", unique = true, nullable = false, length = 150)
+  @ToString.Include
   private String slug;
 
   @Lob
@@ -34,8 +46,8 @@ public class Post {
   @Column(name = "published_on", nullable = false)
   private LocalDateTime publishedOn;
 
-  public Post() {
-  }
+  @Column(name = "updated_on", nullable = false)
+  private LocalDateTime updatedOn;
 
   /**
    * Creates a new {@link Post}.
@@ -44,68 +56,31 @@ public class Post {
    * @param slug        Post slug (must be unique)
    * @param body        Post body
    * @param publishedOn Date time when the post was published.
+   * @param updatedOn   Date time when the post was last updated.
    */
-  public Post(String title, String slug, String body, LocalDateTime publishedOn) {
+  public Post(String title, String slug, String body, LocalDateTime publishedOn,
+              LocalDateTime updatedOn) {
     this.title = title;
     this.slug = slug;
     this.body = body;
     this.publishedOn = publishedOn;
+    this.updatedOn = updatedOn;
   }
-
-  // region getters and setters
-  UUID getUuid() {
-    return uuid;
-  }
-
-  public String getTitle() {
-    return title;
-  }
-
-  public void setTitle(final String title) {
-    this.title = title;
-  }
-
-  public String getSlug() {
-    return slug;
-  }
-
-  void setSlug(final String slug) {
-    this.slug = slug;
-  }
-
-  public String getBody() {
-    return body;
-  }
-
-  public void setBody(final String body) {
-    this.body = body;
-  }
-
-  public LocalDateTime getPublishedOn() {
-    return publishedOn;
-  }
-
-  void setPublishedOn(final LocalDateTime publishedOn) {
-    this.publishedOn = publishedOn;
-  }
-  // endregion
 
   @Override
   public boolean equals(Object other) {
     if (this == other) {
       return true;
     }
-    if (other == null || getClass() != other.getClass()) {
+    if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) {
       return false;
     }
-
-    Post otherPost = (Post) other;
-    return Objects.equals(this.getTitle(), otherPost.getTitle())
-           && Objects.equals(this.getSlug(), otherPost.getSlug());
+    Post post = (Post) other;
+    return uuid != null && Objects.equals(uuid, post.uuid);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(getTitle(), getSlug());
+    return getClass().hashCode();
   }
 }

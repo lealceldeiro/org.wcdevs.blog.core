@@ -14,7 +14,6 @@ import org.wcdevs.blog.core.rest.util.ErrorMessage;
  */
 @RestControllerAdvice
 public class AppExceptionHandler {
-
   /**
    * Handles {@link NotFoundException}s.
    *

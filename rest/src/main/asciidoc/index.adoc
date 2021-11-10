@@ -1,0 +1,14 @@
+= wcDevs Blog API docs
+Asiel Leal Celdeiro <lealceldeiro@gmail.com>
+:doctype: book
+:icons: font
+:source-highlighter: highlights
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+include::__introduction.adoc[]
+
+include::__overview_index.adoc[]
+
+include::_resource_index.adoc[]
