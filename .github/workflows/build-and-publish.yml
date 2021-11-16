@@ -81,9 +81,11 @@ jobs:
           echo Images:
           docker image ls
           echo "AWS CLI Info: $(aws --version)"
-          aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login -u AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
-          docker tag orgwcdevsblogcore ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${ECR_REPO_NAME}:${DOCKER_IMAGE_TAG}
-          docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${ECR_REPO_NAME}:${DOCKER_IMAGE_TAG}
+          aws ecr get-login-password \
+            --region ${AWS_DEFAULT_REGION} \
+            | docker login -u AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com \
+            docker tag orgwcdevsblogcore ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${ECR_REPO_NAME}:${DOCKER_IMAGE_TAG} \
+            docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${ECR_REPO_NAME}:${DOCKER_IMAGE_TAG}
 
       - name: Send Deployment event to queue
         if: github.ref == 'refs/heads/main'
@@ -95,9 +97,9 @@ jobs:
           DOCKER_IMAGE_TAG: ${{ steps.dockerImageTag.outputs.tag }}
           # see https://github.com/lealceldeiro/org.wcdevs.blog.awsdeployer/blob/main/deployment-sequencer-lambda/src/index.ts#L65
         run: |
-          export EVENT_PAYLOAD="{\"commitSha\": \"$GITHUB_SHA\", \"ref\": \"main\", \"owner\": \"lealceldeiro\", \"repo\": \"org.wcdevs.blog.awsdeployer\", \"workflowId\": \"core-app-deployment.yml\", \"environmentName\": \"staging\", \"applicationName\": \"orgwcdevsblogcore\", \"dockerImageTag\": \"$DOCKER_IMAGE_TAG\"}"
+          export EVENT_PAYLOAD="{\"commitSha\": \"$GITHUB_SHA\", \"ref\": \"main\", \"owner\": \"lealceldeiro\", \"repo\": \"org.wcdevs.blog.awsdeployer\", \"workflowId\": \"core-app-deployment.yml\", \"environmentName\": \"staging\", \"applicationName\": \"core\", \"dockerImageTag\": \"$DOCKER_IMAGE_TAG\"}"
           aws sqs send-message \
-            --queue-url=https://sqs.${AWS_DEFAULT_REGION}.amazonaws.com/${AWS_ACCOUNT_ID}/orgwcdevsblogcore-deploymentsQueue.fifo \
+            --queue-url=https://sqs.${AWS_DEFAULT_REGION}.amazonaws.com/${AWS_ACCOUNT_ID}/orgwcdevsblog-deploymentsQueue.fifo \
             --message-group-id default \
             --message-deduplication-id $GITHUB_SHA \
             --message-body "$EVENT_PAYLOAD"
