@@ -23,14 +23,23 @@
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
     <!--versions-->
-    <org.apache.maven.plugins-maven-checkstyle-plugin.version>
-      3.1.2
-    </org.apache.maven.plugins-maven-checkstyle-plugin.version>
-    <com.puppycrawl.tools-checkstyle.version>8.45.1</com.puppycrawl.tools-checkstyle.version>
+    <maven-checkstyle-plugin.version>3.1.2</maven-checkstyle-plugin.version>
+    <spring-cloud-aws.version>2.3.2</spring-cloud-aws.version>
 
     <!-- custom props -->
     <checkstyle-skip>false</checkstyle-skip>
   </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- https://docs.awspring.io/spring-cloud-aws/docs/2.3.2/reference/html/index.html#basic-setup -->
+      <dependency>
+        <groupId>io.awspring.cloud</groupId>
+        <artifactId>spring-cloud-starter-aws</artifactId>
+        <version>${spring-cloud-aws.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <modules>
     <module>persistence</module>
@@ -43,14 +52,14 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>${org.apache.maven.plugins-maven-checkstyle-plugin.version}</version>
+        <version>${maven-checkstyle-plugin.version}</version>
         <dependencies>
           <!-- upgrade checkstyle version at runtime-->
           <!-- https://maven.apache.org/plugins/maven-checkstyle-plugin/examples/upgrading-checkstyle.html -->
           <dependency>
             <groupId>com.puppycrawl.tools</groupId>
             <artifactId>checkstyle</artifactId>
-            <version>${com.puppycrawl.tools-checkstyle.version}</version>
+            <version>8.44</version>
           </dependency>
         </dependencies>
         <configuration>
