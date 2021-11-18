@@ -11,4 +11,4 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8888/auth/reamls/wcdevs-realm
+          issuer-uri: http://localhost:8888/auth/realms/wcdevs-realm
