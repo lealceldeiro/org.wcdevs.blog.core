@@ -23,6 +23,22 @@ services:
       POSTGRES_USER: wcdevsu
       POSTGRES_DB: wcdevsdb
 
+  keycloak:
+    image: jboss/keycloak:15.0.2
+    ports:
+      - "8888:8080"
+    environment:
+      - PORT_KEYCLOAK=8080
+      - KEYCLOAK_USER=keycloak
+      - KEYCLOAK_PASSWORD=keycloak
+      - DB_VENDOR=h2
+      - JAVA_OPTS= \
+        -Dkeycloak.migration.provider=singleFile \
+        -Dkeycloak.migration.realmName=wcdevs-realm \
+      - JAVA_OPTS= -Dkeycloak.migration.action=import -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.file=/tmp/wcdevs-realm.json
+    volumes:
+      - ./_mocks/wcdevs-realm.json:/tmp/wcdevs-realm.json
+
   wcdevs_app:
     image: org.wcdevs.blog:core
     ports:
