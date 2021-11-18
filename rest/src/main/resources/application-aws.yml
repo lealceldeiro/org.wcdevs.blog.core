@@ -11,3 +11,14 @@ spring:
             clientName: ${COGNITO_CORE_CLIENT_NAME}
             clientSecret: ${COGNITO_CORE_CLIENT_SECRET}
             scope: openid, profile, email
+cloud:
+  aws:
+    region:
+      static: ${AWS_REGION}
+    sns:
+      enabled: false
+    instance:
+      data:
+        enabled: false
+    stack:
+      auto: false
