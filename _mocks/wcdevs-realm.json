@@ -407,13 +407,13 @@
     {
       "id": "191ee79e-2563-4782-b497-3a898991b7ce",
       "createdTimestamp": 1605901286819,
-      "username": "bjoern",
+      "username": "johnd",
       "enabled": true,
       "totp": false,
       "emailVerified": true,
-      "firstName": "Bjoern",
-      "lastName": "Wilmsmann",
-      "email": "jon@wcdevs.org",
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "john@wcdevs.org",
       "credentials": [
         {
           "id": "324b6c69-0216-4ec0-b876-e156c9bea4ef",
@@ -446,8 +446,8 @@
       "totp": false,
       "emailVerified": true,
       "firstName": "Duke",
-      "lastName": "Java",
-      "email": "info@wcdevs.org",
+      "lastName": "Siem",
+      "email": "dsiem@wcdevs.org",
       "credentials": [
         {
           "id": "3dbb1057-ee81-4cf3-8f1d-ad0f108b0741",
@@ -479,7 +479,7 @@
       "enabled": true,
       "totp": false,
       "emailVerified": true,
-      "firstName": "victoria",
+      "firstName": "Victoria",
       "lastName": "jons",
       "email": "victoria@wcdevs.org",
       "credentials": [
