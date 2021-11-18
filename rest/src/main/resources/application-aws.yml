@@ -1,0 +1,13 @@
+spring:
+  security:
+    oauth2:
+      client:
+        provider:
+          cognito:
+            issuerUri: ${COGNITO_PROVIDER_URL}
+        registration:
+          cognito:
+            clientId: ${COGNITO_CORE_CLIENT_ID}
+            clientName: ${COGNITO_CORE_CLIENT_NAME}
+            clientSecret: ${COGNITO_CORE_CLIENT_SECRET}
+            scope: openid, profile, email
