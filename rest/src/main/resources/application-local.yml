@@ -6,3 +6,9 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     show-sql: true
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8888/auth/reamls/wcdevs-realm
