@@ -41,8 +41,7 @@ public class ErrorMessage {
    *
    * @return An {@link ErrorMessage}.
    */
-  public static ErrorMessage from(DataIntegrityViolationException ex,
-                                  WebRequest request) {
+  public static ErrorMessage from(DataIntegrityViolationException ex, WebRequest request) {
     // TODO: improve message sent to client
     Throwable cause = ex.getRootCause();
     String message = DATA_INTEGRITY_VIOLATION + (cause != null ? cause.getMessage() : "");
