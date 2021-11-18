@@ -32,9 +32,6 @@ services:
       - KEYCLOAK_USER=keycloak
       - KEYCLOAK_PASSWORD=keycloak
       - DB_VENDOR=h2
-      - JAVA_OPTS= \
-        -Dkeycloak.migration.provider=singleFile \
-        -Dkeycloak.migration.realmName=wcdevs-realm \
       - JAVA_OPTS= -Dkeycloak.migration.action=import -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.file=/tmp/wcdevs-realm.json
     volumes:
       - ./_mocks/wcdevs-realm.json:/tmp/wcdevs-realm.json
