@@ -7,10 +7,10 @@ spring:
             issuerUri: ${COGNITO_PROVIDER_URL}
         registration:
           cognito:
-            clientId: ${COGNITO_CORE_CLIENT_ID}
-            clientName: ${COGNITO_CORE_CLIENT_NAME}
-            clientSecret: ${COGNITO_CORE_CLIENT_SECRET}
-            scope: openid, profile, email
+            clientId: ${COGNITO_CLIENT_ID}
+            clientName: ${COGNITO_CLIENT_NAME}
+            clientSecret: ${COGNITO_CLIENT_SECRET}
+            scope: openid, profile, address, email, phone
 cloud:
   aws:
     region:
