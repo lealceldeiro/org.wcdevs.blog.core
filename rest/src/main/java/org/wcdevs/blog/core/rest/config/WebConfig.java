@@ -8,10 +8,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
-  private final CoreProperties coreConfig;
+  private final CoreProperties coreProperties;
 
   @Override
   public void addCorsMappings(CorsRegistry registry) {
-    coreConfig.getAllowedOrigins().forEach(registry::addMapping);
+    coreProperties.getAllowedOrigins().forEach(registry::addMapping);
   }
 }
