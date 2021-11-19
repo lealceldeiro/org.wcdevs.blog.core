@@ -11,6 +11,9 @@ spring:
             clientName: ${COGNITO_CLIENT_NAME}
             clientSecret: ${COGNITO_CLIENT_SECRET}
             scope: openid, profile, address, email, phone
+      resourceserver:
+        jwt:
+          issuer-uri: ${COGNITO_PROVIDER_URL}
 cloud:
   aws:
     region:
