@@ -20,4 +20,5 @@ spring:
             clientSecret: "857964ff-674c-4892-a31f-50a6df8c319e"
       resourceserver:
         jwt:
+          # see http://localhost:8888/auth/realms/wcdevs/.well-known/openid-configuration
           issuerUri: http://localhost:8888/auth/realms/wcdevs
