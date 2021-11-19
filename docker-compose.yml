@@ -34,7 +34,7 @@ services:
       - DB_VENDOR=h2
       - JAVA_OPTS= -Dkeycloak.migration.action=import -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.file=/tmp/wcdevs-realm.json
     volumes:
-      - ./_mocks/wcdevs-realm.json:/tmp/wcdevs-realm.json
+      - ./appmocks/wcdevs-realm.json:/tmp/wcdevs-realm.json
 
   wcdevs_app:
     image: org.wcdevs.blog:core
@@ -52,6 +52,7 @@ services:
           memory: "1024M"
     depends_on:
       - wcdevs_db
+      - keycloak
     environment:
       CORE_APP_DB_URL: jdbc:postgresql://wcdevs_db:5432/wcdevsdb
       CORE_APP_DB_PASSWORD: wcdevspwd
