@@ -1894,7 +1894,7 @@
     "oauth2DeviceCodeLifespan" : "600",
     "clientSessionMaxLifespan" : "0",
     "parRequestUriLifespan" : "60",
-    "frontendUrl" : "http://localhost:3000"
+    "frontendUrl" : "http://localhost:8888/auth"
   },
   "keycloakVersion" : "15.0.2",
   "userManagedAccessAllowed" : false,
