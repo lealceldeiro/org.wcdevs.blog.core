@@ -31,6 +31,8 @@ build/
 
 # Log file
 *.log
+/appmocks/hsperfdata_jboss
+/appmocks/wcdevs-updated-realm.json
 
 # BlueJ files
 *.ctxt
