@@ -22,3 +22,7 @@ spring:
         jwt:
           # see http://localhost:8888/auth/realms/wcdevs/.well-known/openid-configuration
           issuerUri: http://localhost:8888/auth/realms/wcdevs
+
+core-app:
+  allowedOrigins:
+    - "/**"

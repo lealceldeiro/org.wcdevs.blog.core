@@ -6,6 +6,7 @@ open module org.wcdevs.blog.core.rest {
   requires spring.core;
   requires spring.web;
   requires spring.webmvc;
+  requires spring.security.config;
 
   requires lombok;
 
