@@ -65,3 +65,9 @@ The API documentation can be seen once the app is up and running by navigating t
 ```
 http://localhost/docs/index.html
 ```
+
+#### Keycloak
+
+To access the keycloak admin console navigate to `http://localhost:8888` and login using as a username and password `keycloak`.
+
+For more info see the [keycloak docs](./KEYCLOAK.md)
