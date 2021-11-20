@@ -3,7 +3,10 @@ A keycloak server is configured to start from the docker-compose file. After thi
 administration console can be accessed by navigating to `http://localhost:8888` and login using as
 a username and password `keycloak`.
 
-There are two users created: `admin` (password: `admin`) and john (password `john`).
+There are two users created:
+
+- username: `admin@wcdevs.org`, password: `admin`
+- username: `john@wcdevs.org`, password `john`.
 
 Also, there's a client registration configuration with initial access token:
 ```
