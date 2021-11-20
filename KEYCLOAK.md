@@ -20,8 +20,8 @@ And two clients already configured with the following data:
 - Protocol: `openid-connect`
 - Implicit flow: `enabled`
 - Root Url: `http://localhost:3000`
-- Valid redirect URIs: `http://localhost:3000/*`
-- Web origins: `http://localhost:3000`
+- Valid redirect URIs: `*`
+- Web origins: `*`
 
 #### Core (this) app
 
