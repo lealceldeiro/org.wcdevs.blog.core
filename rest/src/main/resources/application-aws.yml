@@ -25,3 +25,8 @@ cloud:
         enabled: false
     stack:
       auto: false
+
+core-app:
+  allowedOrigins:
+    # TODO: update to restrict only to some origins
+    - "/**"
