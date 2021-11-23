@@ -109,7 +109,7 @@ jobs:
         run: |
           export EVENT_PAYLOAD="{\"commitSha\": \"$GITHUB_SHA\", \"ref\": \"main\", \"owner\": \"lealceldeiro\", \"repo\": \"org.wcdevs.blog.awsdeployer\", \"workflowId\": \"core-app-deployment.yml\", \"environmentName\": \"$DEPLOY_ENV\", \"applicationName\": \"core\", \"dockerImageTag\": \"$DOCKER_IMAGE_TAG\"}"
           aws sqs send-message \
-            --queue-url=https://sqs.${AWS_DEFAULT_REGION}.amazonaws.com/${AWS_ACCOUNT_ID}/orgwcdevsblog-deploymentsQueue.fifo \
+            --queue-url=https://sqs.${AWS_DEFAULT_REGION}.amazonaws.com/${AWS_ACCOUNT_ID}/$DEPLOY_ENV-core-depQueue.fifo \
             --message-group-id default \
             --message-deduplication-id $GITHUB_SHA \
             --message-body "$EVENT_PAYLOAD"
