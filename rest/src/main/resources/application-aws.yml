@@ -27,4 +27,5 @@ cloud:
       auto: false
 
 core-app:
+  # https://github.com/spring-projects/spring-boot/wiki/Relaxed-Binding-2.0#list-types-1
   allowedOrigins: ${ALLOWED_ORIGINS}
