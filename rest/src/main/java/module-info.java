@@ -8,6 +8,9 @@ open module org.wcdevs.blog.core.rest {
   requires spring.webmvc;
   requires spring.security.config;
   requires spring.security.web;
+  requires spring.security.core;
+  requires spring.security.oauth2.resource.server;
+  requires spring.security.oauth2.jose;
 
   requires lombok;
 
