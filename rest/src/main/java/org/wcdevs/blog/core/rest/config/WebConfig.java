@@ -24,6 +24,7 @@ public class WebConfig implements WebMvcConfigurer {
                           .toArray(new String[0]);
     log.info("Adding CORS allowed origins {} to {}", Arrays.toString(origins), RESOURCE_PATTERNS);
 
+    // https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/cors/CorsConfiguration.html#setAllowedOriginPatterns-java.util.List-
     RESOURCE_PATTERNS.forEach(path -> registry.addMapping(path).allowedOriginPatterns(origins));
   }
 }
