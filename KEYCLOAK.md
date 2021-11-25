@@ -3,10 +3,12 @@ A keycloak server is configured to start from the docker-compose file. After thi
 administration console can be accessed by navigating to `http://localhost:8888` and login using as
 a username and password `keycloak`.
 
-There are two users created:
+There are the following users created:
 
-- username: `admin@wcdevs.org`, password: `admin`
-- username: `john@wcdevs.org`, password `john`.
+- username: `admin@wcdevs.org`, password: `admin`, roles: `USER`, `ADMIN`
+- username: `john@wcdevs.org`, password `john`,  roles: `USER`, `AUTHOR`
+- username: `edi@wcdevs.org`, password `edi`,  roles: `USER`, `EDITOR`
+- username: `susan@wcdevs.org`, password `susan`,  role: `USER`
 
 Also, there's a client registration configuration with initial access token:
 ```
@@ -56,3 +58,7 @@ docker exec -it kc /opt/jboss/keycloak/bin/standalone.sh -Djboss.socket.binding.
 ```
 - Compare the new data inside `appmocks/wcdevs-updated-realm.json` and `appmocks/wcdevs-realm.json`.
   Move the updated data from the updated file to the old file.
+- Once finished, you can stop the keycloak server using `docker stop kc` (`kc` should be visible if
+`docker ps -a` is issued)
+- Then it can be removed by using `docker rm kc` (and it should not be visible when `docker ps -a`
+is issued) 
