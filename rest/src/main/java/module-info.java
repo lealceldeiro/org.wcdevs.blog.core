@@ -1,6 +1,7 @@
 open module org.wcdevs.blog.core.rest {
   requires spring.boot;
   requires spring.boot.autoconfigure;
+  requires spring.boot.starter.validation;
   requires spring.context;
   requires spring.beans;
   requires spring.core;
