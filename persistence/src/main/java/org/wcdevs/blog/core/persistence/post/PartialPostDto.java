@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
+import javax.validation.constraints.Size;
 
 /**
  * Data transfer object which contains optional post information.
@@ -27,10 +28,13 @@ public class PartialPostDto {
   }
 
   @EqualsAndHashCode.Include
+  @Size(min = 3, max = 200)
   private String title;
+  @Size(min = 3, max = 150)
   @EqualsAndHashCode.Include
   private String slug;
   @ToString.Exclude
+  @Size(min = 3)
   private String body;
   private LocalDateTime publishedOn;
   private LocalDateTime updatedOn;
