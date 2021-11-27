@@ -26,8 +26,6 @@ cloud:
     stack:
       auto: false
 
-coreApp:
+core-app:
   # https://github.com/spring-projects/spring-boot/wiki/Relaxed-Binding-2.0#list-types-1
-  # updated at runtime
-  allowedOrigins:
-    - "https://wcdevs.org"
+  allowedOrigins: ${ALLOWED_ORIGINS}
