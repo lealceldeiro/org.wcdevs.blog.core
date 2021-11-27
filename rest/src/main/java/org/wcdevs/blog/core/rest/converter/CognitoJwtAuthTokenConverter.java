@@ -24,8 +24,9 @@ class CognitoJwtAuthTokenConverter extends AbstractJwtAuthTokenConverter {
   @NonNull
   @Override
   protected Collection<GrantedAuthority> providerAuthorities(Jwt jwt) {
-    log.info("Attempting to retrieved cognito groups");
+    log.info("Cognito token {}", jwt);
     var claims = Optional.ofNullable(jwt.getClaims()).orElse(emptyMap());
+    log.info("Attempting to retrieved cognito groups from claims {}", claims);
     @SuppressWarnings("unchecked")
     var cognitoGroups = (List<String>) claims.getOrDefault(COGNITO_GROUPS, emptyList());
     log.info("Retrieved cognito groups {}", cognitoGroups);
