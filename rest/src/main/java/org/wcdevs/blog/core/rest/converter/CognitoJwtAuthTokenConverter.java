@@ -4,6 +4,7 @@ import java.util.Collection;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import static java.util.stream.Collectors.toSet;
 import lombok.extern.slf4j.Slf4j;
@@ -24,17 +25,27 @@ class CognitoJwtAuthTokenConverter extends AbstractJwtAuthTokenConverter {
   @NonNull
   @Override
   protected Collection<GrantedAuthority> providerAuthorities(Jwt jwt) {
-    log.info("Cognito token {}", jwt);
     var claims = Optional.ofNullable(jwt.getClaims()).orElse(emptyMap());
-    log.info("Attempting to retrieved cognito groups from claims {}", claims);
-    @SuppressWarnings("unchecked")
-    var cognitoGroups = (List<String>) claims.getOrDefault(COGNITO_GROUPS, emptyList());
-    log.info("Retrieved cognito groups {}", cognitoGroups);
-    return Optional.ofNullable(cognitoGroups)
-                   .orElse(emptyList())
-                   .stream()
-                   .map(ConverterUtil::toAuthRoleName)
-                   .map(SimpleGrantedAuthority::new)
-                   .collect(toSet());
+    List<String> cognitoGroups = cognitoGroupsFrom(claims);
+
+    if (cognitoGroups.isEmpty()) {
+      log.warn("Cognito groups are empty. This is probably an error or misconfiguration. claims {}",
+               claims);
+    }
+    return cognitoGroups.stream()
+                        .map(ConverterUtil::toAuthRoleName)
+                        .map(SimpleGrantedAuthority::new)
+                        .collect(toSet());
+  }
+
+  private static List<String> cognitoGroupsFrom(Map<String, Object> claims) {
+    try {
+      @SuppressWarnings("unchecked")
+      var groups = (List<String>) claims.getOrDefault(COGNITO_GROUPS, emptyList());
+      return groups;
+    } catch (ClassCastException cce) {
+      log.error("The claims map does not accept the '{}' string as a key.", COGNITO_GROUPS);
+      return emptyList();
+    }
   }
 }
