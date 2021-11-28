@@ -73,7 +73,7 @@ jobs:
       - name: Create Docker image tag
         if: ${{ env.DEPLOY_ENV == 'staging' || env.DEPLOY_ENV == 'prod' }}
         id: dockerImageTag
-        run: echo "::set-output name=tag::$(date +'%Y%m%d%H%M%S')-${GITHUB_SHA}"
+        run: echo "::set-output name=tag::${DEPLOY_ENV}-$(date +'%Y%m%d%H%M%S')-${GITHUB_SHA}"
 
       - name: Publish Docker image to ECR registry
         if: ${{ env.DEPLOY_ENV == 'staging' || env.DEPLOY_ENV == 'prod' }}
