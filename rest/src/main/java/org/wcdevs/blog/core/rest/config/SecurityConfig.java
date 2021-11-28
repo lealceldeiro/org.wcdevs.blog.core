@@ -15,7 +15,8 @@ import org.wcdevs.blog.core.rest.converter.JwtAuthTokenConverter;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
   // https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/util/AntPathMatcher.html
   private static final String[] UNPROTECTED_GET_ENDPOINTS = new String[]{
-      "/post/**"
+      "/post/**",
+      "/docs/index.html"
   };
 
   private final JwtAuthTokenConverter jwtAuthTokenConverter;
