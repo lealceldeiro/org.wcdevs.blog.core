@@ -41,12 +41,12 @@ jobs:
     # https://docs.github.com/en/actions/learn-github-actions/workflow-commands-for-github-actions#setting-an-environment-variable
     steps:
       - name: Set env to staging
-        if: endsWith(github.ref, '/develop')
+        if: ${{ startsWith(github.ref, '/develop') && endsWith(github.ref, '/develop') }}
         run: |
           echo "DEPLOY_ENV=staging" >> $GITHUB_ENV
 
       - name: Set env to prod
-        if: endsWith(github.ref, '/main')
+        if: ${{ startsWith(github.ref, '/main') && endsWith(github.ref, '/main') }}
         run: |
           echo "DEPLOY_ENV=prod" >> $GITHUB_ENV
 
