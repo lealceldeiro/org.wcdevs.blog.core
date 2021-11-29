@@ -16,15 +16,15 @@
 #
 #   <local ref> <local sha1> <remote ref> <remote sha1>
 #
-# This sample shows how to prevent push of commits where the log message starts
-# with "WIP" (work in progress).
+# For issues arising related to this hook, please use as a reference:
+# https://github.com/git/git/blob/master/templates/hooks--pre-push.sample
 
 remote="$1"
 url="$2"
 
 z40=0000000000000000000000000000000000000000
 
-while read local_ref local_sha remote_ref remote_sha
+while read -r local_ref local_sha remote_ref remote_sha
 do
     if [ "$local_sha" = $z40 ]
     then
