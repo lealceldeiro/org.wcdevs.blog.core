@@ -1,7 +1,8 @@
 package org.wcdevs.blog.core.rest.config;
 
-import java.util.Arrays;
 import static java.util.Collections.emptyList;
+
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,9 @@ import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+/**
+ * Configuration to be applied to web components.
+ */
 @Slf4j
 @Configuration
 @RequiredArgsConstructor

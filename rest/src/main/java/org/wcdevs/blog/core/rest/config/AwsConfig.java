@@ -8,9 +8,20 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
+/**
+ * Configuration to be applied only in an AWS environment.
+ */
 @Configuration
 @Profile("!local")
 public class AwsConfig {
+  /**
+   * Provides and AWS identity provider.
+   *
+   * @param reg                    AWS region.
+   * @param awsCredentialsProvider {@link AWSCredentialsProvider} instance.
+   *
+   * @return An {@link AWSCognitoIdentityProvider} bean.
+   */
   @Bean
   public AWSCognitoIdentityProvider awsIdProvider(@Value("${cloud.aws.region.static}") String reg,
                                                   AWSCredentialsProvider awsCredentialsProvider) {

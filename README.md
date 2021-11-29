@@ -4,6 +4,11 @@
 
 Holds `org.wcdevs.blog:core`, the core application (API) where all the back-end web-services live in.
 
+## Contributing
+
+Before start contributing to this project be sure you're familiar with our
+[Contribution guidelines](CONTRIBUTING.md) and our [Code of Conduct](CODE_OF_CONDUCT.md).
+
 ## Project structure
 
 - Root (parent) module: `org.wcdevs.blog:core`

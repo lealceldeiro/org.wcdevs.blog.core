@@ -1,12 +1,13 @@
 package org.wcdevs.blog.core.rest.converter;
 
-import java.util.Collection;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
+import static java.util.stream.Collectors.toSet;
+
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import static java.util.stream.Collectors.toSet;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.lang.NonNull;
