@@ -162,17 +162,18 @@ To help you ensure these practices there are some (shell scripts) git hooks in [
 that you can copy to your local copy of the project inside the appropriate directory (`<root_dir>/.git/hooks`), so they're
 executed by git in each phase ([see docs for more info](https://git-scm.com/docs/githooks)).
 
-These
-hooks will override any custom hook you'd had defined already with the same name, so, you can check
-first the names of the files before copying them. So, to do so (in a unix environment), execute
+These hooks will override any custom hook you'd had defined already with the same name, so, you can
+check first the names of the files before copying them. So, to do so (in a unix environment),
+execute
+
 ```shell
 cp -r scripts/git/hooks .git
 chmod +x -R .git/hooks
 ```
-For more info about the `cp` command, check [cp-invocation](http://www.gnu.org/software/coreutils/cp).
 
-For more info about the `chmod` command, check [chmod-invocation](http://www.gnu.org/software/coreutils/chmod).
+For more info about these commands check [cp-invocation](http://www.gnu.org/software/coreutils/cp)
+and [chmod-invocation](http://www.gnu.org/software/coreutils/chmod).
 
 These are not hard rules, but rather best practices, so, if you enable these git hooks in your local
-copy of the project and later you need to bypass any of them you can use the `--no-verify` option (
-although it is highly discouraged to do so) -- example: `git push --no-verify`.
+copy of the project, and later you need to bypass any of them, you can use the `--no-verify` option
+(although it's highly discouraged to do so) -- example: `git push --no-verify`.
