@@ -61,7 +61,9 @@ jobs:
           cache: maven
 
       - name: Build with Maven
-        run: mvn -B package --file pom.xml
+        # -B,--batch-mode
+        # see mvn --help for more info
+        run: mvn -B clean verify package --file pom.xml
 
       - name: Codecov
         uses: codecov/codecov-action@v2
