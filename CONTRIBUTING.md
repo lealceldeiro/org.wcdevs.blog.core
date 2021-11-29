@@ -166,7 +166,7 @@ These
 hooks will override any custom hook you'd had defined already with the same name, so, you can check
 first the names of the files before copying them. So, to do so (in a unix environment), execute
 ```shell
-cp -r scripts/git/hooks .git/hooks
+cp -r scripts/git/hooks .git
 chmod +x -R .git/hooks
 ```
 For more info about the `cp` command, check [cp-invocation](http://www.gnu.org/software/coreutils/cp).
