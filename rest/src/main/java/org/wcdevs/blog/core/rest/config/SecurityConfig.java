@@ -9,6 +9,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.stereotype.Component;
 import org.wcdevs.blog.core.rest.converter.JwtAuthTokenConverter;
 
+/**
+ * Security configuration class.
+ */
 @Component
 @RequiredArgsConstructor
 @EnableGlobalMethodSecurity(prePostEnabled = true)
