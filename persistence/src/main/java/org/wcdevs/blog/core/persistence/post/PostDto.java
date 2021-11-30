@@ -33,7 +33,7 @@ public class PostDto {
 
   @NotNull
   @NotBlank
-  @Size(max = 200, min = 3)
+  @Size(min = 3, max = 200)
   @EqualsAndHashCode.Include
   private String title;
 
@@ -45,6 +45,7 @@ public class PostDto {
 
   // only to be sent to clients
   @EqualsAndHashCode.Include
+  @Size(min = 3, max = 150)
   private String slug;
   private LocalDateTime publishedOn;
   private LocalDateTime updatedOn;

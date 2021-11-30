@@ -13,6 +13,8 @@ import org.wcdevs.blog.core.persistence.util.ClockUtil;
 final class PostTransformer {
   private static final String SLUG_REPLACEMENT = "-";
   private static final String SLUG_REPLACE_REGEX = "[^a-z0-9]++";
+  static final int SLUG_MAX_LENGTH = 150;
+  static final int TITLE_MAX_LENGTH = 200;
 
   private PostTransformer() {
     // do not allow instantiation
@@ -25,7 +27,20 @@ final class PostTransformer {
     var publishedOn = dto.getPublishedOn() != null ? dto.getPublishedOn() : now;
     var updatedOn = dto.getUpdatedOn() != null ? dto.getUpdatedOn() : now;
 
-    return new Post(dto.getTitle(), slug, dto.getBody(), publishedOn, updatedOn);
+    return new Post(sizedTitleFrom(dto.getTitle()), sizedSlugFrom(slug), dto.getBody(),
+                    publishedOn, updatedOn);
+  }
+
+  private static String sizedSlugFrom(String candidateSlug) {
+    return candidateSlug.length() <= SLUG_MAX_LENGTH
+           ? candidateSlug
+           : candidateSlug.substring(candidateSlug.length() - SLUG_MAX_LENGTH);
+  }
+
+  private static String sizedTitleFrom(String candidateTitle) {
+    return candidateTitle.length() <= TITLE_MAX_LENGTH
+           ? candidateTitle
+           : candidateTitle.substring(0, TITLE_MAX_LENGTH - 3) + "...";
   }
 
   static PostDto slugInfo(String slug) {
@@ -48,7 +63,7 @@ final class PostTransformer {
 
   static void updatePostWithNonNullValues(Post post, PartialPostDto newPostDto) {
     if (isNotNull(newPostDto.getTitle())) {
-      post.setTitle(newPostDto.getTitle());
+      post.setTitle(sizedTitleFrom(newPostDto.getTitle()));
     }
     if (isNotNull(newPostDto.getBody())) {
       post.setBody(newPostDto.getBody());
@@ -56,7 +71,7 @@ final class PostTransformer {
   }
 
   static void updatePost(Post post, PostDto newPostDto) {
-    post.setTitle(newPostDto.getTitle());
+    post.setTitle(sizedTitleFrom(newPostDto.getTitle()));
     post.setBody(newPostDto.getBody());
   }
 

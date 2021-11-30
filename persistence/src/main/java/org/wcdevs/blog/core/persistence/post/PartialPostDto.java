@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import java.time.LocalDateTime;
+import javax.validation.constraints.Size;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -27,10 +28,13 @@ public class PartialPostDto {
   }
 
   @EqualsAndHashCode.Include
+  @Size(min = 3, max = 200)
   private String title;
+  @Size(min = 3, max = 150)
   @EqualsAndHashCode.Include
   private String slug;
   @ToString.Exclude
+  @Size(min = 3)
   private String body;
   private LocalDateTime publishedOn;
   private LocalDateTime updatedOn;

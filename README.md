@@ -4,6 +4,11 @@
 
 Holds `org.wcdevs.blog:core`, the core application (API) where all the back-end web-services live in.
 
+## Contributing
+
+Before start contributing to this project be sure you're familiar with our
+[Contribution guidelines](CONTRIBUTING.md) and our [Code of Conduct](CODE_OF_CONDUCT.md).
+
 ## Project structure
 
 - Root (parent) module: `org.wcdevs.blog:core`
@@ -65,3 +70,9 @@ The API documentation can be seen once the app is up and running by navigating t
 ```
 http://localhost/docs/index.html
 ```
+
+#### Keycloak
+
+To access the keycloak admin console navigate to `http://localhost:8888` and login using as a username and password `keycloak`.
+
+For more info see the [keycloak docs](./KEYCLOAK.md)

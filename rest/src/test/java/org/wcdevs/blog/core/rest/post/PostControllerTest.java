@@ -40,8 +40,10 @@ import org.wcdevs.blog.core.common.post.PostService;
 import org.wcdevs.blog.core.persistence.post.PartialPostDto;
 import org.wcdevs.blog.core.persistence.post.PostDto;
 import org.wcdevs.blog.core.rest.AppExceptionHandler;
-import static org.wcdevs.blog.core.rest.post.TestsUtil.MAPPER;
-import static org.wcdevs.blog.core.rest.post.TestsUtil.nextPostSlugSample;
+import org.wcdevs.blog.core.rest.TestsUtil;
+
+import static org.wcdevs.blog.core.rest.TestsUtil.MAPPER;
+import static org.wcdevs.blog.core.rest.TestsUtil.nextPostSlugSample;
 
 @EnableWebMvc
 @SpringBootTest(classes = {PostController.class, AppExceptionHandler.class})

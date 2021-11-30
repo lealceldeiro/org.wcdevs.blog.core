@@ -1,0 +1,31 @@
+spring:
+  security:
+    oauth2:
+      client:
+        provider:
+          cognito:
+            issuerUri: ${COGNITO_PROVIDER_URL}
+        registration:
+          cognito:
+            clientId: ${COGNITO_CLIENT_ID}
+            clientName: ${COGNITO_CLIENT_NAME}
+            clientSecret: ${COGNITO_CLIENT_SECRET}
+            scope: ${COGNITO_SCOPES}
+      resourceserver:
+        jwt:
+          issuer-uri: ${COGNITO_PROVIDER_URL}
+cloud:
+  aws:
+    region:
+      static: ${AWS_REGION}
+    sns:
+      enabled: false
+    instance:
+      data:
+        enabled: false
+    stack:
+      auto: false
+
+core-app:
+  # https://github.com/spring-projects/spring-boot/wiki/Relaxed-Binding-2.0#list-types-1
+  allowedOrigins: ${ALLOWED_ORIGINS}

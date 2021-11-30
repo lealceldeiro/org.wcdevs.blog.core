@@ -4,6 +4,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +35,7 @@ public class PostController {
   }
 
   @PostMapping("/")
+  @PreAuthorize("hasAnyRole('EDITOR', 'AUTHOR')")
   public ResponseEntity<PostDto> createPost(@Validated @RequestBody PostDto postDto) {
     return new ResponseEntity<>(postService.createPost(postDto), HttpStatus.CREATED);
   }
@@ -44,12 +46,14 @@ public class PostController {
   }
 
   @PatchMapping("/{postSlug}")
+  @PreAuthorize("hasAnyRole('EDITOR', 'AUTHOR')")
   public ResponseEntity<PostDto> partialUpdatePost(@PathVariable String postSlug,
                                                    @Validated @RequestBody PartialPostDto newDto) {
     return new ResponseEntity<>(postService.partialUpdate(postSlug, newDto), HttpStatus.OK);
   }
 
   @PutMapping("/{postSlug}")
+  @PreAuthorize("hasAnyRole('EDITOR', 'AUTHOR')")
   public ResponseEntity<PostDto> fullyUpdatePost(@PathVariable String postSlug,
                                                  @Validated @RequestBody PostDto newDto) {
     return new ResponseEntity<>(postService.fullUpdate(postSlug, newDto), HttpStatus.OK);
@@ -57,6 +61,7 @@ public class PostController {
 
   @DeleteMapping("/{postSlug}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
+  @PreAuthorize("hasAnyRole('EDITOR', 'AUTHOR')")
   public void deletePost(@PathVariable String postSlug) {
     postService.deletePost(postSlug);
   }
