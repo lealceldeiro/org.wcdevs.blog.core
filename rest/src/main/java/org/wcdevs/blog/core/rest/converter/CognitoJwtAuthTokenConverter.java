@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 @Profile("aws")
 class CognitoJwtAuthTokenConverter extends AbstractJwtAuthTokenConverter {
   // https://docs.aws.amazon.com/cognito/latest/developerguide/role-based-access-control.html
-  private static final String COGNITO_GROUPS = "cognito:groups";
+  static final String COGNITO_GROUPS = "cognito:groups";
 
   @NonNull
   @Override
@@ -40,13 +40,14 @@ class CognitoJwtAuthTokenConverter extends AbstractJwtAuthTokenConverter {
   }
 
   private static List<String> cognitoGroupsFrom(Map<String, Object> claims) {
+    List<String> defaultGroups = emptyList();
     try {
       @SuppressWarnings("unchecked")
-      var groups = (List<String>) claims.getOrDefault(COGNITO_GROUPS, emptyList());
-      return groups;
+      var groups = (List<String>) claims.getOrDefault(COGNITO_GROUPS, defaultGroups);
+      return Optional.ofNullable(groups).orElse(defaultGroups);
     } catch (ClassCastException cce) {
       log.error("The claims map does not accept the '{}' string as a key.", COGNITO_GROUPS);
-      return emptyList();
+      return defaultGroups;
     }
   }
 }
