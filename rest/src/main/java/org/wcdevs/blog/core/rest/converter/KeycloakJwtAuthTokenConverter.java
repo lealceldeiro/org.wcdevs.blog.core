@@ -18,12 +18,12 @@ import org.springframework.stereotype.Component;
 @Component
 @Profile("local")
 class KeycloakJwtAuthTokenConverter extends AbstractJwtAuthTokenConverter {
-  private static final String REALM_ACCESS = "realm_access";
-  private static final String ROLES = "roles";
+  static final String REALM_ACCESS = "realm_access";
+  static final String ROLES = "roles";
 
   @Override
   @NonNull
-  protected Collection<GrantedAuthority> providerAuthorities(final Jwt jwt) {
+  protected Collection<GrantedAuthority> providerAuthorities(Jwt jwt) {
     var claims = Optional.ofNullable(jwt.getClaims()).orElse(emptyMap());
     @SuppressWarnings("unchecked")
     var realmAccess = (Map<String, List<String>>) claims.getOrDefault(REALM_ACCESS, emptyMap());

@@ -1,4 +1,4 @@
-package org.wcdevs.blog.core.rest.post;
+package org.wcdevs.blog.core.rest;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,6 +9,7 @@ import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 import org.springframework.util.ResourceUtils;
 import org.wcdevs.blog.core.persistence.post.PostDto;
 
@@ -34,34 +35,38 @@ public final class TestsUtil {
     }
   }
 
-  private static List<PostDto> read(String file) throws IOException {
+  public static List<PostDto> read(String file) throws IOException {
     var fileName = String.format("classpath:%s", file);
 
     return TestsUtil.MAPPER.readValue(ResourceUtils.getFile(fileName), new TypeReference<>() {
     });
   }
 
-  static PostDto nextPostTitleBodySample() {
+  public static PostDto nextPostTitleBodySample() {
     return SAMPLE_TITLE_BODY_DATA.get(RANDOM.nextInt(SAMPLE_TITLE_BODY_DATA.size()));
   }
 
-  static PostDto nextPostSlugSample() {
+  public static PostDto nextPostSlugSample() {
     return SAMPLE_SLUG_DATA.get(RANDOM.nextInt(SAMPLE_SLUG_DATA.size()));
   }
 
-  static PostDto nextPostSlugTitleSample() {
+  public static PostDto nextPostSlugTitleSample() {
     return SAMPLE_SLUG_TITLE_DATA.get(RANDOM.nextInt(SAMPLE_SLUG_TITLE_DATA.size()));
   }
 
-  static List<PostDto> postSlugTitleSamples() {
+  public static List<PostDto> postSlugTitleSamples() {
     return Collections.unmodifiableList(SAMPLE_SLUG_TITLE_DATA);
   }
 
-  static PostDto nextFullPostSample() {
+  public static PostDto nextFullPostSample() {
     return SAMPLE_FULL_POST_DATA.get(RANDOM.nextInt(SAMPLE_FULL_POST_DATA.size()));
   }
 
-  static List<PostDto> fullPostSamples() {
+  public static List<PostDto> fullPostSamples() {
     return Collections.unmodifiableList(SAMPLE_FULL_POST_DATA);
+  }
+
+  public static String aString() {
+    return UUID.randomUUID().toString();
   }
 }

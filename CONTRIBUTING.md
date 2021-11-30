@@ -112,27 +112,19 @@ request can be ultimately accepted.
 
 ### Git flow
 
-#### Branch names
+#### Branch names and commit messages convention
 
-Branch names should start with one of the following, depending on what the intention is:
+Branch names should follow the following pattern:
 
-- `fix` for but fixes
-- `feature` for a new feature implementation
-- `enhancement` for an enhancement implementation
-
-After one of the previous prefix add a slash (`/`) and the issue number which causes the changes to
-be implemented. Lastly, add a short description of the intended change. Examples:
-
-- `fix/104-check-for-token-validity-in-security-config`
-- `feature/284-implement-user-details-endpoint`
-- `enahancement/734-improve-custom-claims-retrieval-from-auth-token`
-
-#### Commit messages convention
+```text
+<type>/<ITEM ID>?-brief-subject-separated-with-dashes
+```
 
 To have a consistent git history the commit messages should follow the following pattern:
 ```text
 <type>(<ITEM ID>?): <subject>
 ```
+
 ##### `<type>` should be one of:
 
 - `build`: Changes that affect the build system or external dependencies (example scopes: Maven)
@@ -148,7 +140,7 @@ To have a consistent git history the commit messages should follow the following
 - `test`: Adding missing tests or correcting existing tests
 
 #### `<ITEM ID>` -- The related issue, user story or defect
-- 
+
 - For user stories, you should use `US-` as prefix. i.e.: `feat(US-237): User subscription`
 - For non-related issues or defects you should leave it blank. i.e:
 `refactor: Improve code style in SecurityConfig class`
