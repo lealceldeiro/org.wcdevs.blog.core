@@ -1,10 +1,8 @@
 package org.wcdevs.blog.core.rest.errorhandler;
 
-import java.util.Collection;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import java.util.List;
 import org.springframework.stereotype.Component;
-import org.wcdevs.blog.core.rest.errorhandler.impl.DefaultErrorHandler;
+import org.wcdevs.blog.core.rest.errorhandler.impl.NoopErrorHandler;
 
 /**
  * Creates the handler appropriately to handle REST exceptions.
@@ -13,20 +11,16 @@ import org.wcdevs.blog.core.rest.errorhandler.impl.DefaultErrorHandler;
 public class ErrorHandlerFactory {
   private final ErrorHandler errorHandler;
 
-  ErrorHandlerFactory(Collection<ErrorHandler> availableErrorHandlers) {
-    Predicate<ErrorHandler> notDefault = handler -> !(handler instanceof DefaultErrorHandler);
-    var customHandlers = availableErrorHandlers.stream()
-                                               .filter(notDefault)
-                                               .collect(Collectors.toList());
-    if (!customHandlers.isEmpty()) {
-      for (int i = 0; i < customHandlers.size() - 1; i++) {
-        customHandlers.get(i).setDelegateHandler(customHandlers.get(i + 1));
+  ErrorHandlerFactory(List<ErrorHandler> errorHandlers) {
+    if (!errorHandlers.isEmpty()) {
+      var i = 0;
+      while (i < errorHandlers.size() - 1) {
+        errorHandlers.get(i).setDelegateHandler(errorHandlers.get(i++));
       }
-      customHandlers.get(availableErrorHandlers.size() - 2)
-                    .setDelegateHandler(new DefaultErrorHandler());
-      errorHandler = customHandlers.get(0);
+      errorHandlers.get(i).setDelegateHandler(new NoopErrorHandler());
+      errorHandler = errorHandlers.get(0);
     } else {
-      errorHandler = new DefaultErrorHandler();
+      errorHandler = new NoopErrorHandler();
     }
   }
 
