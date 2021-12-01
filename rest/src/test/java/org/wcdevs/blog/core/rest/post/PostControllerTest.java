@@ -1,19 +1,9 @@
 package org.wcdevs.blog.core.rest.post;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.MediaType;
-import org.springframework.restdocs.RestDocumentationContextProvider;
-import org.springframework.restdocs.RestDocumentationExtension;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
@@ -24,14 +14,27 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.wcdevs.blog.core.rest.TestsUtil.MAPPER;
+import static org.wcdevs.blog.core.rest.TestsUtil.nextPostSlugSample;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.MediaType;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.RequestFieldsSnippet;
 import org.springframework.restdocs.payload.ResponseFieldsSnippet;
 import org.springframework.restdocs.request.PathParametersSnippet;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -41,12 +44,15 @@ import org.wcdevs.blog.core.persistence.post.PartialPostDto;
 import org.wcdevs.blog.core.persistence.post.PostDto;
 import org.wcdevs.blog.core.rest.AppExceptionHandler;
 import org.wcdevs.blog.core.rest.TestsUtil;
-
-import static org.wcdevs.blog.core.rest.TestsUtil.MAPPER;
-import static org.wcdevs.blog.core.rest.TestsUtil.nextPostSlugSample;
+import org.wcdevs.blog.core.rest.errorhandler.ErrorHandlerFactory;
+import org.wcdevs.blog.core.rest.errorhandler.impl.DefaultErrorHandler;
+import org.wcdevs.blog.core.rest.errorhandler.impl.NotFoundErrorHandler;
 
 @EnableWebMvc
-@SpringBootTest(classes = {PostController.class, AppExceptionHandler.class})
+@SpringBootTest(classes = {
+    PostController.class, AppExceptionHandler.class, ErrorHandlerFactory.class,
+    DefaultErrorHandler.class, NotFoundErrorHandler.class
+})
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 class PostControllerTest {
   private static final String BASE_URL = "/post";
