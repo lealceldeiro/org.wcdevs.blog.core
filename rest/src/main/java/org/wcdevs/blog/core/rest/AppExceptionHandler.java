@@ -13,14 +13,14 @@ import org.wcdevs.blog.core.rest.errorhandler.ErrorMessage;
  */
 @RestControllerAdvice
 public class AppExceptionHandler {
-  private final ErrorHandler errorHandler;
+  private final ErrorHandler chainedErrorHandler;
 
   public AppExceptionHandler(ErrorHandlerFactory errorHandlerFactory) {
-    errorHandler = errorHandlerFactory.getHandler();
+    chainedErrorHandler = errorHandlerFactory.getChainedHandler();
   }
 
   @ExceptionHandler(Throwable.class)
   public ResponseEntity<ErrorMessage> handleNotFound(Throwable e, WebRequest req) {
-    return errorHandler.handle(e, req);
+    return chainedErrorHandler.handle(e, req);
   }
 }
