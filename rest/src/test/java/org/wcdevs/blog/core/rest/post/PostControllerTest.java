@@ -181,6 +181,16 @@ class PostControllerTest {
   }
 
   @Test
+  void createPostWithBadFormatJson() throws Exception {
+    var postDto = TestsUtil.nextPostTitleBodySample();
+
+    mockMvc.perform(post(BASE_URL + "/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("/" + MAPPER.writeValueAsString(postDto)))
+           .andExpect(status().isBadRequest());
+  }
+
+  @Test
   void getPost() throws Exception {
     var postDto = TestsUtil.nextPostSlugSample();
     mockMvc.perform(get(BASE_URL + "/{postSlug}", postDto.getSlug()))

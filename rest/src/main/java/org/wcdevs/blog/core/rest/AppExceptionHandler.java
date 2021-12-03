@@ -26,7 +26,7 @@ public class AppExceptionHandler {
   }
 
   @ExceptionHandler(HttpMessageNotReadableException.class)
-  public ResponseEntity<ErrorMessage> handleNotFound(HttpMessageNotReadableException e) {
+  public ResponseEntity<ErrorMessage> handleNoReadableException(HttpMessageNotReadableException e) {
     throw e;
   }
 }
