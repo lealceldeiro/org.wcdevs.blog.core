@@ -45,13 +45,15 @@ import org.wcdevs.blog.core.persistence.post.PostDto;
 import org.wcdevs.blog.core.rest.AppExceptionHandler;
 import org.wcdevs.blog.core.rest.TestsUtil;
 import org.wcdevs.blog.core.rest.errorhandler.ErrorHandlerFactory;
+import org.wcdevs.blog.core.rest.errorhandler.impl.ArgumentNotValidExceptionHandler;
 import org.wcdevs.blog.core.rest.errorhandler.impl.DataIntegrityViolationErrorHandler;
 import org.wcdevs.blog.core.rest.errorhandler.impl.NotFoundErrorHandler;
 
 @EnableWebMvc
 @SpringBootTest(classes = {
     PostController.class, AppExceptionHandler.class, ErrorHandlerFactory.class,
-    NotFoundErrorHandler.class, DataIntegrityViolationErrorHandler.class
+    NotFoundErrorHandler.class, DataIntegrityViolationErrorHandler.class,
+    ArgumentNotValidExceptionHandler.class
 })
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 class PostControllerTest {
