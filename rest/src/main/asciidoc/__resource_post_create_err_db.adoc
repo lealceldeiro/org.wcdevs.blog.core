@@ -23,5 +23,3 @@ include::{snippets}/create_post_db_error/response-fields.adoc[]
 include::__H_EXAMPLE_BARE.adoc[]
 
 include::{snippets}/create_post_db_error/http-response.adoc[]
-
-*This error handling will be improved in future*

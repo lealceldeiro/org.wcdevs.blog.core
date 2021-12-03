@@ -188,16 +188,17 @@ class PostControllerTest {
     mockMvc.perform(post(BASE_URL + "/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("/" + MAPPER.writeValueAsString(postDto)))
-           .andExpect(status().isBadRequest());
+           .andExpect(status().isBadRequest())
+           .andDo(document("create_post_bad_format"));
   }
 
   @ParameterizedTest
   @ValueSource(strings = {
-      "", "a",
       "A very long value that cannot be a title. It should have been a value with length less than"
       + "or equal to the max allowed characters. Hence this title will cause the API to throw a bad"
       + "request exception informing the client about it. This is a sample title to show the error"
-      + "handling and should not be emulated."
+      + "handling and should not be emulated.",
+      "a", ""
   })
   void createPostWithIncorrectTitle(String title) throws Exception {
     var prototype = TestsUtil.nextFullPostSample();
@@ -207,11 +208,12 @@ class PostControllerTest {
     mockMvc.perform(post(BASE_URL + "/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(MAPPER.writeValueAsString(postDto)))
-           .andExpect(status().isBadRequest());
+           .andExpect(status().isBadRequest())
+           .andDo(document("create_post_wrong_title"));
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"", "a"})
+  @ValueSource(strings = {"a", ""})
   void createPostWithIncorrectBody(String body) throws Exception {
     var prototype = TestsUtil.nextFullPostSample();
     var now = LocalDateTime.now();
@@ -220,7 +222,8 @@ class PostControllerTest {
     mockMvc.perform(post(BASE_URL + "/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(MAPPER.writeValueAsString(postDto)))
-           .andExpect(status().isBadRequest());
+           .andExpect(status().isBadRequest())
+           .andDo(document("create_post_wrong_body"));
   }
 
   @ParameterizedTest
@@ -238,7 +241,8 @@ class PostControllerTest {
     mockMvc.perform(post(BASE_URL + "/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(MAPPER.writeValueAsString(postDto)))
-           .andExpect(status().isBadRequest());
+           .andExpect(status().isBadRequest())
+           .andDo(document("create_post_wrong_slug"));
   }
 
   @Test
