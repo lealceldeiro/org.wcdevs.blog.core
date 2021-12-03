@@ -20,6 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.wcdevs.blog.core.rest.TestsUtil.MAPPER;
 import static org.wcdevs.blog.core.rest.TestsUtil.nextPostSlugSample;
 
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -187,6 +188,56 @@ class PostControllerTest {
     mockMvc.perform(post(BASE_URL + "/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("/" + MAPPER.writeValueAsString(postDto)))
+           .andExpect(status().isBadRequest());
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {
+      "", "a",
+      "A very long value that cannot be a title. It should have been a value with length less than"
+      + "or equal to the max allowed characters. Hence this title will cause the API to throw a bad"
+      + "request exception informing the client about it. This is a sample title to show the error"
+      + "handling and should not be emulated."
+  })
+  void createPostWithIncorrectTitle(String title) throws Exception {
+    var prototype = TestsUtil.nextFullPostSample();
+    var now = LocalDateTime.now();
+    var postDto = new PostDto(title, prototype.getBody(), prototype.getSlug(), now, now);
+
+    mockMvc.perform(post(BASE_URL + "/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(MAPPER.writeValueAsString(postDto)))
+           .andExpect(status().isBadRequest());
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"", "a"})
+  void createPostWithIncorrectBody(String body) throws Exception {
+    var prototype = TestsUtil.nextFullPostSample();
+    var now = LocalDateTime.now();
+    var postDto = new PostDto(prototype.getTitle(), body, prototype.getSlug(), now, now);
+
+    mockMvc.perform(post(BASE_URL + "/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(MAPPER.writeValueAsString(postDto)))
+           .andExpect(status().isBadRequest());
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {
+      "", "a",
+      "a-very-long-slug-with-more-than-allowed-characters-to-show-the-api-error-handling-feature-"
+      + "which-should-definively-not-be-emulated-at-all-otherwise-an-error-will-be-reported-to-the-"
+      + "calling-client-with-an-approriate-message"
+  })
+  void createPostWithIncorrectSlug(String slug) throws Exception {
+    var prototype = TestsUtil.nextFullPostSample();
+    var now = LocalDateTime.now();
+    var postDto = new PostDto(prototype.getTitle(), prototype.getBody(), slug, now, now);
+
+    mockMvc.perform(post(BASE_URL + "/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(MAPPER.writeValueAsString(postDto)))
            .andExpect(status().isBadRequest());
   }
 
