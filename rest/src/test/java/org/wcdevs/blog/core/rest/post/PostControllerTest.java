@@ -23,6 +23,8 @@ import static org.wcdevs.blog.core.rest.TestsUtil.nextPostSlugSample;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -149,19 +151,28 @@ class PostControllerTest {
                  );
   }
 
-  @Test
-  void createPostDBErrorWithRootCause() throws Exception {
+  @ParameterizedTest
+  @ValueSource(strings = {
+      "ERROR: duplicate key value violates unique constraint. "
+      + "Primary key violation. Values (title)=(A duplicated title)",
+      "ERROR: duplicate key value violates unique constraint. "
+      + "Some other message will yield a not so well formatted response message",
+      "",
+      "-",
+      "null"
+  })
+  void createPostDBErrorWithRootCause(String rootCauseMsg) throws Exception {
     var postDto = TestsUtil.nextPostTitleBodySample();
 
-    var cause = mock(Throwable.class);
-    when(cause.getMessage()).thenReturn("PK constraint violation");
+    var rootCause = mock(Throwable.class);
+    when(rootCause.getMessage()).thenReturn(!"-".equals(rootCauseMsg) ? rootCauseMsg : null);
     var errMessage = String.format("There's already a post with title %s", postDto.getSlug());
 
-    var ex = mock(DataIntegrityViolationException.class);
-    when(ex.getMessage()).thenReturn(errMessage);
-    when(ex.getRootCause()).thenReturn(cause);
+    var violationException = mock(DataIntegrityViolationException.class);
+    when(violationException.getMessage()).thenReturn(errMessage);
+    when(violationException.getRootCause()).thenReturn(rootCause);
 
-    when(postService.createPost(postDto)).thenThrow(ex);
+    when(postService.createPost(postDto)).thenThrow(violationException);
 
     mockMvc.perform(post(BASE_URL + "/")
                         .contentType(MediaType.APPLICATION_JSON)
