@@ -1,6 +1,7 @@
 package org.wcdevs.blog.core.rest;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
@@ -22,5 +23,10 @@ public class AppExceptionHandler {
   @ExceptionHandler(Throwable.class)
   public ResponseEntity<ErrorMessage> handleNotFound(Throwable e, WebRequest req) {
     return chainedErrorHandler.handle(e, req);
+  }
+
+  @ExceptionHandler(HttpMessageNotReadableException.class)
+  public ResponseEntity<ErrorMessage> handleNotFound(HttpMessageNotReadableException e) {
+    throw e;
   }
 }

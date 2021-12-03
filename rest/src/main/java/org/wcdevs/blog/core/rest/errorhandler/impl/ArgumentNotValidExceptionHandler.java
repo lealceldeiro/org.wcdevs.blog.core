@@ -32,7 +32,7 @@ public class ArgumentNotValidExceptionHandler extends AbstractErrorHandler {
     var errorMsg = throwable.getMessage();
 
     if (errorMsg.startsWith("Validation failed for argument")) {
-      errorMsg = String.format("Incorrect value ('%s') for field '%s'. Error: %s",
+      errorMsg = String.format("Incorrect value '%s' for field '%s'. Error: %s",
                                fieldValue(errorMsg), fieldName(errorMsg),
                                frameworkErrorMessage(errorMsg));
     }
