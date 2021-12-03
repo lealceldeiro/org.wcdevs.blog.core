@@ -1,19 +1,9 @@
 package org.wcdevs.blog.core.rest.post;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.MediaType;
-import org.springframework.restdocs.RestDocumentationContextProvider;
-import org.springframework.restdocs.RestDocumentationExtension;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
@@ -24,14 +14,30 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.wcdevs.blog.core.rest.TestsUtil.MAPPER;
+import static org.wcdevs.blog.core.rest.TestsUtil.nextPostSlugSample;
+
+import java.time.LocalDateTime;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.MediaType;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.RequestFieldsSnippet;
 import org.springframework.restdocs.payload.ResponseFieldsSnippet;
 import org.springframework.restdocs.request.PathParametersSnippet;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -41,12 +47,17 @@ import org.wcdevs.blog.core.persistence.post.PartialPostDto;
 import org.wcdevs.blog.core.persistence.post.PostDto;
 import org.wcdevs.blog.core.rest.AppExceptionHandler;
 import org.wcdevs.blog.core.rest.TestsUtil;
-
-import static org.wcdevs.blog.core.rest.TestsUtil.MAPPER;
-import static org.wcdevs.blog.core.rest.TestsUtil.nextPostSlugSample;
+import org.wcdevs.blog.core.rest.errorhandler.ErrorHandlerFactory;
+import org.wcdevs.blog.core.rest.errorhandler.impl.ArgumentNotValidExceptionHandler;
+import org.wcdevs.blog.core.rest.errorhandler.impl.DataIntegrityViolationErrorHandler;
+import org.wcdevs.blog.core.rest.errorhandler.impl.NotFoundErrorHandler;
 
 @EnableWebMvc
-@SpringBootTest(classes = {PostController.class, AppExceptionHandler.class})
+@SpringBootTest(classes = {
+    PostController.class, AppExceptionHandler.class, ErrorHandlerFactory.class,
+    NotFoundErrorHandler.class, DataIntegrityViolationErrorHandler.class,
+    ArgumentNotValidExceptionHandler.class
+})
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 class PostControllerTest {
   private static final String BASE_URL = "/post";
@@ -141,24 +152,97 @@ class PostControllerTest {
                  );
   }
 
-  @Test
-  void createPostDBErrorWithRootCause() throws Exception {
+  @ParameterizedTest
+  @ValueSource(strings = {
+      "ERROR: duplicate key value violates unique constraint. "
+      + "Primary key violation. Values (title)=(A duplicated title)",
+      "ERROR: duplicate key value violates unique constraint. "
+      + "Some other message will yield a not so well formatted response message",
+      "",
+      "-",
+      "null"
+  })
+  void createPostDBErrorWithRootCause(String rootCauseMsg) throws Exception {
     var postDto = TestsUtil.nextPostTitleBodySample();
 
-    var cause = mock(Throwable.class);
-    when(cause.getMessage()).thenReturn("PK constraint violation");
+    var rootCause = mock(Throwable.class);
+    when(rootCause.getMessage()).thenReturn(!"-".equals(rootCauseMsg) ? rootCauseMsg : null);
     var errMessage = String.format("There's already a post with title %s", postDto.getSlug());
 
-    var ex = mock(DataIntegrityViolationException.class);
-    when(ex.getMessage()).thenReturn(errMessage);
-    when(ex.getRootCause()).thenReturn(cause);
+    var violationException = mock(DataIntegrityViolationException.class);
+    when(violationException.getMessage()).thenReturn(errMessage);
+    when(violationException.getRootCause()).thenReturn(rootCause);
 
-    when(postService.createPost(postDto)).thenThrow(ex);
+    when(postService.createPost(postDto)).thenThrow(violationException);
 
     mockMvc.perform(post(BASE_URL + "/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(MAPPER.writeValueAsString(postDto)))
            .andExpect(status().isConflict());
+  }
+
+  @Test
+  void createPostWithBadFormatJson() throws Exception {
+    var postDto = TestsUtil.nextPostTitleBodySample();
+
+    mockMvc.perform(post(BASE_URL + "/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("/" + MAPPER.writeValueAsString(postDto)))
+           .andExpect(status().isBadRequest())
+           .andDo(document("create_post_bad_format"));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {
+      "A very long value that cannot be a title. It should have been a value with length less than"
+      + "or equal to the max allowed characters. Hence this title will cause the API to throw a bad"
+      + "request exception informing the client about it. This is a sample title to show the error"
+      + "handling and should not be emulated.",
+      "a", ""
+  })
+  void createPostWithIncorrectTitle(String title) throws Exception {
+    var prototype = TestsUtil.nextFullPostSample();
+    var now = LocalDateTime.now();
+    var postDto = new PostDto(title, prototype.getBody(), prototype.getSlug(), now, now);
+
+    mockMvc.perform(post(BASE_URL + "/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(MAPPER.writeValueAsString(postDto)))
+           .andExpect(status().isBadRequest())
+           .andDo(document("create_post_wrong_title"));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"a", ""})
+  void createPostWithIncorrectBody(String body) throws Exception {
+    var prototype = TestsUtil.nextFullPostSample();
+    var now = LocalDateTime.now();
+    var postDto = new PostDto(prototype.getTitle(), body, prototype.getSlug(), now, now);
+
+    mockMvc.perform(post(BASE_URL + "/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(MAPPER.writeValueAsString(postDto)))
+           .andExpect(status().isBadRequest())
+           .andDo(document("create_post_wrong_body"));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {
+      "", "a",
+      "a-very-long-slug-with-more-than-allowed-characters-to-show-the-api-error-handling-feature-"
+      + "which-should-definively-not-be-emulated-at-all-otherwise-an-error-will-be-reported-to-the-"
+      + "calling-client-with-an-approriate-message"
+  })
+  void createPostWithIncorrectSlug(String slug) throws Exception {
+    var prototype = TestsUtil.nextFullPostSample();
+    var now = LocalDateTime.now();
+    var postDto = new PostDto(prototype.getTitle(), prototype.getBody(), slug, now, now);
+
+    mockMvc.perform(post(BASE_URL + "/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(MAPPER.writeValueAsString(postDto)))
+           .andExpect(status().isBadRequest())
+           .andDo(document("create_post_wrong_slug"));
   }
 
   @Test

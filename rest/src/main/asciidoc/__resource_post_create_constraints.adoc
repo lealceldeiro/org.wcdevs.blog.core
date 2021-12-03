@@ -1,0 +1,63 @@
+[[resource-post-create-constraints]]
+==== Other constraint errors while creating a new post
+
+In general, when a `POST` request is performed to create a _Post_ there are constraints that
+must be fulfilled, otherwise an error will be reported along with a `409` CONFLICT http status.
+
+Some examples as follows:
+
+**Bad JSON posted**
+
+include::__H_REQUEST.adoc[]
+
+include::__H_EXAMPLE.adoc[]
+
+include::{snippets}/create_post_bad_format/http-request.adoc[]
+
+include::__H_RESPONSE.adoc[]
+
+include::__H_EXAMPLE_BARE.adoc[]
+
+include::{snippets}/create_post_bad_format/http-response.adoc[]
+
+**Incorrect title**
+
+include::__H_REQUEST.adoc[]
+
+include::__H_EXAMPLE.adoc[]
+
+include::{snippets}/create_post_wrong_title/http-request.adoc[]
+
+include::__H_RESPONSE.adoc[]
+
+include::__H_EXAMPLE_BARE.adoc[]
+
+include::{snippets}/create_post_wrong_title/http-response.adoc[]
+
+**Incorrect body**
+
+include::__H_REQUEST.adoc[]
+
+include::__H_EXAMPLE.adoc[]
+
+include::{snippets}/create_post_wrong_body/http-request.adoc[]
+
+include::__H_RESPONSE.adoc[]
+
+include::__H_EXAMPLE_BARE.adoc[]
+
+include::{snippets}/create_post_wrong_body/http-response.adoc[]
+
+**Incorrect slug**
+
+include::__H_REQUEST.adoc[]
+
+include::__H_EXAMPLE.adoc[]
+
+include::{snippets}/create_post_wrong_slug/http-request.adoc[]
+
+include::__H_RESPONSE.adoc[]
+
+include::__H_EXAMPLE_BARE.adoc[]
+
+include::{snippets}/create_post_wrong_slug/http-response.adoc[]

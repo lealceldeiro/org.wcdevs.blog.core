@@ -1,35 +1,32 @@
 package org.wcdevs.blog.core.rest;
 
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
-import org.wcdevs.blog.core.common.exception.NotFoundException;
-import org.wcdevs.blog.core.rest.util.ErrorMessage;
+import org.wcdevs.blog.core.rest.errorhandler.ErrorHandler;
+import org.wcdevs.blog.core.rest.errorhandler.ErrorHandlerFactory;
+import org.wcdevs.blog.core.rest.errorhandler.ErrorMessage;
 
 /**
  * Handles exceptions thrown by the business logic.
  */
 @RestControllerAdvice
 public class AppExceptionHandler {
-  /**
-   * Handles {@link NotFoundException}s.
-   *
-   * @param e   Exception
-   * @param req Web request
-   *
-   * @return A response entity with info about the exception.
-   */
-  @ExceptionHandler(NotFoundException.class)
-  public ResponseEntity<ErrorMessage> handleNotFound(NotFoundException e, WebRequest req) {
-    return new ResponseEntity<>(ErrorMessage.from(e, req), HttpStatus.NOT_FOUND);
+  private final ErrorHandler chainedErrorHandler;
+
+  public AppExceptionHandler(ErrorHandlerFactory errorHandlerFactory) {
+    chainedErrorHandler = errorHandlerFactory.getChainedHandler();
   }
 
-  @ExceptionHandler(DataIntegrityViolationException.class)
-  public ResponseEntity<ErrorMessage> handleViolation(DataIntegrityViolationException violation,
-                                                      WebRequest request) {
-    return new ResponseEntity<>(ErrorMessage.from(violation, request), HttpStatus.CONFLICT);
+  @ExceptionHandler(Throwable.class)
+  public ResponseEntity<ErrorMessage> handleNotFound(Throwable e, WebRequest req) {
+    return chainedErrorHandler.handle(e, req);
+  }
+
+  @ExceptionHandler(HttpMessageNotReadableException.class)
+  public ResponseEntity<ErrorMessage> handleNoReadableException(HttpMessageNotReadableException e) {
+    throw e;
   }
 }

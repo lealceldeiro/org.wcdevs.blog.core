@@ -8,6 +8,8 @@ include::__resource_post_create.adoc[]
 
 include::__resource_post_create_err_db.adoc[]
 
+include::__resource_post_create_constraints.adoc[]
+
 include::__resource_post_full_update.adoc[]
 
 include::__resource_post_partial_update.adoc[]
