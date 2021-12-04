@@ -27,7 +27,7 @@ public class PostServiceImpl implements PostService {
 
   @Override
   public PostDto createPost(PostDto postDto) {
-    Post post = postRepository.save(PostTransformer.entityFromDto(postDto));
+    Post post = postRepository.save(PostTransformer.newEntityFromDto(postDto));
     return PostTransformer.slugInfo(post);
   }
 

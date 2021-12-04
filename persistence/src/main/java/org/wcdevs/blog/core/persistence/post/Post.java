@@ -31,17 +31,20 @@ public class Post {
   @ToString.Include
   private UUID uuid;
 
-  @Column(name = "title", unique = true, nullable = false, length = 200)
+  @Column(name = "title", unique = true, nullable = false, length = 250)
   @ToString.Include
   private String title;
 
-  @Column(name = "slug", unique = true, nullable = false, length = 150)
+  @Column(name = "slug", unique = true, nullable = false, length = 200)
   @ToString.Include
   private String slug;
 
   @Lob
   @Column(name = "body", nullable = false)
   private String body;
+
+  @Column(name = "excerpt", nullable = false, length = 300)
+  private String excerpt;
 
   @Column(name = "published_on", nullable = false)
   private LocalDateTime publishedOn;
@@ -58,11 +61,12 @@ public class Post {
    * @param publishedOn Date time when the post was published.
    * @param updatedOn   Date time when the post was last updated.
    */
-  public Post(String title, String slug, String body, LocalDateTime publishedOn,
+  public Post(String title, String slug, String body, String excerpt, LocalDateTime publishedOn,
               LocalDateTime updatedOn) {
     this.title = title;
     this.slug = slug;
     this.body = body;
+    this.excerpt = excerpt;
     this.publishedOn = publishedOn;
     this.updatedOn = updatedOn;
   }

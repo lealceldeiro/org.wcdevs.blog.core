@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import java.time.LocalDateTime;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +19,7 @@ import lombok.ToString;
  */
 @Getter
 @Builder
-@ToString
+@ToString(onlyExplicitlyIncluded = true)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -33,20 +34,26 @@ public class PostDto {
 
   @NotNull
   @NotBlank
-  @Size(min = 3, max = 200)
+  @ToString.Include
   @EqualsAndHashCode.Include
+  @Size(min = 3, max = 200)
   private String title;
+
+  @ToString.Include
+  @EqualsAndHashCode.Include
+  @Size(min = 3, max = 150)
+  @Pattern(regexp = "[-a-z0-9]{0,150}")
+  private String slug;
 
   @NotNull
   @NotBlank
   @Size(min = 3)
-  @ToString.Exclude
   private String body;
 
+  @Size(min = 3, max = 250)
+  private String excerpt;
+
   // only to be sent to clients
-  @EqualsAndHashCode.Include
-  @Size(min = 3, max = 150)
-  private String slug;
   private LocalDateTime publishedOn;
   private LocalDateTime updatedOn;
 

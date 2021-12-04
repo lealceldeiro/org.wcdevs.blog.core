@@ -66,8 +66,9 @@ class PostControllerTest {
                            .description("Post slug generated during creation"));
   private static final RequestFieldsSnippet TITLE_AND_BODY_REQUEST_FIELDS
       = requestFields(fieldWithPath("title").description("Post title"),
+                      fieldWithPath("slug").description("A custom slug. Optional."),
                       fieldWithPath("body").description("Body of the post."),
-                      fieldWithPath("slug").ignored(),
+                      fieldWithPath("excerpt").description("A custom excerpt. Optional."),
                       fieldWithPath("publishedOn").ignored(),
                       fieldWithPath("updatedOn").ignored());
   private static final ResponseFieldsSnippet SLUG_INFO_RESPONSE_FIELDS
@@ -203,7 +204,8 @@ class PostControllerTest {
   void createPostWithIncorrectTitle(String title) throws Exception {
     var prototype = TestsUtil.nextFullPostSample();
     var now = LocalDateTime.now();
-    var postDto = new PostDto(title, prototype.getBody(), prototype.getSlug(), now, now);
+    var postDto = new PostDto(title, prototype.getSlug(), prototype.getBody(),
+                              prototype.getExcerpt(), now, now);
 
     mockMvc.perform(post(BASE_URL + "/")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -217,7 +219,8 @@ class PostControllerTest {
   void createPostWithIncorrectBody(String body) throws Exception {
     var prototype = TestsUtil.nextFullPostSample();
     var now = LocalDateTime.now();
-    var postDto = new PostDto(prototype.getTitle(), body, prototype.getSlug(), now, now);
+    var postDto = new PostDto(prototype.getTitle(), prototype.getSlug(), body,
+                              prototype.getExcerpt(), now, now);
 
     mockMvc.perform(post(BASE_URL + "/")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -236,7 +239,8 @@ class PostControllerTest {
   void createPostWithIncorrectSlug(String slug) throws Exception {
     var prototype = TestsUtil.nextFullPostSample();
     var now = LocalDateTime.now();
-    var postDto = new PostDto(prototype.getTitle(), prototype.getBody(), slug, now, now);
+    var postDto = new PostDto(prototype.getTitle(), slug, prototype.getBody(),
+                              prototype.getExcerpt(), now, now);
 
     mockMvc.perform(post(BASE_URL + "/")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -257,6 +261,7 @@ class PostControllerTest {
                                               .description("Post slug. This value can be used to "
                                                            + "retrieve the post later"),
                                           fieldWithPath("body").description("Post body"),
+                                          fieldWithPath("excerpt").description("An body excerpt"),
                                           fieldWithPath("publishedOn")
                                               .description("Date time where the post was "
                                                            + "published"),

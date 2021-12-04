@@ -13,22 +13,23 @@ import org.wcdevs.blog.core.persistence.util.ClockUtil;
 final class PostTransformer {
   private static final String SLUG_REPLACEMENT = "-";
   private static final String SLUG_REPLACE_REGEX = "[^a-z0-9]++";
-  static final int SLUG_MAX_LENGTH = 150;
   static final int TITLE_MAX_LENGTH = 200;
+  static final int SLUG_MAX_LENGTH = 150;
+  static final int EXCERPT_MAX_LENGTH = 250;
 
   private PostTransformer() {
     // do not allow instantiation
   }
 
-  static Post entityFromDto(PostDto dto) {
+  static Post newEntityFromDto(PostDto dto) {
     var now = ClockUtil.utcNow();
 
-    var slug = dto.getSlug() != null ? dto.getSlug() : slugFromTitle(dto.getTitle());
-    var publishedOn = dto.getPublishedOn() != null ? dto.getPublishedOn() : now;
-    var updatedOn = dto.getUpdatedOn() != null ? dto.getUpdatedOn() : now;
+    // allow user the option to specify a custom slug
+    var slug = sizedSlugFrom(dto.getSlug() != null ? dto.getSlug() : slugFromTitle(dto.getTitle()));
+    var excerpt = excerptFrom(dto.getExcerpt(), dto.getBody());
 
-    return new Post(sizedTitleFrom(dto.getTitle()), sizedSlugFrom(slug), dto.getBody(),
-                    publishedOn, updatedOn);
+    // publishedOn and updatedOn will always be determined in the core app
+    return new Post(sizedTitleFrom(dto.getTitle()), slug, dto.getBody(), excerpt, now, now);
   }
 
   private static String sizedSlugFrom(String candidateSlug) {
@@ -41,6 +42,22 @@ final class PostTransformer {
     return candidateTitle.length() <= TITLE_MAX_LENGTH
            ? candidateTitle
            : candidateTitle.substring(0, TITLE_MAX_LENGTH - 3) + "...";
+  }
+
+  private static String excerptFrom(String excerptCandidate, String bodyToCreateExcerpt) {
+    var candidate = Objects.nonNull(excerptCandidate) ? excerptCandidate : bodyToCreateExcerpt;
+    if (candidate.length() <= EXCERPT_MAX_LENGTH) {
+      return candidate;
+    }
+    var stripped = Objects.requireNonNull(candidate).strip();
+    var trimmed = stripped.substring(0, EXCERPT_MAX_LENGTH);
+
+    if (!" ".equals(stripped.substring(EXCERPT_MAX_LENGTH, EXCERPT_MAX_LENGTH + 1))) {
+      var spaceIndex = trimmed.lastIndexOf(" ");
+      return spaceIndex != -1 ? trimmed.substring(0, spaceIndex) : trimmed;
+    }
+
+    return trimmed;
   }
 
   static PostDto slugInfo(String slug) {
@@ -63,16 +80,27 @@ final class PostTransformer {
 
   static void updatePostWithNonNullValues(Post post, PartialPostDto newPostDto) {
     if (isNotNull(newPostDto.getTitle())) {
-      post.setTitle(sizedTitleFrom(newPostDto.getTitle()));
+      post.setTitle(newPostDto.getTitle());
+    }
+    if (isNotNull(newPostDto.getSlug())) {
+      post.setSlug(newPostDto.getSlug());
     }
     if (isNotNull(newPostDto.getBody())) {
       post.setBody(newPostDto.getBody());
     }
+    if (isNotNull(newPostDto.getExcerpt())) {
+      post.setExcerpt(newPostDto.getExcerpt());
+    }
+    post.setUpdatedOn(ClockUtil.utcNow());
   }
 
   static void updatePost(Post post, PostDto newPostDto) {
-    post.setTitle(sizedTitleFrom(newPostDto.getTitle()));
+    post.setTitle(newPostDto.getTitle());
     post.setBody(newPostDto.getBody());
+    post.setExcerpt(newPostDto.getExcerpt());
+    post.setSlug(newPostDto.getSlug());
+
+    post.setUpdatedOn(ClockUtil.utcNow());
   }
 
   private static boolean isNotNull(Object o) {
@@ -84,6 +112,7 @@ final class PostTransformer {
                   .title(postEntity.getTitle())
                   .slug(postEntity.getSlug())
                   .body(postEntity.getBody())
+                  .excerpt(postEntity.getExcerpt())
                   .publishedOn(postEntity.getPublishedOn())
                   .updatedOn(postEntity.getUpdatedOn())
                   .build();

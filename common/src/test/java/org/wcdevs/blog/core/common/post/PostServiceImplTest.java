@@ -50,7 +50,7 @@ class PostServiceImplTest {
     var slugInfoMock = mock(PostDto.class);
 
     try (var mockedPostTransformer = mockStatic(PostTransformer.class)) {
-      mockedPostTransformer.when(() -> PostTransformer.entityFromDto(argMock)).thenReturn(postMock);
+      mockedPostTransformer.when(() -> PostTransformer.newEntityFromDto(argMock)).thenReturn(postMock);
       mockedPostTransformer.when(() -> PostTransformer.slugInfo(postMock)).thenReturn(slugInfoMock);
       when(postRepository.save(postMock)).thenReturn(postMock);
 
@@ -58,7 +58,7 @@ class PostServiceImplTest {
 
       assertEquals(slugInfoMock, actual);
       verify(postRepository, times(1)).save(postMock);
-      mockedPostTransformer.verify(() -> PostTransformer.entityFromDto(argMock), times(1));
+      mockedPostTransformer.verify(() -> PostTransformer.newEntityFromDto(argMock), times(1));
       mockedPostTransformer.verify(() -> PostTransformer.slugInfo(postMock), times(1));
     }
   }

@@ -3,20 +3,23 @@
     "title": "Lorem Ipsum",
     "slug": "lorem-ipsum-2011460781",
     "body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur ullamcorper ex at turpis fermentum, nec rhoncus leo facilisis. Nam scelerisque nibh sed nisl pellentesque, vel aliquam orci laoreet. Integer facilisis sapien non nunc blandit, laoreet auctor lectus interdum. Pellentesque semper ex non placerat iaculis. Phasellus cursus finibus luctus. Nullam iaculis auctor volutpat. Nullam maximus sollicitudin augue a mattis. Etiam aliquam fringilla ipsum, et tristique mauris faucibus eu. Sed accumsan rutrum ultrices. Nam aliquam, nisi pellentesque suscipit sagittis, arcu erat luctus lacus, sed imperdiet velit sem suscipit nisi. In eu porta diam, et laoreet nisl. Aenean id faucibus dui. Nam vitae quam vitae libero mattis porta. Suspendisse potenti.",
-    "publishedOn": "2021-11-05T14:40:05.522755",
-    "updatedOn": "2021-11-05T14:57:49.017876"
+    "excerpt": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur ullamcorper ex at turpis fermentum",
+    "publishedOn": "2021-12-05T14:40:05.522755",
+    "updatedOn": "2021-12-06T14:57:49.017876"
   },
   {
     "title": "Integer in pretium turpis",
     "slug": "integer-in-pretium-turpis-2011460751",
     "body": "Integer in pretium turpis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nullam consectetur dolor ac malesuada pretium. Nulla eu libero tortor. Curabitur suscipit justo nec ipsum gravida condimentum. Phasellus ac sem facilisis, sollicitudin purus id, elementum felis. Phasellus quis metus pharetra ipsum efficitur fermentum. Nunc dignissim orci metus, nec sollicitudin eros tempor in. Cras nec tempus purus. Fusce ullamcorper arcu eu arcu fringilla tristique. Nullam ac arcu at nisl varius eleifend vitae non purus. Fusce finibus elit vel lobortis suscipit. Nunc ut urna dignissim, fermentum dui eget, ornare ex. Donec at augue ut ipsum mattis imperdiet eu accumsan eros. Ut venenatis hendrerit erat nec volutpat. Donec luctus dignissim tortor, ut faucibus mauris facilisis ut.",
-    "publishedOn": "2021-11-05T15:40:05.522755",
-    "updatedOn": "2021-11-06T14:57:49.017876"
+    "excerpt": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur ullamcorper ex at turpis fermentum",
+    "publishedOn": "2021-12-05T14:40:05.522755",
+    "updatedOn": "2021-12-06T14:57:49.017876"
   },
   {
     "title": "Fusce eu sagittis tortor",
     "slug": "fusce-eu-sagittis-tortor-2011460723",
     "body": "Fusce eu sagittis tortor. Fusce sodales ac nisl auctor tincidunt. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aliquam erat volutpat. Sed interdum sodales ullamcorper. Aenean molestie consectetur libero, sit amet rhoncus orci varius eget. Fusce vitae tristique tortor.\n\nMaecenas lacus metus, feugiat vitae est eu, blandit rhoncus dui. Phasellus in massa ligula. Pellentesque egestas metus at orci rhoncus, id eleifend enim consequat. Nam turpis orci, volutpat sed tellus eu, suscipit sodales orci. Nam justo metus, condimentum non urna id, vehicula molestie metus. Ut pulvinar vel tellus non fringilla. Morbi dictum auctor nisl, vitae pellentesque nibh condimentum quis. Morbi magna libero, interdum gravida ultricies a, vulputate vitae sem. Donec quis finibus magna.",
+    "excerpt": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur ullamcorper ex at turpis fermentum",
     "publishedOn": "2021-12-05T14:40:05.522755",
     "updatedOn": "2021-12-06T14:57:49.017876"
   }
