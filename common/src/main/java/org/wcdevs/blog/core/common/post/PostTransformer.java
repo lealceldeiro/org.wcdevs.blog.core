@@ -25,23 +25,11 @@ final class PostTransformer {
     var now = ClockUtil.utcNow();
 
     // allow user the option to specify a custom slug
-    var slug = sizedSlugFrom(dto.getSlug() != null ? dto.getSlug() : slugFromTitle(dto.getTitle()));
+    var slug = Objects.nonNull(dto.getSlug()) ? dto.getSlug() : slugFromTitle(dto.getTitle());
     var excerpt = excerptFrom(dto.getExcerpt(), dto.getBody());
 
     // publishedOn and updatedOn will always be determined in the core app
-    return new Post(sizedTitleFrom(dto.getTitle()), slug, dto.getBody(), excerpt, now, now);
-  }
-
-  private static String sizedSlugFrom(String candidateSlug) {
-    return candidateSlug.length() <= SLUG_MAX_LENGTH
-           ? candidateSlug
-           : candidateSlug.substring(candidateSlug.length() - SLUG_MAX_LENGTH);
-  }
-
-  private static String sizedTitleFrom(String candidateTitle) {
-    return candidateTitle.length() <= TITLE_MAX_LENGTH
-           ? candidateTitle
-           : candidateTitle.substring(0, TITLE_MAX_LENGTH - 3) + "...";
+    return new Post(dto.getTitle(), slug, dto.getBody(), excerpt, now, now);
   }
 
   private static String excerptFrom(String excerptCandidate, String bodyToCreateExcerpt) {
@@ -73,22 +61,30 @@ final class PostTransformer {
                            .toLowerCase(Locale.ENGLISH)
                            .strip()
                            .replaceAll(SLUG_REPLACE_REGEX, SLUG_REPLACEMENT);
-    return sanitized
-           + (!sanitized.endsWith(SLUG_REPLACEMENT) ? SLUG_REPLACEMENT : "")
-           + Math.abs(Objects.hash(sanitized));
+    var hashed = sanitized
+                 + (!sanitized.endsWith(SLUG_REPLACEMENT) ? SLUG_REPLACEMENT : "")
+                 + Math.abs(Objects.hash(sanitized));
+
+    return sizedSlugFrom(hashed);
+  }
+
+  private static String sizedSlugFrom(String candidateSlug) {
+    return candidateSlug.length() <= SLUG_MAX_LENGTH
+           ? candidateSlug
+           : candidateSlug.substring(candidateSlug.length() - SLUG_MAX_LENGTH);
   }
 
   static void updatePostWithNonNullValues(Post post, PartialPostDto newPostDto) {
-    if (isNotNull(newPostDto.getTitle())) {
+    if (Objects.nonNull(newPostDto.getTitle())) {
       post.setTitle(newPostDto.getTitle());
     }
-    if (isNotNull(newPostDto.getSlug())) {
+    if (Objects.nonNull(newPostDto.getSlug())) {
       post.setSlug(newPostDto.getSlug());
     }
-    if (isNotNull(newPostDto.getBody())) {
+    if (Objects.nonNull(newPostDto.getBody())) {
       post.setBody(newPostDto.getBody());
     }
-    if (isNotNull(newPostDto.getExcerpt())) {
+    if (Objects.nonNull(newPostDto.getExcerpt())) {
       post.setExcerpt(newPostDto.getExcerpt());
     }
     post.setUpdatedOn(ClockUtil.utcNow());
@@ -101,10 +97,6 @@ final class PostTransformer {
     post.setSlug(newPostDto.getSlug());
 
     post.setUpdatedOn(ClockUtil.utcNow());
-  }
-
-  private static boolean isNotNull(Object o) {
-    return null != o;
   }
 
   static PostDto dtoFromEntity(Post postEntity) {

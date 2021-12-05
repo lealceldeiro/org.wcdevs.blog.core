@@ -76,44 +76,7 @@ class PostTransformerTest {
       + "sagittis tortor Fusce eu sagittis tortor Fusce eu sagittis tortor",
   })
   void entityFromDtoWithLengthyTitle(String title) {
-    var dto = dtoBuilder().slug(null).title(title).build();
-
-    var entity = PostTransformer.newEntityFromDto(dto);
-
-    var expectedTitleCorrectLengthWithAppendix
-        = "Integer in pretium turpis Integer in pretium turpis Integer in pretium turpis Integer "
-          + "in pretium turpis Fusce eu sagittis tortor Fusce eu sagittis tortor Fusce eu "
-          + "sagittis tortor Fusce eu sagittis ...";
-    assertEquals(expectedTitleCorrectLengthWithAppendix, entity.getTitle());
-    assertEquals(PostTransformer.TITLE_MAX_LENGTH, entity.getTitle().length());
-    assertNotNull(entity.getSlug());
-    assertEquals(PostTransformer.SLUG_MAX_LENGTH, entity.getSlug().length());
-  }
-
-  @ParameterizedTest
-  @ValueSource(strings = {
-      // large
-      "Integer in pretium turpis Integer in pretium turpis Integer in pretium turpis Integer in "
-      + "pretium turpis Fusce eu sagittis tortor Fusce eu sagittis tortor Fusce eu sagittis tortor "
-      + "Fusce eu sagittis tortor Fusce eu sagittis tortor Fusce eu sagittis tortor Fusce eu "
-      + "sagittis tortor Fusce eu sagittis tortor Fusce eu sagittis tortor",
-      "Integer in pretium turpis Integer in pretium turpis Integer in pretium turpis Integer in "
-      // extra large
-      + "pretium turpis Fusce eu sagittis tortor Fusce eu sagittis tortor Fusce eu sagittis tortor "
-      + "Fusce eu sagittis tortor Fusce eu sagittis tortor Fusce eu sagittis tortor Fusce eu "
-      + "sagittis tortor Fusce eu sagittis tortor Fusce eu sagittis tortor"
-      + "pretium turpis Fusce eu sagittis tortor Fusce eu sagittis tortor Fusce eu sagittis tortor "
-      + "Fusce eu sagittis tortor Fusce eu sagittis tortor Fusce eu sagittis tortor Fusce eu "
-      + "sagittis tortor Fusce eu sagittis tortor Fusce eu sagittis tortor"
-      + "pretium turpis Fusce eu sagittis tortor Fusce eu sagittis tortor Fusce eu sagittis tortor "
-      + "Fusce eu sagittis tortor Fusce eu sagittis tortor Fusce eu sagittis tortor Fusce eu "
-      + "sagittis tortor Fusce eu sagittis tortor Fusce eu sagittis tortor"
-      + "pretium turpis Fusce eu sagittis tortor Fusce eu sagittis tortor Fusce eu sagittis tortor "
-      + "Fusce eu sagittis tortor Fusce eu sagittis tortor Fusce eu sagittis tortor Fusce eu "
-      + "sagittis tortor Fusce eu sagittis tortor Fusce eu sagittis tortor",
-  })
-  void entityFromDtoWithLengthySlug(String slug) {
-    var dto = dtoBuilder().slug(slug).title("Some title with long slug set already").build();
+    var dto = dtoBuilder().title(title).slug(null).build();
 
     var entity = PostTransformer.newEntityFromDto(dto);
 
