@@ -1,7 +1,7 @@
 [[resource-post-create-err-db]]
 ==== Data constraint errors while creating a new post
 
-When a `POST` request is performed to add a new _Post_ entry in the DB and there's constraint error
+When a `POST` request is performed to add a new _Post_ entry in the DB and there's any constraint not fulfilled,
 there will be an error reported along with a `409` CONFLICT http status. Example:
 
 include::__H_REQUEST.adoc[]
