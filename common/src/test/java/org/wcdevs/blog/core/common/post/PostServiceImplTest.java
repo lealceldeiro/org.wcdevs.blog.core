@@ -1,24 +1,23 @@
 package org.wcdevs.blog.core.common.post;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.wcdevs.blog.core.common.TestsUtil.aString;
+
+import java.util.List;
+import java.util.Optional;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.wcdevs.blog.core.common.TestsUtil;
-import static org.wcdevs.blog.core.common.TestsUtil.aString;
 import org.wcdevs.blog.core.persistence.post.PartialPostDto;
 import org.wcdevs.blog.core.persistence.post.Post;
 import org.wcdevs.blog.core.persistence.post.PostDto;
@@ -114,7 +113,6 @@ class PostServiceImplTest {
       assertEquals(slugInfoMock, actual);
 
       verify(postRepository, times(1)).findBySlug(slug);
-      verify(postMock, times(1)).setUpdatedOn(any(LocalDateTime.class));
 
       mockedPostTransformer
           .verify(() -> PostTransformer.updatePostWithNonNullValues(postMock, argMock), times(1));
@@ -138,7 +136,6 @@ class PostServiceImplTest {
       assertEquals(slugInfoMock, actual);
 
       verify(postRepository, times(1)).findBySlug(slug);
-      verify(postMock, times(1)).setUpdatedOn(any(LocalDateTime.class));
 
       mockedPostTransformer
           .verify(() -> PostTransformer.updatePost(postMock, argMock), times(1));

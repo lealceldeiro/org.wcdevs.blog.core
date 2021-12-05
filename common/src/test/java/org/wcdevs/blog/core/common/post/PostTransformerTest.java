@@ -204,6 +204,8 @@ class PostTransformerTest {
     PostTransformer.updatePostWithNonNullValues(postMock, emptyDto);
     verify(postMock, never()).setTitle(any());
     verify(postMock, never()).setBody(any());
+    verify(postMock, never()).setExcerpt(any());
+    verify(postMock, times(1)).setUpdatedOn(any());
   }
 
   @Test
@@ -215,6 +217,7 @@ class PostTransformerTest {
     verify(postMock, times(1)).setTitle(dtoWithValues.getTitle());
     verify(postMock, times(1)).setBody(dtoWithValues.getBody());
     verify(postMock, times(1)).setExcerpt(dtoWithValues.getExcerpt());
+    verify(postMock, times(1)).setUpdatedOn(any());
   }
 
   @Test
@@ -225,6 +228,8 @@ class PostTransformerTest {
     PostTransformer.updatePost(postMock, dtoWithValues);
     verify(postMock, times(1)).setTitle(dtoWithValues.getTitle());
     verify(postMock, times(1)).setBody(dtoWithValues.getBody());
+    verify(postMock, times(1)).setExcerpt(dtoWithValues.getExcerpt());
+    verify(postMock, times(1)).setUpdatedOn(any());
   }
 
   @Test
