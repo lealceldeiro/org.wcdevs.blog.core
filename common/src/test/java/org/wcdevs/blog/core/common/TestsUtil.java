@@ -19,49 +19,52 @@ public final class TestsUtil {
   }
 
   public static PartialPostDto buildPartialDto() {
-    return partialDtoBuilder(aString(), aString(), aString(), LocalDateTime.now(),
+    return partialDtoBuilder(aString(), aString(), aString(), aString(), LocalDateTime.now(),
                              LocalDateTime.now()).build();
   }
 
   public static PostDto buildDto(String title, String slug) {
-    return buildDto(title, slug, aString(), LocalDateTime.now().minusDays(1),
+    return buildDto(title, slug, aString(), aString(), LocalDateTime.now().minusDays(1),
                     LocalDateTime.now());
   }
 
-  public static PostDto buildDto(String title, String slug, String body, LocalDateTime publishedOn,
-                                 LocalDateTime updatedOn) {
-    return dtoBuilder(title, slug, body, publishedOn, updatedOn).build();
+  public static PostDto buildDto(String title, String slug, String body, String excerpt,
+                                 LocalDateTime publishedOn, LocalDateTime updatedOn) {
+    return dtoBuilder(title, slug, body, excerpt, publishedOn, updatedOn).build();
   }
 
   public static PostDto.PostDtoBuilder dtoBuilder() {
-    return dtoBuilder(aString(), aString(), aString(), LocalDateTime.now(),
+    return dtoBuilder(aString(), aString(), aString(), aString(), LocalDateTime.now(),
                       LocalDateTime.now());
   }
 
   public static PostDto.PostDtoBuilder dtoBuilder(String title, String slug, String body,
-                                                  LocalDateTime publishedOn, LocalDateTime updatedOn) {
+                                                  String excerpt, LocalDateTime publishedOn,
+                                                  LocalDateTime updatedOn) {
     return PostDto.builder()
                   .title(title)
                   .slug(slug)
                   .body(body)
+                  .excerpt(excerpt)
                   .publishedOn(publishedOn)
                   .updatedOn(updatedOn);
   }
 
   public static PartialPostDto.PartialPostDtoBuilder partialDtoBuilder(String title, String slug,
-                                                                       String body,
+                                                                       String body, String excerpt,
                                                                        LocalDateTime publishedOn,
                                                                        LocalDateTime updatedOn) {
     return PartialPostDto.builder()
                          .title(title)
                          .slug(slug)
                          .body(body)
+                         .excerpt(excerpt)
                          .publishedOn(publishedOn)
                          .updatedOn(updatedOn);
   }
 
   public static Post entitySample() {
-    return new Post(aString(), aString(), aString(), LocalDateTime.now().minusDays(1),
+    return new Post(aString(), aString(), aString(), aString(), LocalDateTime.now().minusDays(1),
                     LocalDateTime.now());
   }
 }

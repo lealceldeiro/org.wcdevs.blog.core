@@ -1,4 +1,4 @@
 [introduction]
 == Introduction
 
-Welcome to the API for providing access to the blog.wcdevs.org webservices.
+Welcome to the API for providing access to the wcdevs.org webservices.

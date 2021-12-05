@@ -19,7 +19,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
-  private static final List<String> RESOURCE_PATTERNS = List.of("/**");
+  static final List<String> RESOURCE_PATTERNS = List.of("/**");
   private final CoreProperties coreProperties;
 
   @Override

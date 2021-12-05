@@ -2,7 +2,8 @@
 ==== Other constraint errors while creating a new post
 
 In general, when a `POST` request is performed to create a _Post_ there are constraints that
-must be fulfilled, otherwise an error will be reported along with a `409` CONFLICT http status.
+must be fulfilled, otherwise an error will be reported along with a `400` `BAD REQUEST` or a `409`
+`CONFLICT` http status, depending on the type of constraint violation.
 
 Some examples as follows:
 
