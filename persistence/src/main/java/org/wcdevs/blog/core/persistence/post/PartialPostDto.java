@@ -35,8 +35,7 @@ public class PartialPostDto {
 
   @ToString.Include
   @EqualsAndHashCode.Include
-  @Size(min = 3, max = 150)
-  @Pattern(regexp = "[-a-z0-9]{0,150}")
+  @Pattern(regexp = "[-a-z0-9]{3,150}")
   private String slug;
 
   @Size(min = 3)
