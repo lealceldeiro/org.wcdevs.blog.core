@@ -22,9 +22,11 @@ class PostDtoTest {
   void constructor() {
     var title = aString();
     var slug = aString();
-    var dto = new PostDto(title, slug);
+    var excerpt = aString();
+    var dto = new PostDto(title, slug, excerpt);
     assertEquals(title, dto.getTitle());
     assertEquals(slug, dto.getSlug());
+    assertEquals(excerpt, dto.getExcerpt());
   }
 
   @Test

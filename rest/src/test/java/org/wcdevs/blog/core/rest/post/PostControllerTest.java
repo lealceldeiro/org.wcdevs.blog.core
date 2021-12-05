@@ -114,7 +114,9 @@ class PostControllerTest {
                                               .description("Post title"),
                                           fieldWithPath("[*].slug")
                                               .description("Post slug. This value can be used to "
-                                                           + "retrieve the post later")
+                                                           + "retrieve the post later"),
+                                          fieldWithPath("[*].excerpt")
+                                              .description("An excerpt of the post content")
                                          )
                           )
                  );
@@ -129,7 +131,9 @@ class PostControllerTest {
            .andExpect(status().isCreated())
            .andDo(document("create_post",
                            requestFields(fieldWithPath("title").description("Post title"),
-                                         fieldWithPath("body").description("Body of the post")),
+                                         fieldWithPath("body").description("Body of the post"),
+                                         fieldWithPath("excerpt").description("Custom post excerpt."
+                                                                              + " Optional.")),
                            SLUG_INFO_RESPONSE_FIELDS
                           )
                  );
@@ -143,35 +147,31 @@ class PostControllerTest {
     mockMvc.perform(post(BASE_URL + "/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(MAPPER.writeValueAsString(postDto)))
-           .andExpect(status().isConflict())
-           .andDo(document("create_post_db_error",
-                           requestFields(fieldWithPath("title")
-                                             .description("Post title. It must be unique"),
-                                         fieldWithPath("body").description("Body of the post")),
-                           ERROR_RESPONSE_FIELDS
-                          )
-                 );
+           .andExpect(status().isConflict());
   }
 
   @ParameterizedTest
   @ValueSource(strings = {
-      "ERROR: duplicate key value violates unique constraint. "
-      + "Primary key violation. Values (title)=(A duplicated title)",
-      "ERROR: duplicate key value violates unique constraint. "
-      + "Some other message will yield a not so well formatted response message",
       "",
       "-",
-      "null"
+      "null",
+      "ERROR: duplicate key value violates unique constraint. "
+      + "Some other message will yield a not so well formatted response message",
+      "ERROR: duplicate key value violates unique constraint. "
+      + "Duplicate key value violates unique constraint. Values (title)=(%s)"
   })
   void createPostDBErrorWithRootCause(String rootCauseMsg) throws Exception {
     var postDto = TestsUtil.nextPostTitleBodySample();
 
+    var rootCauseMessage = !"-".equals(rootCauseMsg)
+                           ? (rootCauseMsg.contains("%s")
+                              ? String.format(rootCauseMsg, postDto.getTitle()) : rootCauseMsg)
+                           : null;
     var rootCause = mock(Throwable.class);
-    when(rootCause.getMessage()).thenReturn(!"-".equals(rootCauseMsg) ? rootCauseMsg : null);
-    var errMessage = String.format("There's already a post with title %s", postDto.getSlug());
+    when(rootCause.getMessage()).thenReturn(rootCauseMessage);
 
     var violationException = mock(DataIntegrityViolationException.class);
-    when(violationException.getMessage()).thenReturn(errMessage);
+    when(violationException.getMessage()).thenReturn("Data Constraint Violation Exception");
     when(violationException.getRootCause()).thenReturn(rootCause);
 
     when(postService.createPost(postDto)).thenThrow(violationException);
@@ -179,7 +179,13 @@ class PostControllerTest {
     mockMvc.perform(post(BASE_URL + "/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(MAPPER.writeValueAsString(postDto)))
-           .andExpect(status().isConflict());
+           .andExpect(status().isConflict())
+           .andDo(document("create_post_db_error",
+                           requestFields(fieldWithPath("title")
+                                             .description("Post title. It must be unique"),
+                                         fieldWithPath("body").description("Body of the post"),
+                                         fieldWithPath("excerpt").ignored()),
+                           ERROR_RESPONSE_FIELDS));
   }
 
   @Test
@@ -261,7 +267,8 @@ class PostControllerTest {
                                               .description("Post slug. This value can be used to "
                                                            + "retrieve the post later"),
                                           fieldWithPath("body").description("Post body"),
-                                          fieldWithPath("excerpt").description("An body excerpt"),
+                                          fieldWithPath("excerpt").description("An excerpt of the"
+                                                                               + " post content"),
                                           fieldWithPath("publishedOn")
                                               .description("Date time where the post was "
                                                            + "published"),

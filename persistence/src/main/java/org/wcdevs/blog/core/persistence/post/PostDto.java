@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import java.time.LocalDateTime;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -19,9 +18,9 @@ import lombok.ToString;
  */
 @Getter
 @Builder
+@AllArgsConstructor
 @ToString(onlyExplicitlyIncluded = true)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonDeserialize(builder = PostDto.PostDtoBuilder.class)
 public class PostDto {
@@ -33,7 +32,6 @@ public class PostDto {
   }
 
   @NotNull
-  @NotBlank
   @ToString.Include
   @EqualsAndHashCode.Include
   @Size(min = 3, max = 200)
@@ -46,7 +44,6 @@ public class PostDto {
   private String slug;
 
   @NotNull
-  @NotBlank
   @Size(min = 3)
   private String body;
 
@@ -57,8 +54,16 @@ public class PostDto {
   private LocalDateTime publishedOn;
   private LocalDateTime updatedOn;
 
-  public PostDto(String title, String slug) {
+  /**
+   * Creates a new {@link PostDto} with only title, slug and excerpt into.
+   *
+   * @param title   Post title
+   * @param slug    Post slug
+   * @param excerpt Post excerpt
+   */
+  public PostDto(String title, String slug, String excerpt) {
     this.title = title;
     this.slug = slug;
+    this.excerpt = excerpt;
   }
 }
