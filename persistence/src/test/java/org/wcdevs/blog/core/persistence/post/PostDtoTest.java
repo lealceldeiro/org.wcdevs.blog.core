@@ -1,21 +1,17 @@
 package org.wcdevs.blog.core.persistence.post;
 
-import java.time.LocalDateTime;
-import java.util.stream.Stream;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.wcdevs.blog.core.persistence.TestsUtil.aString;
 
+import java.time.LocalDateTime;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-
-import static org.junit.jupiter.params.provider.Arguments.arguments;
-
 import org.junit.jupiter.params.provider.MethodSource;
-
-import static org.wcdevs.blog.core.persistence.TestsUtil.aString;
 
 class PostDtoTest {
   @Test
@@ -37,8 +33,10 @@ class PostDtoTest {
     var excerpt = aString();
     var publishedOn = LocalDateTime.now().minusDays(1);
     var updatedOn = LocalDateTime.now();
+    var publishedBy = aString();
+    var updatedBy = aString();
 
-    var dto = buildDto(title, slug, body, excerpt, publishedOn, updatedOn);
+    var dto = buildDto(title, slug, body, excerpt, publishedOn, updatedOn, publishedBy, updatedBy);
 
     assertNotNull(dto);
     assertEquals(title, dto.getTitle());
@@ -47,6 +45,8 @@ class PostDtoTest {
     assertEquals(excerpt, dto.getExcerpt());
     assertEquals(publishedOn, dto.getPublishedOn());
     assertEquals(updatedOn, dto.getUpdatedOn());
+    assertEquals(publishedBy, dto.getPublishedBy());
+    assertEquals(updatedBy, dto.getUpdatedBy());
   }
 
   static Stream<Arguments> dtoWithTitleAndSlugAreEqualsArgs() {
@@ -78,11 +78,12 @@ class PostDtoTest {
 
   private PostDto buildDto(String title, String slug) {
     return buildDto(title, slug, aString(), aString(), LocalDateTime.now().minusDays(1),
-                    LocalDateTime.now());
+                    LocalDateTime.now(), aString(), aString());
   }
 
   private PostDto buildDto(String title, String slug, String body, String excerpt,
-                           LocalDateTime publishedOn, LocalDateTime updatedOn) {
+                           LocalDateTime publishedOn, LocalDateTime updatedOn, String publishedBy,
+                           String updatedBy) {
     return PostDto.builder()
                   .title(title)
                   .slug(slug)
@@ -90,6 +91,8 @@ class PostDtoTest {
                   .excerpt(excerpt)
                   .publishedOn(publishedOn)
                   .updatedOn(updatedOn)
+                  .publishedBy(publishedBy)
+                  .updatedBy(updatedBy)
                   .build();
   }
 

@@ -13,7 +13,6 @@ import org.wcdevs.blog.core.persistence.util.ClockUtil;
 final class PostTransformer {
   private static final String SLUG_REPLACEMENT = "-";
   private static final String SLUG_REPLACE_REGEX = "[^a-z0-9]++";
-  static final int TITLE_MAX_LENGTH = 200;
   static final int SLUG_MAX_LENGTH = 150;
   static final int EXCERPT_MAX_LENGTH = 250;
 
@@ -27,9 +26,11 @@ final class PostTransformer {
     // allow user the option to specify a custom slug
     var slug = Objects.nonNull(dto.getSlug()) ? dto.getSlug() : slugFromTitle(dto.getTitle());
     var excerpt = excerptFrom(dto.getExcerpt(), dto.getBody());
+    var updatedBy = Objects.nonNull(dto.getUpdatedBy()) ? dto.getUpdatedBy() : dto.getPublishedBy();
 
     // publishedOn and updatedOn will always be determined in the core app
-    return new Post(dto.getTitle(), slug, dto.getBody(), excerpt, now, now);
+    return new Post(dto.getTitle(), slug, dto.getBody(), excerpt, now, now, dto.getPublishedBy(),
+                    updatedBy);
   }
 
   private static String excerptFrom(String excerptCandidate, String bodyToCreateExcerpt) {
@@ -87,6 +88,9 @@ final class PostTransformer {
     if (Objects.nonNull(newPostDto.getExcerpt())) {
       post.setExcerpt(newPostDto.getExcerpt());
     }
+    if (Objects.nonNull(newPostDto.getUpdatedBy())) {
+      post.setUpdatedBy(newPostDto.getUpdatedBy());
+    }
     post.setUpdatedOn(ClockUtil.utcNow());
   }
 
@@ -95,6 +99,7 @@ final class PostTransformer {
     post.setBody(newPostDto.getBody());
     post.setExcerpt(newPostDto.getExcerpt());
     post.setSlug(newPostDto.getSlug());
+    post.setUpdatedBy(newPostDto.getUpdatedBy());
 
     post.setUpdatedOn(ClockUtil.utcNow());
   }
@@ -107,6 +112,8 @@ final class PostTransformer {
                   .excerpt(postEntity.getExcerpt())
                   .publishedOn(postEntity.getPublishedOn())
                   .updatedOn(postEntity.getUpdatedOn())
+                  .publishedBy(postEntity.getPublishedBy())
+                  .updatedBy(postEntity.getUpdatedBy())
                   .build();
   }
 }

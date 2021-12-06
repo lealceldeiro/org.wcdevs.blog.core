@@ -52,6 +52,12 @@ public class Post {
   @Column(name = "updated_on", nullable = false)
   private LocalDateTime updatedOn;
 
+  @Column(name = "published_by", nullable = false, length = 100)
+  private String publishedBy;
+
+  @Column(name = "updated_by", nullable = false, length = 100)
+  private String updatedBy;
+
   /**
    * Creates a new {@link Post}.
    *
@@ -60,15 +66,19 @@ public class Post {
    * @param body        Post body
    * @param publishedOn Date time when the post was published.
    * @param updatedOn   Date time when the post was last updated.
+   * @param publishedBy Author of the post.
+   * @param updatedBy   User who last updated it.
    */
   public Post(String title, String slug, String body, String excerpt, LocalDateTime publishedOn,
-              LocalDateTime updatedOn) {
+              LocalDateTime updatedOn, String publishedBy, String updatedBy) {
     this.title = title;
     this.slug = slug;
     this.body = body;
     this.excerpt = excerpt;
     this.publishedOn = publishedOn;
     this.updatedOn = updatedOn;
+    this.publishedBy = publishedBy;
+    this.updatedBy = updatedBy;
   }
 
   @Override
