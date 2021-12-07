@@ -7,5 +7,7 @@ CREATE TABLE IF NOT EXISTS post
   body         TEXT         NOT NULL,
   excerpt      VARCHAR(300) NOT NULL,
   published_on TIMESTAMP    NOT NULL,
-  updated_on   TIMESTAMP    NOT NULL
+  updated_on   TIMESTAMP    NOT NULL,
+  published_by VARCHAR(100) NOT NULL,
+  updated_by   VARCHAR(100) NOT NULL
 );

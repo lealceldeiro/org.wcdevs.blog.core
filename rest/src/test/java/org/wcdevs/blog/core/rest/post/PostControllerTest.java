@@ -64,11 +64,14 @@ class PostControllerTest {
   private static final PathParametersSnippet SLUG_PATH_PARAMETER
       = pathParameters(parameterWithName("postSlug")
                            .description("Post slug generated during creation"));
-  private static final RequestFieldsSnippet TITLE_AND_BODY_REQUEST_FIELDS
-      = requestFields(fieldWithPath("title").description("Post title"),
-                      fieldWithPath("slug").description("A custom slug. Optional."),
-                      fieldWithPath("body").description("Body of the post."),
+  private static final RequestFieldsSnippet REQUEST_FIELDS
+      = requestFields(fieldWithPath("title").description("Post title. Mandatory, unique."),
+                      fieldWithPath("slug").description("A custom slug. Optional, but unique."),
+                      fieldWithPath("body").description("Body of the post. Mandatory."),
                       fieldWithPath("excerpt").description("A custom excerpt. Optional."),
+                      fieldWithPath("publishedBy").description("Author of the post. Mandatory"),
+                      fieldWithPath("updatedBy").description("Last user who edited the post. "
+                                                             + "Optional (default: publishedBy)"),
                       fieldWithPath("publishedOn").ignored(),
                       fieldWithPath("updatedOn").ignored());
   private static final ResponseFieldsSnippet SLUG_INFO_RESPONSE_FIELDS
@@ -124,19 +127,12 @@ class PostControllerTest {
 
   @Test
   void createPost() throws Exception {
-    var postDto = TestsUtil.nextPostTitleBodySample();
+    var postDto = TestsUtil.nextFullPostSample();
     mockMvc.perform(post(BASE_URL + "/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(MAPPER.writeValueAsString(postDto)))
            .andExpect(status().isCreated())
-           .andDo(document("create_post",
-                           requestFields(fieldWithPath("title").description("Post title"),
-                                         fieldWithPath("body").description("Body of the post"),
-                                         fieldWithPath("excerpt").description("Custom post excerpt."
-                                                                              + " Optional.")),
-                           SLUG_INFO_RESPONSE_FIELDS
-                          )
-                 );
+           .andDo(document("create_post", REQUEST_FIELDS, SLUG_INFO_RESPONSE_FIELDS));
   }
 
   @Test
@@ -161,7 +157,7 @@ class PostControllerTest {
       + "Duplicate key value violates unique constraint. Values (title)=(%s)"
   })
   void createPostDBErrorWithRootCause(String rootCauseMsg) throws Exception {
-    var postDto = TestsUtil.nextPostTitleBodySample();
+    var postDto = TestsUtil.nextFullPostSample();
 
     var rootCauseMessage = !"-".equals(rootCauseMsg)
                            ? (rootCauseMsg.contains("%s")
@@ -180,12 +176,7 @@ class PostControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(MAPPER.writeValueAsString(postDto)))
            .andExpect(status().isConflict())
-           .andDo(document("create_post_db_error",
-                           requestFields(fieldWithPath("title")
-                                             .description("Post title. It must be unique"),
-                                         fieldWithPath("body").description("Body of the post"),
-                                         fieldWithPath("excerpt").ignored()),
-                           ERROR_RESPONSE_FIELDS));
+           .andDo(document("create_post_db_error", REQUEST_FIELDS, ERROR_RESPONSE_FIELDS));
   }
 
   @Test
@@ -211,7 +202,8 @@ class PostControllerTest {
     var prototype = TestsUtil.nextFullPostSample();
     var now = LocalDateTime.now();
     var postDto = new PostDto(title, prototype.getSlug(), prototype.getBody(),
-                              prototype.getExcerpt(), now, now);
+                              prototype.getExcerpt(), prototype.getPublishedBy(),
+                              prototype.getUpdatedBy(), now, now);
 
     mockMvc.perform(post(BASE_URL + "/")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -226,7 +218,8 @@ class PostControllerTest {
     var prototype = TestsUtil.nextFullPostSample();
     var now = LocalDateTime.now();
     var postDto = new PostDto(prototype.getTitle(), prototype.getSlug(), body,
-                              prototype.getExcerpt(), now, now);
+                              prototype.getExcerpt(), prototype.getPublishedBy(),
+                              prototype.getUpdatedBy(), now, now);
 
     mockMvc.perform(post(BASE_URL + "/")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -246,7 +239,8 @@ class PostControllerTest {
     var prototype = TestsUtil.nextFullPostSample();
     var now = LocalDateTime.now();
     var postDto = new PostDto(prototype.getTitle(), slug, prototype.getBody(),
-                              prototype.getExcerpt(), now, now);
+                              prototype.getExcerpt(), prototype.getPublishedBy(),
+                              prototype.getUpdatedBy(), now, now);
 
     mockMvc.perform(post(BASE_URL + "/")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -258,26 +252,20 @@ class PostControllerTest {
   @Test
   void getPost() throws Exception {
     var postDto = TestsUtil.nextPostSlugSample();
+    var responseFields = responseFields(
+        fieldWithPath("title").description("Post title"),
+        fieldWithPath("slug").description("Post slug. It can be used to retrieve the post later"),
+        fieldWithPath("body").description("Post body"),
+        fieldWithPath("excerpt").description("An excerpt of the post content"),
+        fieldWithPath("publishedOn").description("Date time where the post was published"),
+        fieldWithPath("updatedOn").description("Date time where the post was last updated"),
+        fieldWithPath("publishedBy").description("Author of the post"),
+        fieldWithPath("updatedBy").description("Last user who edited the post. ")
+                                       );
+
     mockMvc.perform(get(BASE_URL + "/{postSlug}", postDto.getSlug()))
            .andExpect(status().isOk())
-           .andDo(document("get_post",
-                           SLUG_PATH_PARAMETER,
-                           responseFields(fieldWithPath("title").description("Post title"),
-                                          fieldWithPath("slug")
-                                              .description("Post slug. This value can be used to "
-                                                           + "retrieve the post later"),
-                                          fieldWithPath("body").description("Post body"),
-                                          fieldWithPath("excerpt").description("An excerpt of the"
-                                                                               + " post content"),
-                                          fieldWithPath("publishedOn")
-                                              .description("Date time where the post was "
-                                                           + "published"),
-                                          fieldWithPath("updatedOn")
-                                              .description("Date time where the post was last"
-                                                           + " updated")
-                                         )
-                          )
-                 );
+           .andDo(document("get_post", SLUG_PATH_PARAMETER, responseFields));
   }
 
   @Test
@@ -298,7 +286,7 @@ class PostControllerTest {
            .andExpect(status().isOk())
            .andDo(document("partial_update_post",
                            SLUG_PATH_PARAMETER,
-                           TITLE_AND_BODY_REQUEST_FIELDS,
+                           REQUEST_FIELDS,
                            SLUG_INFO_RESPONSE_FIELDS));
   }
 
@@ -311,7 +299,7 @@ class PostControllerTest {
            .andExpect(status().isOk())
            .andDo(document("full_update_post",
                            SLUG_PATH_PARAMETER,
-                           TITLE_AND_BODY_REQUEST_FIELDS,
+                           REQUEST_FIELDS,
                            SLUG_INFO_RESPONSE_FIELDS));
   }
 

@@ -28,7 +28,7 @@ public final class TestsUtil {
     try {
       SAMPLE_SLUG_DATA = read("sample-post-slugs.json");
       SAMPLE_SLUG_TITLE_DATA = read("sample-post-excerpts-slugs-and-titles.json");
-      SAMPLE_TITLE_BODY_DATA = read("sample-post-excerpt-title-and-body.json");
+      SAMPLE_TITLE_BODY_DATA = read("sample-new-post-payload.json");
       SAMPLE_FULL_POST_DATA = read("sample-full-posts.json");
     } catch (IOException e) {
       e.printStackTrace();

@@ -84,6 +84,8 @@ class PostTest {
     var excerpt = TestsUtil.aString();
     var publishedOn = LocalDateTime.now().minusDays(1);
     var updatedOn = LocalDateTime.now();
+    var publishedBy = TestsUtil.aString();
+    var updatedBy = TestsUtil.aString();
 
     var post = new Post();
     post.setUuid(uuid);
@@ -93,6 +95,8 @@ class PostTest {
     post.setExcerpt(excerpt);
     post.setPublishedOn(publishedOn);
     post.setUpdatedOn(updatedOn);
+    post.setPublishedBy(publishedBy);
+    post.setUpdatedBy(updatedBy);
 
     assertEquals(uuid, post.getUuid());
     assertEquals(title, post.getTitle());
@@ -101,6 +105,8 @@ class PostTest {
     assertEquals(excerpt, post.getExcerpt());
     assertEquals(publishedOn, post.getPublishedOn());
     assertEquals(updatedOn, post.getUpdatedOn());
+    assertEquals(publishedBy, post.getPublishedBy());
+    assertEquals(updatedBy, post.getUpdatedBy());
   }
 
   @Test
@@ -111,8 +117,10 @@ class PostTest {
     var body = TestsUtil.aString();
     var slug = TestsUtil.aString();
     var title = TestsUtil.aString();
+    var publishedBy = TestsUtil.aString();
+    var updatedBy = TestsUtil.aString();
 
-    var post = new Post(title, slug, body, excerpt, publishedOn, updatedOn);
+    var post = new Post(title, slug, body, excerpt, publishedOn, updatedOn, publishedBy, updatedBy);
 
     assertEquals(title, post.getTitle());
     assertEquals(slug, post.getSlug());

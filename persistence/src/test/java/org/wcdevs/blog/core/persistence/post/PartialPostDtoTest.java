@@ -20,11 +20,12 @@ class PartialPostDtoTest {
     var slug = aString();
     var body = aString();
     var excerpt = aString();
+    var updatedBy = aString();
 
     var publishedOn = LocalDateTime.now().minusDays(1);
     var updatedOn = LocalDateTime.now();
 
-    var dto = buildDto(title, slug, body, excerpt, publishedOn, updatedOn);
+    var dto = buildDto(title, slug, body, excerpt, publishedOn, updatedOn, updatedBy);
 
     assertNotNull(dto);
     assertEquals(title, dto.getTitle());
@@ -33,6 +34,7 @@ class PartialPostDtoTest {
     assertEquals(excerpt, dto.getExcerpt());
     assertEquals(publishedOn, dto.getPublishedOn());
     assertEquals(updatedOn, dto.getUpdatedOn());
+    assertEquals(updatedBy, dto.getUpdatedBy());
   }
 
   static Stream<Arguments> dtoWithTitleAndSlugAreEqualsArgs() {
@@ -64,11 +66,24 @@ class PartialPostDtoTest {
 
   private PartialPostDto buildDto(String title, String slug) {
     return buildDto(title, slug, aString(), aString(), LocalDateTime.now().minusDays(1),
-                    LocalDateTime.now());
+                    LocalDateTime.now(), aString());
   }
 
   private PartialPostDto buildDto(String title, String slug, String body, String excerpt,
-                                  LocalDateTime publishedOn, LocalDateTime updatedOn) {
+                                  LocalDateTime publishedOn, LocalDateTime updatedOn,
+                                  String updatedBy) {
+    return dtoBuilder(title, slug, body, excerpt, publishedOn, updatedOn, updatedBy).build();
+  }
+
+  private PartialPostDto.PartialPostDtoBuilder dtoBuilder() {
+    return dtoBuilder(aString(), aString(), aString(), aString(), LocalDateTime.now(),
+                      LocalDateTime.now(), aString());
+  }
+
+  private PartialPostDto.PartialPostDtoBuilder dtoBuilder(String title, String slug, String body,
+                                                          String excerpt, LocalDateTime publishedOn,
+                                                          LocalDateTime updatedOn,
+                                                          String updatedBy) {
     return PartialPostDto.builder()
                          .title(title)
                          .slug(slug)
@@ -76,14 +91,16 @@ class PartialPostDtoTest {
                          .excerpt(excerpt)
                          .publishedOn(publishedOn)
                          .updatedOn(updatedOn)
-                         .build();
+                         .updatedBy(updatedBy);
   }
 
   @Test
   void toStringContainsFields() {
-    var toString = buildDto().toString();
-    assertTrue(toString.contains("title="));
-    assertTrue(toString.contains("slug="));
+    var title = aString();
+    var slug = aString();
+    var toString = dtoBuilder().title(title).slug(slug).build().toString();
+    assertTrue(toString.contains("title=" + title));
+    assertTrue(toString.contains("slug=" + slug));
   }
 
   @Test

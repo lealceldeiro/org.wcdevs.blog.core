@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import java.time.LocalDateTime;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import lombok.Builder;
@@ -12,7 +13,8 @@ import lombok.Getter;
 import lombok.ToString;
 
 /**
- * Data transfer object which contains optional post information.
+ * Data transfer object which contains optional post information. This should be generally used
+ * for  data transfer for updating existing posts.
  */
 @Getter
 @Builder
@@ -43,6 +45,10 @@ public class PartialPostDto {
 
   @Size(min = 3, max = 250)
   private String excerpt;
+
+  @NotBlank
+  @Size(max = 30)
+  private String updatedBy;
 
   private LocalDateTime publishedOn;
   private LocalDateTime updatedOn;

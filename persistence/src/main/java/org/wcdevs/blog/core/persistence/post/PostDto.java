@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import java.time.LocalDateTime;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -14,7 +15,8 @@ import lombok.Getter;
 import lombok.ToString;
 
 /**
- * Data transfer object which contains required post information.
+ * Data transfer object which contains required post information. This should be generally used
+ * for new posts creation data transfer.
  */
 @Getter
 @Builder
@@ -48,6 +50,13 @@ public class PostDto {
 
   @Size(min = 3, max = 250)
   private String excerpt;
+
+  @NotBlank
+  @Size(max = 30)
+  private String publishedBy;
+
+  @Size(max = 30)
+  private String updatedBy;
 
   // only to be sent to clients
   private LocalDateTime publishedOn;

@@ -28,17 +28,32 @@ import org.wcdevs.blog.core.persistence.util.ClockUtil;
 
 class PostTransformerTest {
   @Test
-  void entityFromPartialDto() {
+  void newEntityFromDto() {
     try (var mockedClock = mockStatic(ClockUtil.class)) {
       var now = LocalDateTime.now().minusDays(1);
       mockedClock.when(ClockUtil::utcNow).thenReturn(now);
-      var dto = dtoBuilder().slug(null).updatedOn(null).publishedOn(null).build();
+      var dto = dtoBuilder().slug(null).updatedOn(null).publishedOn(null).updatedBy(null).build();
 
       var entity = PostTransformer.newEntityFromDto(dto);
 
       assertNotNull(entity.getSlug());
       assertEquals(now, entity.getPublishedOn());
       assertEquals(now, entity.getUpdatedOn());
+      assertEquals(dto.getPublishedBy(), entity.getPublishedBy());
+      assertEquals(dto.getPublishedBy(), entity.getUpdatedBy());
+    }
+  }
+
+  @Test
+  void newEntityFromDtoWithUpdatedBy() {
+    try (var mockedClock = mockStatic(ClockUtil.class)) {
+      var now = LocalDateTime.now().minusDays(1);
+      mockedClock.when(ClockUtil::utcNow).thenReturn(now);
+      var dto = dtoBuilder().build();
+
+      var entity = PostTransformer.newEntityFromDto(dto);
+
+      assertEquals(dto.getUpdatedBy(), entity.getUpdatedBy());
     }
   }
 
@@ -99,7 +114,7 @@ class PostTransformerTest {
   @Test
   void entityFromDtoWillNullBodyNullExcerptThrowsNPE() {
     var now = LocalDateTime.now();
-    var dto = buildDto(aString(), aString(), null, null, now, now);
+    var dto = buildDto(aString(), aString(), null, null, now, now, aString(), aString());
 
     assertThrows(NullPointerException.class, () -> PostTransformer.newEntityFromDto(dto));
   }
@@ -112,7 +127,7 @@ class PostTransformerTest {
                   + "abcde abcde abcde abcde abcde abcde abcde abcde abcde abcde "  // 60 chars
                   + "abcd - abc";                                                   // 10
     var now = LocalDateTime.now();
-    var dto = buildDto(aString(), aString(), aString(), excerpt, now, now);
+    var dto = buildDto(aString(), aString(), aString(), excerpt, now, now, aString(), aString());
 
     var post = PostTransformer.newEntityFromDto(dto);
 
@@ -134,7 +149,7 @@ class PostTransformerTest {
   })
   void entityFromDtoWithExcerptLongerIsTrimmedAtLastSpaceBeforeWordToMaxLength(String excerpt) {
     var now = LocalDateTime.now();
-    var dto = buildDto(aString(), aString(), aString(), excerpt, now, now);
+    var dto = buildDto(aString(), aString(), aString(), excerpt, now, now, aString(), aString());
 
     var post = PostTransformer.newEntityFromDto(dto);
 
@@ -168,6 +183,8 @@ class PostTransformerTest {
     verify(postMock, never()).setTitle(any());
     verify(postMock, never()).setBody(any());
     verify(postMock, never()).setExcerpt(any());
+    verify(postMock, never()).setPublishedBy(any());
+    verify(postMock, never()).setUpdatedBy(any());
     verify(postMock, times(1)).setUpdatedOn(any());
   }
 
@@ -180,6 +197,8 @@ class PostTransformerTest {
     verify(postMock, times(1)).setTitle(dtoWithValues.getTitle());
     verify(postMock, times(1)).setBody(dtoWithValues.getBody());
     verify(postMock, times(1)).setExcerpt(dtoWithValues.getExcerpt());
+    verify(postMock, never()).setPublishedBy(any());
+    verify(postMock, times(1)).setUpdatedBy(any());
     verify(postMock, times(1)).setUpdatedOn(any());
   }
 
@@ -192,6 +211,8 @@ class PostTransformerTest {
     verify(postMock, times(1)).setTitle(dtoWithValues.getTitle());
     verify(postMock, times(1)).setBody(dtoWithValues.getBody());
     verify(postMock, times(1)).setExcerpt(dtoWithValues.getExcerpt());
+    verify(postMock, times(1)).setUpdatedBy(dtoWithValues.getUpdatedBy());
+    verify(postMock, never()).setPublishedBy(any());
     verify(postMock, times(1)).setUpdatedOn(any());
   }
 
@@ -203,7 +224,10 @@ class PostTransformerTest {
     var excerpt = aString();
     var publishedOn = LocalDateTime.now().minusDays(1);
     var updatedOn = LocalDateTime.now();
-    Post entity = new Post(title, slug, body, excerpt, publishedOn, updatedOn);
+    var publishedBy = aString();
+    var updatedBy = aString();
+    Post entity = new Post(title, slug, body, excerpt, publishedOn, updatedOn, publishedBy,
+                           updatedBy);
 
     var dto = PostTransformer.dtoFromEntity(entity);
 
@@ -212,5 +236,7 @@ class PostTransformerTest {
     assertEquals(body, dto.getBody());
     assertEquals(publishedOn, dto.getPublishedOn());
     assertEquals(updatedOn, dto.getUpdatedOn());
+    assertEquals(publishedBy, dto.getPublishedBy());
+    assertEquals(updatedBy, dto.getUpdatedBy());
   }
 }
