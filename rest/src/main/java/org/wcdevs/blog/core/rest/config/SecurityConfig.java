@@ -17,7 +17,7 @@ import org.wcdevs.blog.core.rest.converter.JwtAuthTokenConverter;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
   // https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/util/AntPathMatcher.html
-  private static final String[] UNPROTECTED_GET_ENDPOINTS = new String[]{
+  static final String[] UNPROTECTED_GET_ENDPOINTS = new String[]{
       "/post/**",
       "/docs/index.html"
   };
@@ -25,7 +25,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   private final JwtAuthTokenConverter jwtAuthTokenConverter;
 
   @Override
-  protected void configure(final HttpSecurity http) throws Exception {
+  protected void configure(HttpSecurity http) throws Exception {
     http
         .cors().and()
         .authorizeRequests()
