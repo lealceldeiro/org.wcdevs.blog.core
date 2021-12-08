@@ -64,8 +64,6 @@ public final class TestsUtil {
                          .slug(slug)
                          .body(body)
                          .excerpt(excerpt)
-                         .publishedOn(publishedOn)
-                         .updatedOn(updatedOn)
                          .updatedBy(updatedBy);
   }
 }

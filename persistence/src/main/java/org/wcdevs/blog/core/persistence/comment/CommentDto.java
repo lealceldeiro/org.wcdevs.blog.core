@@ -1,51 +1,54 @@
-package org.wcdevs.blog.core.persistence.post;
+package org.wcdevs.blog.core.persistence.comment;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
 /**
- * Data transfer object which contains optional post information. This should be generally used
- * for data transfer for updating existing posts.
+ * Data transfer object which contains required comment information. This should be generally used
+ * for new comment creation data transfer.
  */
 @Getter
 @Builder
+@AllArgsConstructor
 @ToString(onlyExplicitlyIncluded = true)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonDeserialize(builder = PartialPostDto.PartialPostDtoBuilder.class)
-public class PartialPostDto {
+@JsonDeserialize(builder = CommentDto.CommentDtoBuilder.class)
+public class CommentDto {
   /**
-   * {@link PartialPostDto} builder.
+   * {@link CommentDto} builder.
    */
   @JsonPOJOBuilder(withPrefix = "")
-  public static class PartialPostDtoBuilder {
+  public static class CommentDtoBuilder {
   }
 
   @ToString.Include
   @EqualsAndHashCode.Include
-  @Size(min = 3, max = 200)
-  private String title;
+  private String postSlug;
 
   @ToString.Include
   @EqualsAndHashCode.Include
-  @Pattern(regexp = "[-a-z0-9]{3,150}")
-  private String slug;
+  private String parentCommentAnchor;
 
-  @Size(min = 3)
+  @NotNull
+  @Size(min = 3, max = 2500)
   private String body;
-
-  @Size(min = 3, max = 250)
-  private String excerpt;
 
   @NotBlank
   @Size(max = 30)
-  private String updatedBy;
+  private String publishedBy;
+
+  // only to be sent to clients
+  @ToString.Include
+  @EqualsAndHashCode.Include
+  private String anchor;
 }
