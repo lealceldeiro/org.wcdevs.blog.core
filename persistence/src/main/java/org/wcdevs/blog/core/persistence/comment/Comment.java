@@ -67,9 +67,9 @@ public class Comment {
    *
    * @param anchor        Comment anchor.
    * @param body          Comment body. Main text.
-   * @param lastUpdated   Comment when was the commnet last updated.
+   * @param lastUpdated   Comment when was the comment last updated.
    * @param publishedBy   Author of the comment.
-   * @param post          Post whose the comment is associated to.
+   * @param post          Post which the comment is associated to.
    * @param parentComment Parent comment (if any).
    */
   public Comment(String anchor, String body, LocalDateTime lastUpdated, String publishedBy,
