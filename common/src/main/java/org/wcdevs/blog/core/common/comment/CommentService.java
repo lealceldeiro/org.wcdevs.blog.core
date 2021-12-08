@@ -17,9 +17,9 @@ public interface CommentService {
 
   void deleteComment(String commentAnchor);
 
-  List<CommentDto> getAllComments(String postSlug);
+  List<CommentDto> getAllPostComments(String postSlug);
 
-  List<CommentDto> getRootComments(String postSlug);
+  List<CommentDto> getRootPostComments(String postSlug);
 
-  List<CommentDto> getChildComments(String commentAnchor);
+  List<CommentDto> getCommentChildComments(String commentAnchor);
 }
