@@ -6,5 +6,6 @@ open module org.wcdevs.blog.core.common {
   requires lombok;
 
   exports org.wcdevs.blog.core.common.post;
+  exports org.wcdevs.blog.core.common.comment;
   exports org.wcdevs.blog.core.common.exception;
 }
