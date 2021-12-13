@@ -1,8 +1,8 @@
 package org.wcdevs.blog.core.common.post;
 
-import java.util.Locale;
 import java.util.Objects;
-import org.wcdevs.blog.core.common.EntityTransformer;
+import org.wcdevs.blog.core.common.Transformer;
+import org.wcdevs.blog.core.common.util.StringUtils;
 import org.wcdevs.blog.core.persistence.post.PartialPostDto;
 import org.wcdevs.blog.core.persistence.post.Post;
 import org.wcdevs.blog.core.persistence.post.PostDto;
@@ -11,18 +11,16 @@ import org.wcdevs.blog.core.persistence.util.ClockUtil;
 /**
  * Transformer for classes Post and PostDto.
  */
-final class PostTransformer implements EntityTransformer<Post, PostDto> {
-  private static final String SLUG_REPLACEMENT = "-";
-  private static final String SLUG_REPLACE_REGEX = "[^a-z0-9]++";
-  static final int SLUG_MAX_LENGTH = 150;
+final class PostTransformer implements Transformer<Post, PostDto, PartialPostDto> {
   static final int EXCERPT_MAX_LENGTH = 250;
 
   @Override
   public Post newEntityFromDto(PostDto dto) {
     var now = ClockUtil.utcNow();
 
-    // allow user the option to specify a custom slug
-    var slug = Objects.nonNull(dto.getSlug()) ? dto.getSlug() : slugFromTitle(dto.getTitle());
+    var slug = Objects.nonNull(dto.getSlug()) // allow user the option to specify a custom slug
+               ? dto.getSlug()
+               : StringUtils.slugFrom(dto.getTitle());
     var excerpt = excerptFrom(dto.getExcerpt(), dto.getBody());
     var updatedBy = Objects.nonNull(dto.getUpdatedBy()) ? dto.getUpdatedBy() : dto.getPublishedBy();
 
@@ -55,25 +53,8 @@ final class PostTransformer implements EntityTransformer<Post, PostDto> {
     return slugInfo(post.getSlug());
   }
 
-  private static String slugFromTitle(String title) {
-    var sanitized = Objects.requireNonNull(title)
-                           .toLowerCase(Locale.ENGLISH)
-                           .strip()
-                           .replaceAll(SLUG_REPLACE_REGEX, SLUG_REPLACEMENT);
-    var hashed = sanitized
-                 + (!sanitized.endsWith(SLUG_REPLACEMENT) ? SLUG_REPLACEMENT : "")
-                 + Math.abs(Objects.hash(sanitized));
-
-    return sizedSlugFrom(hashed);
-  }
-
-  private static String sizedSlugFrom(String candidateSlug) {
-    return candidateSlug.length() <= SLUG_MAX_LENGTH
-           ? candidateSlug
-           : candidateSlug.substring(candidateSlug.length() - SLUG_MAX_LENGTH);
-  }
-
-  void updatePostWithNonNullValues(Post post, PartialPostDto newPostDto) {
+  @Override
+  public void updateNonNullValues(Post post, PartialPostDto newPostDto) {
     if (Objects.nonNull(newPostDto.getTitle())) {
       post.setTitle(newPostDto.getTitle());
     }
@@ -92,7 +73,8 @@ final class PostTransformer implements EntityTransformer<Post, PostDto> {
     post.setUpdatedOn(ClockUtil.utcNow());
   }
 
-  void updatePost(Post post, PostDto newPostDto) {
+  @Override
+  public void update(Post post, PostDto newPostDto) {
     post.setTitle(newPostDto.getTitle());
     post.setBody(newPostDto.getBody());
     post.setExcerpt(newPostDto.getExcerpt());

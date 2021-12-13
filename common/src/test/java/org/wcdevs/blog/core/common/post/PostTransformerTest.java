@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.wcdevs.blog.core.common.util.StringUtils;
 import org.wcdevs.blog.core.persistence.post.PartialPostDto;
 import org.wcdevs.blog.core.persistence.post.Post;
 import org.wcdevs.blog.core.persistence.util.ClockUtil;
@@ -97,7 +98,7 @@ class PostTransformerTest {
     var entity = new PostTransformer().newEntityFromDto(dto);
 
     assertNotNull(entity.getSlug());
-    assertEquals(PostTransformer.SLUG_MAX_LENGTH, entity.getSlug().length());
+    assertEquals(StringUtils.SLUG_MAX_LENGTH, entity.getSlug().length());
   }
 
   @Test
@@ -181,7 +182,7 @@ class PostTransformerTest {
     var postMock = mock(Post.class);
     var emptyDto = PartialPostDto.builder().build();
 
-    new PostTransformer().updatePostWithNonNullValues(postMock, emptyDto);
+    new PostTransformer().updateNonNullValues(postMock, emptyDto);
     verify(postMock, never()).setTitle(any());
     verify(postMock, never()).setBody(any());
     verify(postMock, never()).setExcerpt(any());
@@ -195,7 +196,7 @@ class PostTransformerTest {
     var postMock = mock(Post.class);
     var dtoWithValues = buildPartialDto();
 
-    new PostTransformer().updatePostWithNonNullValues(postMock, dtoWithValues);
+    new PostTransformer().updateNonNullValues(postMock, dtoWithValues);
     verify(postMock, times(1)).setTitle(dtoWithValues.getTitle());
     verify(postMock, times(1)).setBody(dtoWithValues.getBody());
     verify(postMock, times(1)).setExcerpt(dtoWithValues.getExcerpt());
@@ -209,7 +210,7 @@ class PostTransformerTest {
     var postMock = mock(Post.class);
     var dtoWithValues = buildDto();
 
-    new PostTransformer().updatePost(postMock, dtoWithValues);
+    new PostTransformer().update(postMock, dtoWithValues);
     verify(postMock, times(1)).setTitle(dtoWithValues.getTitle());
     verify(postMock, times(1)).setBody(dtoWithValues.getBody());
     verify(postMock, times(1)).setExcerpt(dtoWithValues.getExcerpt());

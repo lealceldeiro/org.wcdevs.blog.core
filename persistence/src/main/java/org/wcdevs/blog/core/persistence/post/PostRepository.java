@@ -17,6 +17,9 @@ public interface PostRepository extends JpaRepository<Post, UUID> {
 
   Optional<Post> findBySlug(String slug);
 
+  @Query("select p.uuid from Post p where p.slug = :slug")
+  Optional<UUID> findPostUuidBySlug(String slug);
+
   @Query("delete from Post p where p.slug = :slug")
   @Modifying
   int deleteBySlug(String slug);

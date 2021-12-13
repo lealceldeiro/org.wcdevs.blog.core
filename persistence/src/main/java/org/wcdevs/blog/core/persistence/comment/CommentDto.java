@@ -3,6 +3,7 @@ package org.wcdevs.blog.core.persistence.comment;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import java.time.LocalDateTime;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -10,7 +11,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
+import org.wcdevs.blog.core.persistence.post.Post;
 
 /**
  * Data transfer object which contains required comment information. This should be generally used
@@ -51,4 +54,23 @@ public class CommentDto {
   @ToString.Include
   @EqualsAndHashCode.Include
   private String anchor;
+
+  private LocalDateTime lastUpdated;
+
+  // only to be used among internal components to collaborate on data transfer
+  @Getter
+  @Setter
+  private Post post;
+  @Getter
+  @Setter
+  private Comment parentComment;
+
+  private CommentDto(Comment parentComment, String body, String publishedBy, String anchor,
+                     LocalDateTime lastUpdated) {
+    this.parentCommentAnchor = parentComment != null ? parentComment.getAnchor() : null;
+    this.body = body;
+    this.publishedBy = publishedBy;
+    this.anchor = anchor;
+    this.lastUpdated = lastUpdated;
+  }
 }

@@ -41,7 +41,7 @@ public class PostServiceImpl implements PostService {
   @Override
   public PostDto partialUpdate(String postSlug, PartialPostDto newPostData) {
     Post post = postRepository.findBySlug(postSlug).orElseThrow(PostNotFoundException::new);
-    postTransformer.updatePostWithNonNullValues(post, newPostData);
+    postTransformer.updateNonNullValues(post, newPostData);
 
     return postTransformer.slugInfo(post);
   }
@@ -49,7 +49,7 @@ public class PostServiceImpl implements PostService {
   @Override
   public PostDto fullUpdate(String postSlug, PostDto newPostData) {
     Post post = postRepository.findBySlug(postSlug).orElseThrow(PostNotFoundException::new);
-    postTransformer.updatePost(post, newPostData);
+    postTransformer.update(post, newPostData);
 
     return postTransformer.slugInfo(post);
   }

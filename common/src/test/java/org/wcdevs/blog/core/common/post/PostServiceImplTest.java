@@ -110,7 +110,7 @@ class PostServiceImplTest {
 
     verify(postRepository, times(1)).findBySlug(slug);
 
-    verify(postTransformer, times(1)).updatePostWithNonNullValues(postMock, argMock);
+    verify(postTransformer, times(1)).updateNonNullValues(postMock, argMock);
     verify(postTransformer, times(1)).slugInfo(postMock);
   }
 
@@ -130,7 +130,7 @@ class PostServiceImplTest {
 
     verify(postRepository, times(1)).findBySlug(slug);
 
-    verify(postTransformer, times(1)).updatePost(postMock, argMock);
+    verify(postTransformer, times(1)).update(postMock, argMock);
     verify(postTransformer, times(1)).slugInfo(postMock);
   }
 
