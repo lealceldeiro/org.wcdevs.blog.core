@@ -2,25 +2,23 @@ package org.wcdevs.blog.core.common.post;
 
 import java.util.Locale;
 import java.util.Objects;
+import org.wcdevs.blog.core.common.EntityTransformer;
 import org.wcdevs.blog.core.persistence.post.PartialPostDto;
 import org.wcdevs.blog.core.persistence.post.Post;
 import org.wcdevs.blog.core.persistence.post.PostDto;
 import org.wcdevs.blog.core.persistence.util.ClockUtil;
 
 /**
- * Transformer for classes User and UserDto.
+ * Transformer for classes Post and PostDto.
  */
-final class PostTransformer {
+final class PostTransformer implements EntityTransformer<Post, PostDto> {
   private static final String SLUG_REPLACEMENT = "-";
   private static final String SLUG_REPLACE_REGEX = "[^a-z0-9]++";
   static final int SLUG_MAX_LENGTH = 150;
   static final int EXCERPT_MAX_LENGTH = 250;
 
-  private PostTransformer() {
-    // do not allow instantiation
-  }
-
-  static Post newEntityFromDto(PostDto dto) {
+  @Override
+  public Post newEntityFromDto(PostDto dto) {
     var now = ClockUtil.utcNow();
 
     // allow user the option to specify a custom slug
@@ -49,11 +47,11 @@ final class PostTransformer {
     return trimmed;
   }
 
-  static PostDto slugInfo(String slug) {
+  PostDto slugInfo(String slug) {
     return PostDto.builder().slug(slug).build();
   }
 
-  static PostDto slugInfo(Post post) {
+  PostDto slugInfo(Post post) {
     return slugInfo(post.getSlug());
   }
 
@@ -75,7 +73,7 @@ final class PostTransformer {
            : candidateSlug.substring(candidateSlug.length() - SLUG_MAX_LENGTH);
   }
 
-  static void updatePostWithNonNullValues(Post post, PartialPostDto newPostDto) {
+  void updatePostWithNonNullValues(Post post, PartialPostDto newPostDto) {
     if (Objects.nonNull(newPostDto.getTitle())) {
       post.setTitle(newPostDto.getTitle());
     }
@@ -94,7 +92,7 @@ final class PostTransformer {
     post.setUpdatedOn(ClockUtil.utcNow());
   }
 
-  static void updatePost(Post post, PostDto newPostDto) {
+  void updatePost(Post post, PostDto newPostDto) {
     post.setTitle(newPostDto.getTitle());
     post.setBody(newPostDto.getBody());
     post.setExcerpt(newPostDto.getExcerpt());
@@ -104,7 +102,8 @@ final class PostTransformer {
     post.setUpdatedOn(ClockUtil.utcNow());
   }
 
-  static PostDto dtoFromEntity(Post postEntity) {
+  @Override
+  public PostDto dtoFromEntity(Post postEntity) {
     return PostDto.builder()
                   .title(postEntity.getTitle())
                   .slug(postEntity.getSlug())

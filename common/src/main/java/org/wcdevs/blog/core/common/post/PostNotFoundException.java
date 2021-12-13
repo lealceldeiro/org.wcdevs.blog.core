@@ -3,7 +3,7 @@ package org.wcdevs.blog.core.common.post;
 import org.wcdevs.blog.core.common.exception.NotFoundException;
 
 /**
- * Exception thrown when an entity is not Found.
+ * Exception thrown when a post is not found.
  */
 public class PostNotFoundException extends NotFoundException {
   private static final long serialVersionUID = 5864134251188658316L;

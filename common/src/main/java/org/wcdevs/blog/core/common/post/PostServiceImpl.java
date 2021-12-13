@@ -17,6 +17,7 @@ import org.wcdevs.blog.core.persistence.post.PostRepository;
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
   private final PostRepository postRepository;
+  private final PostTransformer postTransformer;
 
   @Override
   @Transactional(readOnly = true)
@@ -26,31 +27,31 @@ public class PostServiceImpl implements PostService {
 
   @Override
   public PostDto createPost(PostDto postDto) {
-    Post post = postRepository.save(PostTransformer.newEntityFromDto(postDto));
-    return PostTransformer.slugInfo(post);
+    Post post = postRepository.save(postTransformer.newEntityFromDto(postDto));
+    return postTransformer.slugInfo(post);
   }
 
   @Override
   @Transactional(readOnly = true)
   public PostDto getPost(String postSlug) {
     Post post = postRepository.findBySlug(postSlug).orElseThrow(PostNotFoundException::new);
-    return PostTransformer.dtoFromEntity(post);
+    return postTransformer.dtoFromEntity(post);
   }
 
   @Override
   public PostDto partialUpdate(String postSlug, PartialPostDto newPostData) {
     Post post = postRepository.findBySlug(postSlug).orElseThrow(PostNotFoundException::new);
-    PostTransformer.updatePostWithNonNullValues(post, newPostData);
+    postTransformer.updatePostWithNonNullValues(post, newPostData);
 
-    return PostTransformer.slugInfo(post);
+    return postTransformer.slugInfo(post);
   }
 
   @Override
   public PostDto fullUpdate(String postSlug, PostDto newPostData) {
     Post post = postRepository.findBySlug(postSlug).orElseThrow(PostNotFoundException::new);
-    PostTransformer.updatePost(post, newPostData);
+    postTransformer.updatePost(post, newPostData);
 
-    return PostTransformer.slugInfo(post);
+    return postTransformer.slugInfo(post);
   }
 
   @Override

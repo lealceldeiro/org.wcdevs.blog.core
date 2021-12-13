@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -31,6 +30,9 @@ class PostServiceImplTest {
   @MockBean
   private PostRepository postRepository;
 
+  @MockBean
+  private PostTransformer postTransformer;
+
   @Test
   void getPosts() {
     var expected = List.of(TestsUtil.buildDto(), TestsUtil.buildDto());
@@ -48,18 +50,16 @@ class PostServiceImplTest {
     var postMock = mock(Post.class);
     var slugInfoMock = mock(PostDto.class);
 
-    try (var mockedPostTransformer = mockStatic(PostTransformer.class)) {
-      mockedPostTransformer.when(() -> PostTransformer.newEntityFromDto(argMock)).thenReturn(postMock);
-      mockedPostTransformer.when(() -> PostTransformer.slugInfo(postMock)).thenReturn(slugInfoMock);
-      when(postRepository.save(postMock)).thenReturn(postMock);
+    when(postTransformer.newEntityFromDto(argMock)).thenReturn(postMock);
+    when(postTransformer.slugInfo(postMock)).thenReturn(slugInfoMock);
+    when(postRepository.save(postMock)).thenReturn(postMock);
 
-      var actual = postService.createPost(argMock);
+    var actual = postService.createPost(argMock);
 
-      assertEquals(slugInfoMock, actual);
-      verify(postRepository, times(1)).save(postMock);
-      mockedPostTransformer.verify(() -> PostTransformer.newEntityFromDto(argMock), times(1));
-      mockedPostTransformer.verify(() -> PostTransformer.slugInfo(postMock), times(1));
-    }
+    assertEquals(slugInfoMock, actual);
+    verify(postRepository, times(1)).save(postMock);
+    verify(postTransformer, times(1)).newEntityFromDto(argMock);
+    verify(postTransformer, times(1)).slugInfo(postMock);
   }
 
   @Test
@@ -76,17 +76,14 @@ class PostServiceImplTest {
     var slug = aString();
     var post = mock(Post.class);
     var postDto = mock(PostDto.class);
-    try (var mockedPostTransformer = mockStatic(PostTransformer.class)) {
-      when(postRepository.findBySlug(slug)).thenReturn(Optional.of(post));
-      mockedPostTransformer.when(() -> PostTransformer.dtoFromEntity(post))
-                           .thenReturn(postDto);
+    when(postRepository.findBySlug(slug)).thenReturn(Optional.of(post));
+    when(postTransformer.dtoFromEntity(post)).thenReturn(postDto);
 
-      var actual = postService.getPost(slug);
+    var actual = postService.getPost(slug);
 
-      assertEquals(postDto, actual);
-      verify(postRepository, times(1)).findBySlug(slug);
-      mockedPostTransformer.verify(() -> PostTransformer.dtoFromEntity(post), times(1));
-    }
+    assertEquals(postDto, actual);
+    verify(postRepository, times(1)).findBySlug(slug);
+    verify(postTransformer, times(1)).dtoFromEntity(post);
   }
 
   @Test
@@ -105,19 +102,16 @@ class PostServiceImplTest {
     var slugInfoMock = mock(PostDto.class);
 
     when(postRepository.findBySlug(slug)).thenReturn(Optional.of(postMock));
-    try (var mockedPostTransformer = mockStatic(PostTransformer.class)) {
-      mockedPostTransformer.when(() -> PostTransformer.slugInfo(postMock)).thenReturn(slugInfoMock);
+    when(postTransformer.slugInfo(postMock)).thenReturn(slugInfoMock);
 
-      var actual = postService.partialUpdate(slug, argMock);
+    var actual = postService.partialUpdate(slug, argMock);
 
-      assertEquals(slugInfoMock, actual);
+    assertEquals(slugInfoMock, actual);
 
-      verify(postRepository, times(1)).findBySlug(slug);
+    verify(postRepository, times(1)).findBySlug(slug);
 
-      mockedPostTransformer
-          .verify(() -> PostTransformer.updatePostWithNonNullValues(postMock, argMock), times(1));
-      mockedPostTransformer.verify(() -> PostTransformer.slugInfo(postMock), times(1));
-    }
+    verify(postTransformer, times(1)).updatePostWithNonNullValues(postMock, argMock);
+    verify(postTransformer, times(1)).slugInfo(postMock);
   }
 
   @Test
@@ -128,19 +122,16 @@ class PostServiceImplTest {
     var slugInfoMock = mock(PostDto.class);
 
     when(postRepository.findBySlug(slug)).thenReturn(Optional.of(postMock));
-    try (var mockedPostTransformer = mockStatic(PostTransformer.class)) {
-      mockedPostTransformer.when(() -> PostTransformer.slugInfo(postMock)).thenReturn(slugInfoMock);
+    when(postTransformer.slugInfo(postMock)).thenReturn(slugInfoMock);
 
-      var actual = postService.fullUpdate(slug, argMock);
+    var actual = postService.fullUpdate(slug, argMock);
 
-      assertEquals(slugInfoMock, actual);
+    assertEquals(slugInfoMock, actual);
 
-      verify(postRepository, times(1)).findBySlug(slug);
+    verify(postRepository, times(1)).findBySlug(slug);
 
-      mockedPostTransformer
-          .verify(() -> PostTransformer.updatePost(postMock, argMock), times(1));
-      mockedPostTransformer.verify(() -> PostTransformer.slugInfo(postMock), times(1));
-    }
+    verify(postTransformer, times(1)).updatePost(postMock, argMock);
+    verify(postTransformer, times(1)).slugInfo(postMock);
   }
 
   @Test
