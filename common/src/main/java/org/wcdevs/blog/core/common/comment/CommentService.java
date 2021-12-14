@@ -13,7 +13,7 @@ public interface CommentService {
 
   CommentDto getComment(String commentAnchor);
 
-  CommentDto updateComment(PartialCommentDto updateCommentDto);
+  CommentDto updateComment(String commentAnchor, PartialCommentDto updateCommentDto);
 
   void deleteComment(String commentAnchor);
 

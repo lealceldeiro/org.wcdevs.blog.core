@@ -19,6 +19,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   // https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/util/AntPathMatcher.html
   static final String[] UNPROTECTED_GET_ENDPOINTS = new String[]{
       "/post/**",
+      "/comment/**",
       "/docs/index.html"
   };
 

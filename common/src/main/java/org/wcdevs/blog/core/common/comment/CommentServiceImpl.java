@@ -47,8 +47,8 @@ public class CommentServiceImpl implements CommentService {
   }
 
   @Override
-  public CommentDto updateComment(PartialCommentDto updateCommentDto) {
-    Comment comment = commentRepository.findByAnchor(updateCommentDto.getAnchor())
+  public CommentDto updateComment(String commentAnchor, PartialCommentDto updateCommentDto) {
+    Comment comment = commentRepository.findByAnchor(commentAnchor)
                                        .orElseThrow(CommentNotFoundException::new);
     commentTransformer.updateNonNullValues(comment, updateCommentDto);
     commentRepository.save(comment);

@@ -1,6 +1,6 @@
 package org.wcdevs.blog.core.rest.post;
 
-import java.util.List;
+import java.util.Collection;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +30,7 @@ public class PostController {
   private final PostService postService;
 
   @GetMapping("/")
-  public ResponseEntity<List<PostDto>> getPosts() {
+  public ResponseEntity<Collection<PostDto>> getPosts() {
     return new ResponseEntity<>(postService.getPosts(), HttpStatus.OK);
   }
 

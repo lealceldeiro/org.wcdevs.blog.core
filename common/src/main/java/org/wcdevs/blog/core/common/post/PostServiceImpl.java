@@ -1,6 +1,6 @@
 package org.wcdevs.blog.core.common.post;
 
-import java.util.List;
+import java.util.Collection;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +21,7 @@ public class PostServiceImpl implements PostService {
 
   @Override
   @Transactional(readOnly = true)
-  public List<PostDto> getPosts() {
+  public Collection<PostDto> getPosts() {
     return postRepository.getPosts();
   }
 
