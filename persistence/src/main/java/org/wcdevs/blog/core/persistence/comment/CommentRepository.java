@@ -12,7 +12,7 @@ import org.springframework.data.jpa.repository.Query;
  */
 public interface CommentRepository extends JpaRepository<Comment, UUID> {
   @Query("select c.uuid from Comment c where c.anchor = :anchor")
-  Optional<UUID> getCommentUuidByAnchor(String anchor);
+  Optional<UUID> getCommentUuidWithAnchor(String anchor);
 
   Optional<Comment> findByAnchor(String anchor);
 
@@ -24,7 +24,7 @@ public interface CommentRepository extends JpaRepository<Comment, UUID> {
          + "c.lastUpdated"
          + ") "
          + "from Comment c inner join Post p where p.slug = :slug")
-  Set<CommentDto> findAllByPostSlug(String postSlug);
+  Set<CommentDto> findAllWithPostSlug(String postSlug);
 
   @Query("select new org.wcdevs.blog.core.persistence.comment.CommentDto("
          + "c.parentComment,"
@@ -34,7 +34,7 @@ public interface CommentRepository extends JpaRepository<Comment, UUID> {
          + "c.lastUpdated"
          + ") "
          + "from Comment c inner join Post p where p.slug = :slug and c.parentComment is null")
-  Set<CommentDto> findAllRootCommentsByPostSlug(String slug);
+  Set<CommentDto> findAllRootCommentsWithPostSlug(String slug);
 
   @Query("select new org.wcdevs.blog.core.persistence.comment.CommentDto("
          + "c.parentComment,"
@@ -44,7 +44,7 @@ public interface CommentRepository extends JpaRepository<Comment, UUID> {
          + "c.lastUpdated"
          + ") "
          + "from Comment c where c.parentComment is not null and c.parentComment.anchor = :anchor")
-  Set<CommentDto> findAllChildCommentsByParentAnchor(String anchor);
+  Set<CommentDto> findAllChildCommentsWithParentAnchor(String anchor);
 
   @Query("delete from Comment c where c.anchor = :anchor")
   @Modifying

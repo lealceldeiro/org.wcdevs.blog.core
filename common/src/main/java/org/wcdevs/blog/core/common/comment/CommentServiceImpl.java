@@ -25,10 +25,10 @@ public class CommentServiceImpl implements CommentService {
   @Override
   public CommentDto createComment(CommentDto dto) {
     // use lighter query, to later get entity reference
-    var post = postRepository.findPostUuidBySlug(dto.getPostSlug())
+    var post = postRepository.findPostUuidWithSlug(dto.getPostSlug())
                              .map(postRepository::getById)
                              .orElseThrow(PostNotFoundException::new);
-    var parentComment = commentRepository.getCommentUuidByAnchor(dto.getParentCommentAnchor())
+    var parentComment = commentRepository.getCommentUuidWithAnchor(dto.getParentCommentAnchor())
                                          .map(commentRepository::getById)
                                          .orElse(null);
     dto.setPost(post);
@@ -66,18 +66,18 @@ public class CommentServiceImpl implements CommentService {
   @Override
   @Transactional(readOnly = true)
   public Collection<CommentDto> getAllPostComments(String postSlug) {
-    return commentRepository.findAllByPostSlug(postSlug);
+    return commentRepository.findAllWithPostSlug(postSlug);
   }
 
   @Override
   @Transactional(readOnly = true)
   public Collection<CommentDto> getRootPostComments(String postSlug) {
-    return commentRepository.findAllRootCommentsByPostSlug(postSlug);
+    return commentRepository.findAllRootCommentsWithPostSlug(postSlug);
   }
 
   @Override
   @Transactional(readOnly = true)
   public Collection<CommentDto> getCommentChildComments(String commentAnchor) {
-    return commentRepository.findAllChildCommentsByParentAnchor(commentAnchor);
+    return commentRepository.findAllChildCommentsWithParentAnchor(commentAnchor);
   }
 }
