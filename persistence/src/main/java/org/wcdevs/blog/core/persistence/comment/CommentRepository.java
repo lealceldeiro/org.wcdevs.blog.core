@@ -23,7 +23,7 @@ public interface CommentRepository extends JpaRepository<Comment, UUID> {
          + "c.anchor,"
          + "c.lastUpdated"
          + ") "
-         + "from Comment c inner join Post p where p.slug = :slug")
+         + "from Comment c inner join Post p where p.slug = :postSlug")
   Set<CommentDto> findAllWithPostSlug(String postSlug);
 
   @Query("select new org.wcdevs.blog.core.persistence.comment.CommentDto("

@@ -65,8 +65,18 @@ public class CommentDto {
   @Setter
   private Comment parentComment;
 
-  private CommentDto(Comment parentComment, String body, String publishedBy, String anchor,
-                     LocalDateTime lastUpdated) {
+  /**
+   * Creates a new {@link CommentDto}.
+   *
+   * @param parentComment Comment parent comment ({@code null} if none). If not {@code null}, it
+   *                      means, this the comment is part of a thread.
+   * @param body          Comment content or body.
+   * @param publishedBy   User who published the comment.
+   * @param anchor        Comment anchor (equivalent to slug in a Post).
+   * @param lastUpdated   Last time the comment was updated.
+   */
+  public CommentDto(Comment parentComment, String body, String publishedBy, String anchor,
+                    LocalDateTime lastUpdated) {
     this.parentCommentAnchor = parentComment != null ? parentComment.getAnchor() : null;
     this.body = body;
     this.publishedBy = publishedBy;
