@@ -1,6 +1,7 @@
 package org.wcdevs.blog.core.common.post;
 
 import java.util.Objects;
+import org.springframework.stereotype.Component;
 import org.wcdevs.blog.core.common.Transformer;
 import org.wcdevs.blog.core.common.util.StringUtils;
 import org.wcdevs.blog.core.persistence.post.PartialPostDto;
@@ -11,6 +12,7 @@ import org.wcdevs.blog.core.persistence.util.ClockUtil;
 /**
  * Transformer for classes Post and PostDto.
  */
+@Component
 final class PostTransformer implements Transformer<Post, PostDto, PartialPostDto> {
   static final int EXCERPT_MAX_LENGTH = 250;
 

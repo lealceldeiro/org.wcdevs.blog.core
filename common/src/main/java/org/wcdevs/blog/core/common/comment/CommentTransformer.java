@@ -1,5 +1,6 @@
 package org.wcdevs.blog.core.common.comment;
 
+import org.springframework.stereotype.Component;
 import org.wcdevs.blog.core.common.Transformer;
 import org.wcdevs.blog.core.common.util.StringUtils;
 import org.wcdevs.blog.core.persistence.comment.Comment;
@@ -10,6 +11,7 @@ import org.wcdevs.blog.core.persistence.util.ClockUtil;
 /**
  * Transformer for classes Comment and CommentDto.
  */
+@Component
 final class CommentTransformer implements Transformer<Comment, CommentDto, PartialCommentDto> {
   @Override
   public Comment newEntityFromDto(CommentDto dto) {
