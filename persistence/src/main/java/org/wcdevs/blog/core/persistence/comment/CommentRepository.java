@@ -17,33 +17,26 @@ public interface CommentRepository extends JpaRepository<Comment, UUID> {
   Optional<Comment> findByAnchor(String anchor);
 
   @Query("select new org.wcdevs.blog.core.persistence.comment.CommentDto("
-         + "c.parentComment,"
-         + "c.body,"
-         + "c.publishedBy,"
-         + "c.anchor,"
-         + "c.lastUpdated"
-         + ") "
-         + "from Comment c inner join Post p where p.slug = :postSlug")
-  Set<CommentDto> findAllWithPostSlug(String postSlug);
+         + "pc.anchor, c.body, c.publishedBy, c.anchor, c.lastUpdated) "
+         + "from Comment c "
+         + "inner join c.post p "
+         + "left join c.parentComment pc "
+         + "where p.slug = :slug")
+  Set<CommentDto> findAllWithPostSlug(String slug);
 
   @Query("select new org.wcdevs.blog.core.persistence.comment.CommentDto("
-         + "c.parentComment,"
-         + "c.body,"
-         + "c.publishedBy,"
-         + "c.anchor,"
-         + "c.lastUpdated"
-         + ") "
-         + "from Comment c inner join Post p where p.slug = :slug and c.parentComment is null")
+         + "pc.anchor, c.body, c.publishedBy, c.anchor, c.lastUpdated) "
+         + "from Comment c "
+         + "inner join c.post p "
+         + "left join c.parentComment pc "
+         + "where p.slug = :slug and pc is null")
   Set<CommentDto> findAllRootCommentsWithPostSlug(String slug);
 
   @Query("select new org.wcdevs.blog.core.persistence.comment.CommentDto("
-         + "c.parentComment,"
-         + "c.body,"
-         + "c.publishedBy,"
-         + "c.anchor,"
-         + "c.lastUpdated"
-         + ") "
-         + "from Comment c where c.parentComment is not null and c.parentComment.anchor = :anchor")
+         + "pc.anchor, c.body, c.publishedBy, c.anchor, c.lastUpdated) "
+         + "from Comment c "
+         + "inner join c.parentComment pc "
+         + "where pc is not null and pc.anchor = :anchor")
   Set<CommentDto> findAllChildCommentsWithParentAnchor(String anchor);
 
   @Query("delete from Comment c where c.anchor = :anchor")
