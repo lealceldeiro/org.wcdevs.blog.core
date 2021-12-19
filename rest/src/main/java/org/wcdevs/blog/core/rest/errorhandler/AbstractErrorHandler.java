@@ -1,6 +1,7 @@
 package org.wcdevs.blog.core.rest.errorhandler;
 
 import java.time.LocalDateTime;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.WebRequest;
@@ -8,6 +9,7 @@ import org.springframework.web.context.request.WebRequest;
 /**
  * An abstract handler defining the core behavior.
  */
+@Slf4j
 public abstract class AbstractErrorHandler implements ErrorHandler {
   private ErrorHandler delegateHandler;
 
@@ -23,6 +25,8 @@ public abstract class AbstractErrorHandler implements ErrorHandler {
     } else if (delegateHandler != null) {
       return delegateHandler.handle(throwable, request);
     }
+
+    log.warn("There has been an error handled in a non-customized way", throwable);
     var errorMessage = new ErrorMessage("Internal Server Error", "", LocalDateTime.now());
     return new ResponseEntity<>(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
   }
