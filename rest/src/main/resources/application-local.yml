@@ -4,8 +4,6 @@ spring:
     username: wcdevsu
     url: jdbc:postgresql://localhost:5432/wcdevsdb
     driver-class-name: org.postgresql.Driver
-  jpa:
-    show-sql: true
 
   security:
     oauth2:
@@ -26,3 +24,8 @@ spring:
 core-app:
   allowedOrigins:
     - "*"
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.type.descriptor.sql: trace
