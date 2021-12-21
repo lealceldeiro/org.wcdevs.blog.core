@@ -4,22 +4,26 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.mockito.Mockito.mock;
+import static org.wcdevs.blog.core.persistence.TestsUtil.aString;
 
+import java.time.LocalDateTime;
+import java.util.Random;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.wcdevs.blog.core.persistence.TestsUtil;
+import org.wcdevs.blog.core.persistence.post.Post;
 
 class CommentDtoTest {
   @Test
   void builder() {
-    var anchor = TestsUtil.aString();
-    var body = TestsUtil.aString();
-    var publishedBy = TestsUtil.aString();
-    var parentCommentAnchor = TestsUtil.aString();
-    var postSlug = TestsUtil.aString();
+    var anchor = aString();
+    var body = aString();
+    var publishedBy = aString();
+    var parentCommentAnchor = aString();
+    var postSlug = aString();
 
     var dto = CommentDto.builder()
                         .anchor(anchor)
@@ -71,16 +75,16 @@ class CommentDtoTest {
                          .anchor(anchor1)
                          .parentCommentAnchor(parentCommentAnchor1)
                          .postSlug(postSlug1)
-                         .publishedBy(TestsUtil.aString())
-                         .body(TestsUtil.aString())
+                         .publishedBy(aString())
+                         .body(aString())
                          .build();
 
     var dto2 = CommentDto.builder()
                          .anchor(anchor2)
                          .parentCommentAnchor(parentCommentAnchor2)
                          .postSlug(postSlug2)
-                         .publishedBy(TestsUtil.aString())
-                         .body(TestsUtil.aString())
+                         .publishedBy(aString())
+                         .body(aString())
                          .build();
 
     assertEquals(equal, dto1.equals(dto2));
@@ -88,10 +92,10 @@ class CommentDtoTest {
 
   @Test
   void toStringContainsFields() {
-    var postSlug = TestsUtil.aString();
-    var parentCommentAnchor = TestsUtil.aString();
-    var publishedBy = TestsUtil.aString();
-    var anchor = TestsUtil.aString();
+    var postSlug = aString();
+    var parentCommentAnchor = aString();
+    var publishedBy = aString();
+    var anchor = aString();
 
     var toString = CommentDto.builder()
                              .postSlug(postSlug)
@@ -103,5 +107,36 @@ class CommentDtoTest {
     assertTrue(toString.contains("anchor=" + anchor));
     assertTrue(toString.contains("postSlug=" + postSlug));
     assertTrue(toString.contains("parentCommentAnchor=" + parentCommentAnchor));
+  }
+
+  @Test
+  void setters() {
+    var parentComment = mock(Comment.class);
+    var post = mock(Post.class);
+
+    var dto = CommentDto.builder().build();
+    dto.setParentComment(parentComment);
+    dto.setPost(post);
+
+    assertNotNull(dto);
+    assertEquals(parentComment, dto.getParentComment());
+    assertEquals(post, dto.getPost());
+  }
+
+  @Test
+  void newCommentDto() {
+    var parentCommentAnchor = aString();
+    var body = aString();
+    var publishedBy = aString();
+    var anchor = aString();
+    var lastUpdated = LocalDateTime.now().minusDays(new Random().nextInt(31));
+    var commentDto = new CommentDto(parentCommentAnchor, body, publishedBy, anchor, lastUpdated);
+
+    assertNotNull(commentDto);
+    assertEquals(parentCommentAnchor, commentDto.getParentCommentAnchor());
+    assertEquals(body, commentDto.getBody());
+    assertEquals(publishedBy, commentDto.getPublishedBy());
+    assertEquals(anchor, commentDto.getAnchor());
+    assertEquals(lastUpdated, commentDto.getLastUpdated());
   }
 }
