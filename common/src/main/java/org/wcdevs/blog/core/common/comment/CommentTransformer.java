@@ -40,7 +40,9 @@ final class CommentTransformer implements Transformer<Comment, CommentDto, Parti
 
   @Override
   public void updateNonNullValues(Comment entity, PartialCommentDto dto) {
-    entity.setBody(dto.getBody());
+    if (dto.getBody() != null) {
+      entity.setBody(dto.getBody());
+    }
     entity.setLastUpdated(ClockUtil.utcNow());
   }
 }

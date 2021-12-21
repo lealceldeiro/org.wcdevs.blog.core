@@ -1,11 +1,15 @@
 package org.wcdevs.blog.core.common;
 
 import java.time.LocalDateTime;
+import java.util.Random;
 import java.util.UUID;
 import org.wcdevs.blog.core.persistence.post.PartialPostDto;
 import org.wcdevs.blog.core.persistence.post.PostDto;
 
 public final class TestsUtil {
+
+  private static final Random RANDOM = new Random();
+
   private TestsUtil() {
   }
 
@@ -65,5 +69,14 @@ public final class TestsUtil {
                          .body(body)
                          .excerpt(excerpt)
                          .updatedBy(updatedBy);
+  }
+
+
+  public static LocalDateTime randomLocalDateTime() {
+    return LocalDateTime.now()
+                        .minusDays(RANDOM.nextInt(31))
+                        .withHour(RANDOM.nextInt(23))
+                        .withMinute(RANDOM.nextInt(59))
+                        .withSecond(RANDOM.nextInt(59));
   }
 }
