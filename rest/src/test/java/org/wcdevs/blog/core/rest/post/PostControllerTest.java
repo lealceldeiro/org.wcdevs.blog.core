@@ -18,7 +18,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.wcdevs.blog.core.rest.TestsUtil.MAPPER;
-import static org.wcdevs.blog.core.rest.TestsUtil.nextPostSlugSample;
+import static org.wcdevs.blog.core.rest.TestsUtil.samplePostSlug;
 
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
@@ -77,7 +77,8 @@ class PostControllerTest {
   private static final ResponseFieldsSnippet SLUG_INFO_RESPONSE_FIELDS
       = responseFields(
       fieldWithPath("slug")
-          .description("Post slug. This value can be used to retrieve the post later"));
+          .description("Post slug. This value must be used to identify (and retrieve) the post "
+                       + "later"));
   private static final ResponseFieldsSnippet ERROR_RESPONSE_FIELDS
       = responseFields(fieldWithPath("message").description("Error message"),
                        fieldWithPath("context").description("Request context"),
@@ -97,13 +98,13 @@ class PostControllerTest {
                              .build();
 
     when(postService.createPost(any(PostDto.class))).
-        then(ignored -> TestsUtil.nextPostSlugSample());
-    when(postService.getPost(anyString())).then(ignored -> TestsUtil.nextFullPostSample());
+        then(ignored -> TestsUtil.samplePostSlug());
+    when(postService.getPost(anyString())).then(ignored -> TestsUtil.sampleFullPost());
     when(postService.partialUpdate(anyString(), any(PartialPostDto.class)))
-        .then(ignored -> TestsUtil.nextPostSlugSample());
+        .then(ignored -> TestsUtil.samplePostSlug());
     when(postService.fullUpdate(anyString(), any(PostDto.class)))
-        .then(ignored -> TestsUtil.nextPostSlugSample());
-    when(postService.getPosts()).then(ignored -> TestsUtil.postSlugTitleSamples());
+        .then(ignored -> TestsUtil.samplePostSlug());
+    when(postService.getPosts()).then(ignored -> TestsUtil.samplePostSlugTitles());
   }
 
   @Test
@@ -127,7 +128,7 @@ class PostControllerTest {
 
   @Test
   void createPost() throws Exception {
-    var postDto = TestsUtil.nextFullPostSample();
+    var postDto = TestsUtil.sampleFullPost();
     mockMvc.perform(post(BASE_URL + "/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(MAPPER.writeValueAsString(postDto)))
@@ -137,7 +138,7 @@ class PostControllerTest {
 
   @Test
   void createPostDBError() throws Exception {
-    var postDto = TestsUtil.nextPostTitleBodySample();
+    var postDto = TestsUtil.samplePostTitleBody();
     var err = String.format("There's already a post with title %s", postDto.getSlug());
     when(postService.createPost(postDto)).thenThrow(new DataIntegrityViolationException(err));
     mockMvc.perform(post(BASE_URL + "/")
@@ -157,7 +158,7 @@ class PostControllerTest {
       + "Duplicate key value violates unique constraint. Values (title)=(%s)"
   })
   void createPostDBErrorWithRootCause(String rootCauseMsg) throws Exception {
-    var postDto = TestsUtil.nextFullPostSample();
+    var postDto = TestsUtil.sampleFullPost();
 
     var rootCauseMessage = !"-".equals(rootCauseMsg)
                            ? (rootCauseMsg.contains("%s")
@@ -181,7 +182,7 @@ class PostControllerTest {
 
   @Test
   void createPostWithBadFormatJson() throws Exception {
-    var postDto = TestsUtil.nextPostTitleBodySample();
+    var postDto = TestsUtil.samplePostTitleBody();
 
     mockMvc.perform(post(BASE_URL + "/")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -199,7 +200,7 @@ class PostControllerTest {
       "a", ""
   })
   void createPostWithIncorrectTitle(String title) throws Exception {
-    var prototype = TestsUtil.nextFullPostSample();
+    var prototype = TestsUtil.sampleFullPost();
     var now = LocalDateTime.now();
     var postDto = new PostDto(title, prototype.getSlug(), prototype.getBody(),
                               prototype.getExcerpt(), prototype.getPublishedBy(),
@@ -215,7 +216,7 @@ class PostControllerTest {
   @ParameterizedTest
   @ValueSource(strings = {"a", ""})
   void createPostWithIncorrectBody(String body) throws Exception {
-    var prototype = TestsUtil.nextFullPostSample();
+    var prototype = TestsUtil.sampleFullPost();
     var now = LocalDateTime.now();
     var postDto = new PostDto(prototype.getTitle(), prototype.getSlug(), body,
                               prototype.getExcerpt(), prototype.getPublishedBy(),
@@ -236,7 +237,7 @@ class PostControllerTest {
       + "calling-client-with-an-approriate-message"
   })
   void createPostWithIncorrectSlug(String slug) throws Exception {
-    var prototype = TestsUtil.nextFullPostSample();
+    var prototype = TestsUtil.sampleFullPost();
     var now = LocalDateTime.now();
     var postDto = new PostDto(prototype.getTitle(), slug, prototype.getBody(),
                               prototype.getExcerpt(), prototype.getPublishedBy(),
@@ -251,7 +252,7 @@ class PostControllerTest {
 
   @Test
   void getPost() throws Exception {
-    var postDto = TestsUtil.nextPostSlugSample();
+    var postDto = TestsUtil.samplePostSlug();
     var responseFields = responseFields(
         fieldWithPath("title").description("Post title"),
         fieldWithPath("slug").description("Post slug. It can be used to retrieve the post later"),
@@ -270,7 +271,7 @@ class PostControllerTest {
 
   @Test
   void getPostNotFound() throws Exception {
-    var slug = nextPostSlugSample().getSlug();
+    var slug = samplePostSlug().getSlug();
     when(postService.getPost(slug)).thenThrow(new PostNotFoundException());
     mockMvc.perform(get(BASE_URL + "/{postSlug}", slug))
            .andExpect(status().isNotFound())
@@ -279,7 +280,7 @@ class PostControllerTest {
 
   @Test
   void partiallyUpdatePost() throws Exception {
-    var postDto = TestsUtil.nextFullPostSample();
+    var postDto = TestsUtil.sampleFullPost();
     mockMvc.perform(patch(BASE_URL + "/{postSlug}", postDto.getSlug())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(MAPPER.writeValueAsString(postDto)))
@@ -292,7 +293,7 @@ class PostControllerTest {
 
   @Test
   void fullyUpdatePost() throws Exception {
-    var postDto = TestsUtil.nextFullPostSample();
+    var postDto = TestsUtil.sampleFullPost();
     mockMvc.perform(put(BASE_URL + "/{postSlug}", postDto.getSlug())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(MAPPER.writeValueAsString(postDto)))
@@ -305,7 +306,7 @@ class PostControllerTest {
 
   @Test
   void deletePost() throws Exception {
-    mockMvc.perform(delete(BASE_URL + "/{postSlug}", TestsUtil.nextPostSlugSample().getSlug()))
+    mockMvc.perform(delete(BASE_URL + "/{postSlug}", TestsUtil.samplePostSlug().getSlug()))
            .andExpect(status().isNoContent())
            .andDo(document("delete_post", SLUG_PATH_PARAMETER));
   }
