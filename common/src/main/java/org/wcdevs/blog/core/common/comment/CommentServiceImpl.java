@@ -1,6 +1,7 @@
 package org.wcdevs.blog.core.common.comment;
 
 import java.util.Collection;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,7 +44,21 @@ public class CommentServiceImpl implements CommentService {
   public CommentDto getComment(String commentAnchor) {
     Comment comment = commentRepository.findByAnchor(commentAnchor)
                                        .orElseThrow(CommentNotFoundException::new);
-    return commentTransformer.dtoFromEntity(comment);
+    var commentDto = commentTransformer.dtoFromEntity(comment);
+    commentDto.setChildrenCount(commentChildrenCount(commentAnchor));
+
+    return commentDto;
+  }
+
+  private int commentChildrenCount(Comment comment) {
+    return commentRepository.countAllByParentComment(comment);
+  }
+
+  private int commentChildrenCount(String commentAnchor) {
+    return commentRepository.getCommentUuidWithAnchor(commentAnchor)
+                            .map(commentRepository::getById)
+                            .map(commentRepository::countAllByParentComment)
+                            .orElse(0);
   }
 
   @Override
@@ -53,7 +68,10 @@ public class CommentServiceImpl implements CommentService {
     commentTransformer.updateNonNullValues(comment, updateCommentDto);
     commentRepository.save(comment);
 
-    return commentTransformer.dtoFromEntity(comment);
+    var commentDto = commentTransformer.dtoFromEntity(comment);
+    commentDto.setChildrenCount(commentChildrenCount(comment));
+
+    return commentDto;
   }
 
   @Override
@@ -66,18 +84,31 @@ public class CommentServiceImpl implements CommentService {
   @Override
   @Transactional(readOnly = true)
   public Collection<CommentDto> getAllPostComments(String postSlug) {
-    return commentRepository.findAllWithPostSlug(postSlug);
+    var comments = commentRepository.findAllWithPostSlug(postSlug);
+    setChildrenCountToComments(comments);
+
+    return comments;
   }
 
   @Override
   @Transactional(readOnly = true)
   public Collection<CommentDto> getRootPostComments(String postSlug) {
-    return commentRepository.findAllRootCommentsWithPostSlug(postSlug);
+    var comments = commentRepository.findAllRootCommentsWithPostSlug(postSlug);
+    setChildrenCountToComments(comments);
+
+    return comments;
+  }
+
+  private void setChildrenCountToComments(final Set<CommentDto> comments) {
+    comments.forEach(c -> c.setChildrenCount(commentChildrenCount(c.getAnchor())));
   }
 
   @Override
   @Transactional(readOnly = true)
   public Collection<CommentDto> getCommentChildComments(String commentAnchor) {
-    return commentRepository.findAllChildCommentsWithParentAnchor(commentAnchor);
+    var comments = commentRepository.findAllChildCommentsWithParentAnchor(commentAnchor);
+    setChildrenCountToComments(comments);
+
+    return comments;
   }
 }
