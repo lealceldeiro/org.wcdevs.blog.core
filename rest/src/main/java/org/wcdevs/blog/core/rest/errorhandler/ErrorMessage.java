@@ -1,5 +1,6 @@
 package org.wcdevs.blog.core.rest.errorhandler;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 
 /**
@@ -18,6 +19,7 @@ public class ErrorMessage {
   /**
    * Error date time.
    */
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   public final LocalDateTime dateTime;
 
   /**

@@ -1,6 +1,5 @@
 package org.wcdevs.blog.core.persistence.post;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import javax.validation.constraints.NotBlank;
@@ -19,7 +18,6 @@ import lombok.ToString;
 @Builder
 @ToString(onlyExplicitlyIncluded = true)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonDeserialize(builder = PartialPostDto.PartialPostDtoBuilder.class)
 public class PartialPostDto {
   /**
