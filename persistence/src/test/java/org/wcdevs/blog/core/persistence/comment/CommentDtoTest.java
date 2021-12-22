@@ -7,6 +7,7 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.mock;
 import static org.wcdevs.blog.core.persistence.TestsUtil.aString;
 
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Random;
 import java.util.stream.Stream;
@@ -113,14 +114,17 @@ class CommentDtoTest {
   void setters() {
     var parentComment = mock(Comment.class);
     var post = mock(Post.class);
+    var childrenCount = new SecureRandom().nextInt();
 
     var dto = CommentDto.builder().build();
     dto.setParentComment(parentComment);
     dto.setPost(post);
+    dto.setChildrenCount(childrenCount);
 
     assertNotNull(dto);
     assertEquals(parentComment, dto.getParentComment());
     assertEquals(post, dto.getPost());
+    assertEquals(childrenCount, dto.getChildrenCount());
   }
 
   @Test

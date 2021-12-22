@@ -56,6 +56,8 @@ public class CommentDto {
   private String anchor;
 
   private LocalDateTime lastUpdated;
+  @Setter
+  private int childrenCount = -1;
 
   // only to be used among internal components to collaborate on data transfer
   @Getter
