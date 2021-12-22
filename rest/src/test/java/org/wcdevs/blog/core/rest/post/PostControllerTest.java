@@ -60,7 +60,7 @@ import org.wcdevs.blog.core.rest.errorhandler.impl.NotFoundErrorHandler;
 })
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 class PostControllerTest {
-  private static final String BASE_URL = "/post";
+  private static final String BASE_URL = "/post/";
   private static final PathParametersSnippet SLUG_PATH_PARAMETER
       = pathParameters(parameterWithName("postSlug")
                            .description("Post slug generated during creation"));
@@ -109,7 +109,7 @@ class PostControllerTest {
 
   @Test
   void getPosts() throws Exception {
-    mockMvc.perform(get(BASE_URL + "/"))
+    mockMvc.perform(get(BASE_URL))
            .andExpect(status().isOk())
            .andDo(document("get_posts",
                            responseFields(fieldWithPath("[]")
@@ -129,7 +129,7 @@ class PostControllerTest {
   @Test
   void createPost() throws Exception {
     var postDto = TestsUtil.sampleFullPost();
-    mockMvc.perform(post(BASE_URL + "/")
+    mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(MAPPER.writeValueAsString(postDto)))
            .andExpect(status().isCreated())
@@ -141,7 +141,7 @@ class PostControllerTest {
     var postDto = TestsUtil.samplePostTitleBody();
     var err = String.format("There's already a post with title %s", postDto.getSlug());
     when(postService.createPost(postDto)).thenThrow(new DataIntegrityViolationException(err));
-    mockMvc.perform(post(BASE_URL + "/")
+    mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(MAPPER.writeValueAsString(postDto)))
            .andExpect(status().isConflict());
@@ -173,7 +173,7 @@ class PostControllerTest {
 
     when(postService.createPost(postDto)).thenThrow(violationException);
 
-    mockMvc.perform(post(BASE_URL + "/")
+    mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(MAPPER.writeValueAsString(postDto)))
            .andExpect(status().isConflict())
@@ -184,7 +184,7 @@ class PostControllerTest {
   void createPostWithBadFormatJson() throws Exception {
     var postDto = TestsUtil.samplePostTitleBody();
 
-    mockMvc.perform(post(BASE_URL + "/")
+    mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("/" + MAPPER.writeValueAsString(postDto)))
            .andExpect(status().isBadRequest())
@@ -206,7 +206,7 @@ class PostControllerTest {
                               prototype.getExcerpt(), prototype.getPublishedBy(),
                               prototype.getUpdatedBy(), now, now);
 
-    mockMvc.perform(post(BASE_URL + "/")
+    mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(MAPPER.writeValueAsString(postDto)))
            .andExpect(status().isBadRequest())
@@ -222,7 +222,7 @@ class PostControllerTest {
                               prototype.getExcerpt(), prototype.getPublishedBy(),
                               prototype.getUpdatedBy(), now, now);
 
-    mockMvc.perform(post(BASE_URL + "/")
+    mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(MAPPER.writeValueAsString(postDto)))
            .andExpect(status().isBadRequest())
@@ -243,7 +243,7 @@ class PostControllerTest {
                               prototype.getExcerpt(), prototype.getPublishedBy(),
                               prototype.getUpdatedBy(), now, now);
 
-    mockMvc.perform(post(BASE_URL + "/")
+    mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(MAPPER.writeValueAsString(postDto)))
            .andExpect(status().isBadRequest())
@@ -264,7 +264,7 @@ class PostControllerTest {
         fieldWithPath("updatedBy").description("Last user who edited the post. ")
                                        );
 
-    mockMvc.perform(get(BASE_URL + "/{postSlug}", postDto.getSlug()))
+    mockMvc.perform(get(BASE_URL + "{postSlug}", postDto.getSlug()))
            .andExpect(status().isOk())
            .andDo(document("get_post", SLUG_PATH_PARAMETER, responseFields));
   }
@@ -273,7 +273,7 @@ class PostControllerTest {
   void getPostNotFound() throws Exception {
     var slug = samplePostSlug().getSlug();
     when(postService.getPost(slug)).thenThrow(new PostNotFoundException());
-    mockMvc.perform(get(BASE_URL + "/{postSlug}", slug))
+    mockMvc.perform(get(BASE_URL + "{postSlug}", slug))
            .andExpect(status().isNotFound())
            .andDo(document("get_post_not_found", SLUG_PATH_PARAMETER, ERROR_RESPONSE_FIELDS));
   }
@@ -281,7 +281,7 @@ class PostControllerTest {
   @Test
   void partiallyUpdatePost() throws Exception {
     var postDto = TestsUtil.sampleFullPost();
-    mockMvc.perform(patch(BASE_URL + "/{postSlug}", postDto.getSlug())
+    mockMvc.perform(patch(BASE_URL + "{postSlug}", postDto.getSlug())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(MAPPER.writeValueAsString(postDto)))
            .andExpect(status().isOk())
@@ -294,7 +294,7 @@ class PostControllerTest {
   @Test
   void fullyUpdatePost() throws Exception {
     var postDto = TestsUtil.sampleFullPost();
-    mockMvc.perform(put(BASE_URL + "/{postSlug}", postDto.getSlug())
+    mockMvc.perform(put(BASE_URL + "{postSlug}", postDto.getSlug())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(MAPPER.writeValueAsString(postDto)))
            .andExpect(status().isOk())
@@ -306,7 +306,7 @@ class PostControllerTest {
 
   @Test
   void deletePost() throws Exception {
-    mockMvc.perform(delete(BASE_URL + "/{postSlug}", TestsUtil.samplePostSlug().getSlug()))
+    mockMvc.perform(delete(BASE_URL + "{postSlug}", TestsUtil.samplePostSlug().getSlug()))
            .andExpect(status().isNoContent())
            .andDo(document("delete_post", SLUG_PATH_PARAMETER));
   }
