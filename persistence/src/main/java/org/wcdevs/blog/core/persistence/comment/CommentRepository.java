@@ -39,6 +39,8 @@ public interface CommentRepository extends JpaRepository<Comment, UUID> {
          + "where pc is not null and pc.anchor = :anchor")
   Set<CommentDto> findAllChildCommentsWithParentAnchor(String anchor);
 
+  int countAllByParentComment(Comment parentComment);
+
   @Query("delete from Comment c where c.anchor = :anchor")
   @Modifying
   int deleteByAnchor(String anchor);
