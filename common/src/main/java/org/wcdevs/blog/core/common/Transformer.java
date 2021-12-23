@@ -15,5 +15,5 @@ public interface Transformer<E, D, P> {
 
   void update(E entity, D dto);
 
-  void updateNonNullValues(E post, P partialDto);
+  void updateNonNullValues(E entity, P partialDto);
 }
