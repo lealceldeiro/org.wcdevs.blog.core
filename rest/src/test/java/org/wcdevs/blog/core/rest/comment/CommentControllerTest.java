@@ -15,10 +15,13 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.wcdevs.blog.core.rest.TestsUtil.ERROR_RESPONSE_FIELDS;
 import static org.wcdevs.blog.core.rest.TestsUtil.MAPPER;
 
+import java.lang.reflect.Array;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
@@ -65,7 +68,7 @@ class CommentControllerTest {
 
   private static final String POST_SLUG = "postSlug";
   private static final String POST_SLUG_DESC
-      = "The slug of the post where the comment is being added";
+      = "The slug of the post where the comment is published";
 
   private static final String BODY = "body";
   private static final String BODY_DESC = "Content of the comment";
@@ -76,7 +79,7 @@ class CommentControllerTest {
   private static final String ANCHOR = "anchor";
   private static final String ANCHOR_DESC
       = "Comment anchor. This is generated during the creation of the comment and should be used"
-        + "later to identify (and retrieve any information) about the comment later";
+        + " later to identify (and retrieve,i.e., any information) about the comment later";
 
   private static final String PARENT_COMMENT_ANCHOR_PARAM = "parentAnchor";
   private static final String PARENT_COMMENT_ANCHOR_PARAM_DESC
@@ -127,7 +130,6 @@ class CommentControllerTest {
                       Arrays.stream(fields).map(CommentControllerTest::toArrayFieldDescriptor))
               .toArray(FieldDescriptor[]::new);
 
-  private static final RequestFieldsSnippet COMMENT_REQUEST_FIELDS = requestFields(fields);
   private static final ResponseFieldsSnippet COMMENT_RESPONSE_FIELDS = responseFields(fields);
   private static final ResponseFieldsSnippet COMMENTS_RESPONSE_FIELDS = responseFields(arrFields);
 
@@ -142,6 +144,7 @@ class CommentControllerTest {
   void setUp(RestDocumentationContextProvider restDocumentationContextProvider) {
     mockMvc = MockMvcBuilders.webAppContextSetup(context)
                              .apply(documentationConfiguration(restDocumentationContextProvider))
+                             .alwaysDo(print())
                              .build();
   }
 
@@ -158,20 +161,57 @@ class CommentControllerTest {
   }
 
   private static Stream<Arguments> createCommentArgs() {
-    return Stream.of(arguments("create_root_comment", TestsUtil.sampleRootComment()),
-                     arguments("create_child_comment", TestsUtil.sampleChildComment()));
+    var rootPrototype = TestsUtil.sampleRootComment();
+    var rootComment = CommentDto.builder()
+                                .postSlug(rootPrototype.getPostSlug())
+                                .body(rootPrototype.getBody())
+                                .publishedBy(rootPrototype.getPublishedBy())
+                                .build();
+    var childPrototype = TestsUtil.sampleChildComment();
+    var childComment = CommentDto.builder()
+                                 .postSlug(childPrototype.getPostSlug())
+                                 .body(childPrototype.getBody())
+                                 .publishedBy(childPrototype.getPublishedBy())
+                                 .parentCommentAnchor(childPrototype.getParentCommentAnchor())
+                                 .build();
+
+    FieldDescriptor[] rootCommentReqFields = {
+        fieldWithPath(POST_SLUG).description(POST_SLUG_DESC),
+        fieldWithPath(BODY).description(BODY_DESC),
+        fieldWithPath(PUBLISHED_BY).description(PUBLISHED_BY_DESC),
+        };
+
+    FieldDescriptor[] childCommentReqFields
+        = unionOf(rootCommentReqFields,
+                  fieldWithPath(PARENT_COMMENT_ANCHOR).description(PARENT_COMMENT_ANCHOR_DESC));
+
+    var resFields = responseFields(fieldWithPath(ANCHOR).description(ANCHOR_DESC));
+
+    return Stream.of(arguments("create_root_comment", rootComment, rootPrototype.getAnchor(),
+                               requestFields(rootCommentReqFields), resFields),
+                     arguments("create_child_comment", childComment, childPrototype.getAnchor(),
+                               requestFields(childCommentReqFields), resFields));
+  }
+
+  @SuppressWarnings("unchecked")
+  private static <T> T[] unionOf(T[] arr1, T... arr2) {
+    return Stream.concat(Arrays.stream(arr1), Arrays.stream(arr2))
+                 .toArray(ignored -> (T[]) Array.newInstance(arr1.getClass().getComponentType(),
+                                                             arr1.length + arr2.length));
   }
 
   @ParameterizedTest
   @MethodSource("createCommentArgs")
-  void createComment(String documentSnippetId, CommentDto dto) throws Exception {
-    when(commentService.createComment(dto)).thenReturn(dto);
+  void createComment(String docId, CommentDto dto, String anchor, RequestFieldsSnippet requestDocs,
+                     ResponseFieldsSnippet responseDocs) throws Exception {
+    when(commentService.createComment(dto)).thenReturn(CommentDto.builder().anchor(anchor).build());
 
     mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
                         .content(MAPPER.writeValueAsString(dto)))
            .andExpect(status().isCreated())
-           .andDo(document(documentSnippetId, COMMENT_REQUEST_FIELDS, COMMENT_RESPONSE_FIELDS));
+           .andDo(document(docId, requestDocs, responseDocs));
   }
 
   @Test
@@ -255,7 +295,7 @@ class CommentControllerTest {
 
     mockMvc.perform(delete(BASE_URL + "{commentAnchor}", anchor))
            .andExpect(status().isNoContent())
-           .andDo(document("get_comment", ANCHOR_PATH_PARAMETER));
+           .andDo(document("delete_comment", ANCHOR_PATH_PARAMETER));
     verify(commentService, times(1)).deleteComment(anchor);
   }
 }

@@ -59,7 +59,7 @@ public class CommentDto {
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   private LocalDateTime lastUpdated;
   @Setter
-  private int childrenCount = -1;
+  private Integer childrenCount;
 
   // only to be used among internal components to collaborate on data transfer
   @Getter

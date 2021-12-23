@@ -11,8 +11,10 @@ import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Random;
+import java.util.TimeZone;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -37,6 +39,8 @@ public final class TestsUtil {
 
   public static final ObjectMapper MAPPER = JsonMapper.builder()
                                                       .addModule(new JavaTimeModule())
+                                                      .defaultLocale(Locale.ENGLISH)
+                                                      .defaultTimeZone(TimeZone.getTimeZone("UTC"))
                                                       .build();
 
   static {

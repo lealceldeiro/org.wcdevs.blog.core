@@ -16,6 +16,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.wcdevs.blog.core.rest.TestsUtil.ERROR_RESPONSE_FIELDS;
 import static org.wcdevs.blog.core.rest.TestsUtil.MAPPER;
@@ -92,6 +93,7 @@ class PostControllerTest {
   void setUp(RestDocumentationContextProvider restDocumentation) {
     mockMvc = MockMvcBuilders.webAppContextSetup(context)
                              .apply(documentationConfiguration(restDocumentation))
+                             .alwaysDo(print())
                              .build();
 
     when(postService.createPost(any(PostDto.class))).
