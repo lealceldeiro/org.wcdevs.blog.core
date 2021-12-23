@@ -1,7 +1,7 @@
 [[resource-post-get-not-found]]
 ==== Not found errors
 
-When there's a `GET` (or any other, for the matter) request to retrieve a resource information, and it cannot be found there's `404` NOT FOUND status returned. Example:
+When there's a `GET` (or any other, for the matter) request to retrieve a resource information, and it cannot be found there's `404` Not Found status returned. Example:
 
 include::__H_REQUEST.adoc[]
 

@@ -1,0 +1,28 @@
+[[resource-comment-update]]
+==== Updating a comment
+
+A `PUT` request updates a comment entry in DB.
+
+include::__H_REQUEST.adoc[]
+
+include::__H_REQUEST_PATH_PARAMS.adoc[]
+
+include::{snippets}/update_comment/path-parameters.adoc[]
+
+include::__H_REQUEST_FIELDS.adoc[]
+
+include::{snippets}/update_comment/request-fields.adoc[]
+
+include::__H_EXAMPLE.adoc[]
+
+include::{snippets}/update_comment/http-request.adoc[]
+
+include::__H_RESPONSE.adoc[]
+
+include::__H_RESPONSE_FIELDS.adoc[]
+
+include::{snippets}/update_comment/response-fields.adoc[]
+
+include::__H_EXAMPLE_BARE.adoc[]
+
+include::{snippets}/update_comment/http-response.adoc[]

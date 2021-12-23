@@ -1,0 +1,25 @@
+[[resource-comment-create-child]]
+==== Creating a new child comment (a reply to another comment)
+
+A `POST` request adds a new _Comment_ entry in the DB.
+This service is only available to users with enough permissions to create a new comments.
+
+include::__H_REQUEST.adoc[]
+
+include::__H_REQUEST_FIELDS.adoc[]
+
+include::{snippets}/create_child_comment/request-fields.adoc[]
+
+include::__H_EXAMPLE.adoc[]
+
+include::{snippets}/create_child_comment/http-request.adoc[]
+
+include::__H_RESPONSE.adoc[]
+
+include::__H_RESPONSE_FIELDS.adoc[]
+
+include::{snippets}/create_child_comment/response-fields.adoc[]
+
+include::__H_EXAMPLE_BARE.adoc[]
+
+include::{snippets}/create_child_comment/http-response.adoc[]

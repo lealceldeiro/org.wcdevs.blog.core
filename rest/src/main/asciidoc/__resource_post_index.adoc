@@ -21,3 +21,5 @@ include::__resource_post_get.adoc[]
 include::__resource_post_get_not_found.adoc[]
 
 include::__resource_post_delete.adoc[]
+
+include::__resource_comment_get_method_not_allowed.adoc[]
