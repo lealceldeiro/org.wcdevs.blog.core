@@ -17,6 +17,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.wcdevs.blog.core.rest.TestsUtil.ERROR_RESPONSE_FIELDS;
 import static org.wcdevs.blog.core.rest.TestsUtil.MAPPER;
 import static org.wcdevs.blog.core.rest.TestsUtil.samplePostSlug;
 
@@ -79,10 +80,6 @@ class PostControllerTest {
       fieldWithPath("slug")
           .description("Post slug. This value must be used to identify (and retrieve) the post "
                        + "later"));
-  private static final ResponseFieldsSnippet ERROR_RESPONSE_FIELDS
-      = responseFields(fieldWithPath("message").description("Error message"),
-                       fieldWithPath("context").description("Request context"),
-                       fieldWithPath("dateTime").description("Request date time"));
 
   @Autowired
   private WebApplicationContext context;

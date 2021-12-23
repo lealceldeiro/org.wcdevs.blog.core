@@ -1,5 +1,8 @@
 package org.wcdevs.blog.core.rest;
 
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -13,12 +16,19 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import org.springframework.restdocs.payload.ResponseFieldsSnippet;
 import org.springframework.util.ResourceUtils;
 import org.wcdevs.blog.core.persistence.comment.CommentDto;
 import org.wcdevs.blog.core.persistence.post.PostDto;
 
 public final class TestsUtil {
+  public static final ResponseFieldsSnippet ERROR_RESPONSE_FIELDS
+      = responseFields(fieldWithPath("message").description("Error message"),
+                       fieldWithPath("context").description("Request context"),
+                       fieldWithPath("dateTime").description("Request date time"));
+
   private static final Random RANDOM = new SecureRandom();
+
   private static List<PostDto> SAMPLE_SLUG_DATA;
   private static List<PostDto> SAMPLE_SLUG_TITLE_DATA;
   private static List<PostDto> SAMPLE_TITLE_BODY_DATA;
