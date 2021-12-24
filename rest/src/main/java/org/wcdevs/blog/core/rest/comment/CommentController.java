@@ -8,7 +8,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,24 +26,9 @@ import org.wcdevs.blog.core.persistence.comment.PartialCommentDto;
 public class CommentController {
   private final CommentService commentService;
 
-  @PostMapping("/")
-  public ResponseEntity<CommentDto> createComment(@Validated @RequestBody CommentDto dto) {
-    return new ResponseEntity<>(commentService.createComment(dto), HttpStatus.CREATED);
-  }
-
   @GetMapping("/{commentAnchor}")
   public ResponseEntity<CommentDto> getComment(@PathVariable String commentAnchor) {
     return new ResponseEntity<>(commentService.getComment(commentAnchor), HttpStatus.OK);
-  }
-
-  @GetMapping("/all/{postSlug}")
-  public ResponseEntity<Collection<CommentDto>> getAllPostComments(@PathVariable String postSlug) {
-    return new ResponseEntity<>(commentService.getAllPostComments(postSlug), HttpStatus.OK);
-  }
-
-  @GetMapping("/root/{postSlug}")
-  public ResponseEntity<Collection<CommentDto>> getRootPostComments(@PathVariable String postSlug) {
-    return new ResponseEntity<>(commentService.getRootPostComments(postSlug), HttpStatus.OK);
   }
 
   @GetMapping("/children/{parentAnchor}")

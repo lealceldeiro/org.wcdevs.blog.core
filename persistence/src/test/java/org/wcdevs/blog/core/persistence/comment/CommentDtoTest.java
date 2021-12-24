@@ -31,7 +31,6 @@ class CommentDtoTest {
                         .body(body)
                         .publishedBy(publishedBy)
                         .parentCommentAnchor(parentCommentAnchor)
-                        .postSlug(postSlug)
                         .build();
 
     assertNotNull(dto);
@@ -39,7 +38,6 @@ class CommentDtoTest {
     assertEquals(body, dto.getBody());
     assertEquals(publishedBy, dto.getPublishedBy());
     assertEquals(parentCommentAnchor, dto.getParentCommentAnchor());
-    assertEquals(postSlug, dto.getPostSlug());
   }
 
   private static Stream<Arguments> dtoWithAnchorParentCommentAnchorAndPostSlugAreEqualArgs() {
@@ -75,7 +73,6 @@ class CommentDtoTest {
     var dto1 = CommentDto.builder()
                          .anchor(anchor1)
                          .parentCommentAnchor(parentCommentAnchor1)
-                         .postSlug(postSlug1)
                          .publishedBy(aString())
                          .body(aString())
                          .build();
@@ -83,7 +80,6 @@ class CommentDtoTest {
     var dto2 = CommentDto.builder()
                          .anchor(anchor2)
                          .parentCommentAnchor(parentCommentAnchor2)
-                         .postSlug(postSlug2)
                          .publishedBy(aString())
                          .body(aString())
                          .build();
@@ -99,14 +95,12 @@ class CommentDtoTest {
     var anchor = aString();
 
     var toString = CommentDto.builder()
-                             .postSlug(postSlug)
                              .parentCommentAnchor(parentCommentAnchor)
                              .publishedBy(publishedBy)
                              .anchor(anchor)
                              .build()
                              .toString();
     assertTrue(toString.contains("anchor=" + anchor));
-    assertTrue(toString.contains("postSlug=" + postSlug));
     assertTrue(toString.contains("parentCommentAnchor=" + parentCommentAnchor));
   }
 

@@ -62,7 +62,6 @@ class CommentServiceImplTest {
     var post = mock(Post.class);
 
     var dtoArg = mock(CommentDto.class);
-    when(dtoArg.getPostSlug()).thenReturn(postSlug);
     when(dtoArg.getParentCommentAnchor()).thenReturn(parentCommentAnchor);
 
     var savedCommentAnchor = TestsUtil.aString();
@@ -76,7 +75,7 @@ class CommentServiceImplTest {
     when(commentRepository.save(savedComment)).thenReturn(savedComment);
     when(commentTransformer.newEntityFromDto(dtoArg)).thenReturn(savedComment);
 
-    var returnedDto = commentService.createComment(dtoArg);
+    var returnedDto = commentService.createComment(postSlug, dtoArg);
 
     assertNotNull(returnedDto);
     verify(postRepository, times(1)).findPostUuidWithSlug(postSlug);
@@ -92,9 +91,11 @@ class CommentServiceImplTest {
 
   @Test
   void createCommentThrowsPostNotFoundException() {
-    when(postRepository.findPostUuidWithSlug(any())).thenReturn(Optional.empty());
+    var slug = TestsUtil.aString();
+    when(postRepository.findPostUuidWithSlug(slug)).thenReturn(Optional.empty());
 
-    assertThrows(PostNotFoundException.class, () -> commentService.createComment(mock(CommentDto.class)));
+    assertThrows(PostNotFoundException.class,
+                 () -> commentService.createComment(slug, mock(CommentDto.class)));
   }
 
   @Test

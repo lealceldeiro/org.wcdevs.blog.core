@@ -1,6 +1,5 @@
 package org.wcdevs.blog.core.rest.comment;
 
-import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -11,34 +10,30 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.wcdevs.blog.core.rest.DocUtil.ANCHOR_DESC;
+import static org.wcdevs.blog.core.rest.DocUtil.BASE_URL;
+import static org.wcdevs.blog.core.rest.DocUtil.BODY;
+import static org.wcdevs.blog.core.rest.DocUtil.BODY_DESC;
+import static org.wcdevs.blog.core.rest.DocUtil.COMMENTS_RESPONSE_FIELDS;
+import static org.wcdevs.blog.core.rest.DocUtil.COMMENT_RESPONSE_FIELDS;
+import static org.wcdevs.blog.core.rest.DocUtil.PARENT_COMMENT_ANCHOR_PARAM;
+import static org.wcdevs.blog.core.rest.DocUtil.PARENT_COMMENT_ANCHOR_PARAM_DESC;
 import static org.wcdevs.blog.core.rest.TestsUtil.ERROR_RESPONSE_FIELDS;
 import static org.wcdevs.blog.core.rest.TestsUtil.MAPPER;
 
-import java.lang.reflect.Array;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
-import org.springframework.restdocs.payload.FieldDescriptor;
-import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.restdocs.payload.ResponseFieldsSnippet;
 import org.springframework.restdocs.request.PathParametersSnippet;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -46,7 +41,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.wcdevs.blog.core.common.comment.CommentService;
-import org.wcdevs.blog.core.persistence.comment.CommentDto;
 import org.wcdevs.blog.core.persistence.comment.PartialCommentDto;
 import org.wcdevs.blog.core.rest.AppExceptionHandler;
 import org.wcdevs.blog.core.rest.TestsUtil;
@@ -54,6 +48,7 @@ import org.wcdevs.blog.core.rest.errorhandler.ErrorHandlerFactory;
 import org.wcdevs.blog.core.rest.errorhandler.impl.ArgumentNotValidExceptionHandler;
 import org.wcdevs.blog.core.rest.errorhandler.impl.DataIntegrityViolationErrorHandler;
 import org.wcdevs.blog.core.rest.errorhandler.impl.NotFoundErrorHandler;
+
 
 @EnableWebMvc
 @SpringBootTest(classes = {
@@ -63,74 +58,12 @@ import org.wcdevs.blog.core.rest.errorhandler.impl.NotFoundErrorHandler;
 })
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 class CommentControllerTest {
-  private static final String BASE_URL = "/comment/";
-
-  private static final String POST_SLUG = "postSlug";
-  private static final String POST_SLUG_DESC
-      = "The slug of the post where the comment is published";
-
-  private static final String BODY = "body";
-  private static final String BODY_DESC = "Content of the comment";
-
-  private static final String PUBLISHED_BY = "publishedBy";
-  private static final String PUBLISHED_BY_DESC = "Author of the comment";
-
-  private static final String ANCHOR = "anchor";
-  private static final String ANCHOR_DESC
-      = "Comment anchor. This is generated during the creation of the comment and should be used"
-        + " later to identify (and retrieve,i.e., any information) about the comment later";
-  private static final ResponseFieldsSnippet ANCHOR_RES_FIELD = responseFields(fieldWithPath(ANCHOR).description(ANCHOR_DESC));
-
-  private static final String PARENT_COMMENT_ANCHOR_PARAM = "parentAnchor";
-  private static final String PARENT_COMMENT_ANCHOR_PARAM_DESC
-      = "Parent comment anchor. This is the anchor of the comment under which the current comment "
-        + "is nested";
-
-  private static final String PARENT_COMMENT_ANCHOR = "parentCommentAnchor";
-  private static final String PARENT_COMMENT_ANCHOR_DESC
-      = "Anchor of the parent comment. This will be null for root comments (those not nested under"
-        + " any other comment)";
-
-  private static final String LAST_UPDATED = "lastUpdated";
-  private static final String LAST_UPDATED_DESC = "Last time the comment was updated";
-
-  private static final String CHILDREN_COUNT = "childrenCount";
-  private static final String CHILDREN_COUNT_DESC
-      = "Number of comments which are children of this comment. Those comments (children) can be "
-        + "seen as the number of replies to the parent comment";
-
-  private static final Object STRING_TYPE = JsonFieldType.STRING;
-  private static final Object INTEGER_TYPE = JsonFieldType.NUMBER;
-  private static final Object LOCAL_DATE_TIME_TYPE = JsonFieldType.STRING;
-
   private static final PathParametersSnippet ANCHOR_PATH_PARAMETER
       = pathParameters(parameterWithName("commentAnchor").description(ANCHOR_DESC));
-
-  private static final PathParametersSnippet POST_SLUG_PATH_PARAMETER
-      = pathParameters(parameterWithName(POST_SLUG).description(POST_SLUG_DESC));
 
   private static final PathParametersSnippet PARENT_COMMENT_ANCHOR_PATH_PARAM
       = pathParameters(parameterWithName(PARENT_COMMENT_ANCHOR_PARAM)
                            .description(PARENT_COMMENT_ANCHOR_PARAM_DESC));
-
-  private static final FieldDescriptor[] fields = {
-      fieldWithPath(ANCHOR).optional().type(STRING_TYPE).description(ANCHOR_DESC),
-      fieldWithPath(BODY).description(BODY_DESC),
-      fieldWithPath(PUBLISHED_BY).description(PUBLISHED_BY_DESC),
-      fieldWithPath(LAST_UPDATED).optional().type(LOCAL_DATE_TIME_TYPE)
-          .description(LAST_UPDATED_DESC),
-      fieldWithPath(CHILDREN_COUNT).optional().type(INTEGER_TYPE).description(CHILDREN_COUNT_DESC),
-      fieldWithPath(POST_SLUG).optional().ignored(),
-      fieldWithPath(PARENT_COMMENT_ANCHOR).optional().ignored(),
-      };
-
-  private static final FieldDescriptor[] arrFields
-      = Stream.concat(Stream.of(fieldWithPath("[]").description("List of comments")),
-                      Arrays.stream(fields).map(CommentControllerTest::toArrayFieldDescriptor))
-              .toArray(FieldDescriptor[]::new);
-
-  private static final ResponseFieldsSnippet COMMENT_RESPONSE_FIELDS = responseFields(fields);
-  private static final ResponseFieldsSnippet COMMENTS_RESPONSE_FIELDS = responseFields(arrFields);
 
   @Autowired
   private WebApplicationContext context;
@@ -147,70 +80,6 @@ class CommentControllerTest {
                              .build();
   }
 
-  private static FieldDescriptor toArrayFieldDescriptor(FieldDescriptor singleFieldDescriptor) {
-    var path = singleFieldDescriptor.getPath();
-    var description = singleFieldDescriptor.getDescription();
-    var type = singleFieldDescriptor.getType();
-
-    var newFd = fieldWithPath("[*]." + path).description(description).type(type);
-    if (singleFieldDescriptor.isOptional()) {
-      newFd.optional();
-    }
-    return singleFieldDescriptor.isIgnored() ? newFd.ignored() : newFd;
-  }
-
-  private static Stream<Arguments> createCommentArgs() {
-    var rootPrototype = TestsUtil.sampleRootComment();
-    var rootComment = CommentDto.builder()
-                                .postSlug(rootPrototype.getPostSlug())
-                                .body(rootPrototype.getBody())
-                                .publishedBy(rootPrototype.getPublishedBy())
-                                .build();
-    var childPrototype = TestsUtil.sampleChildComment();
-    var childComment = CommentDto.builder()
-                                 .postSlug(childPrototype.getPostSlug())
-                                 .body(childPrototype.getBody())
-                                 .publishedBy(childPrototype.getPublishedBy())
-                                 .parentCommentAnchor(childPrototype.getParentCommentAnchor())
-                                 .build();
-
-    FieldDescriptor[] rootCommentReqFields = {
-        fieldWithPath(POST_SLUG).description(POST_SLUG_DESC),
-        fieldWithPath(BODY).description(BODY_DESC),
-        fieldWithPath(PUBLISHED_BY).description(PUBLISHED_BY_DESC),
-        };
-
-    FieldDescriptor[] childCommentReqFields
-        = unionOf(rootCommentReqFields,
-                  fieldWithPath(PARENT_COMMENT_ANCHOR).description(PARENT_COMMENT_ANCHOR_DESC));
-
-    return Stream.of(arguments("create_root_comment", rootComment, rootPrototype.getAnchor(),
-                               rootCommentReqFields),
-                     arguments("create_child_comment", childComment, childPrototype.getAnchor(),
-                               childCommentReqFields));
-  }
-
-  @SuppressWarnings("unchecked")
-  private static <T> T[] unionOf(T[] arr1, T... arr2) {
-    return Stream.concat(Arrays.stream(arr1), Arrays.stream(arr2))
-                 .toArray(ignored -> (T[]) Array.newInstance(arr1.getClass().getComponentType(),
-                                                             arr1.length + arr2.length));
-  }
-
-  @ParameterizedTest
-  @MethodSource("createCommentArgs")
-  void createComment(String docId, CommentDto dto, String anchor,
-                     FieldDescriptor[] requestFieldDescriptors) throws Exception {
-    when(commentService.createComment(dto)).thenReturn(CommentDto.builder().anchor(anchor).build());
-
-    mockMvc.perform(post(BASE_URL)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .content(MAPPER.writeValueAsString(dto)))
-           .andExpect(status().isCreated())
-           .andDo(document(docId, requestFields(requestFieldDescriptors), ANCHOR_RES_FIELD));
-  }
-
   @Test
   void getComment() throws Exception {
     var dto = TestsUtil.sampleComment();
@@ -220,29 +89,6 @@ class CommentControllerTest {
     mockMvc.perform(get(BASE_URL + "{commentAnchor}", anchor))
            .andExpect(status().isOk())
            .andDo(document("get_comment", ANCHOR_PATH_PARAMETER, COMMENT_RESPONSE_FIELDS));
-  }
-
-  @Test
-  void getAllPostComments() throws Exception {
-    var comments = TestsUtil.sampleComments();
-    var postSlug = comments.get(0).getPostSlug();
-    when(commentService.getAllPostComments(postSlug)).thenReturn(comments);
-
-    mockMvc.perform(get(BASE_URL + "all/{postSlug}", postSlug))
-           .andExpect(status().isOk())
-           .andDo(document("get_all_comments", POST_SLUG_PATH_PARAMETER, COMMENTS_RESPONSE_FIELDS));
-  }
-
-  @Test
-  void getRootPostComments() throws Exception {
-    var comments = TestsUtil.sampleRootComments();
-    var postSlug = comments.get(0).getPostSlug();
-    when(commentService.getRootPostComments(postSlug)).thenReturn(comments);
-
-    mockMvc.perform(get(BASE_URL + "root/{postSlug}", postSlug))
-           .andExpect(status().isOk())
-           .andDo(document("get_root_comments", POST_SLUG_PATH_PARAMETER,
-                           COMMENTS_RESPONSE_FIELDS));
   }
 
   @Test

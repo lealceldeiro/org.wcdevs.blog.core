@@ -37,10 +37,6 @@ public class CommentDto {
 
   @ToString.Include
   @EqualsAndHashCode.Include
-  private String postSlug;
-
-  @ToString.Include
-  @EqualsAndHashCode.Include
   private String parentCommentAnchor;
 
   @NotNull

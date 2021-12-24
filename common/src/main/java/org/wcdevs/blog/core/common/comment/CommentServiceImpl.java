@@ -23,9 +23,9 @@ public class CommentServiceImpl implements CommentService {
   private final CommentTransformer commentTransformer;
 
   @Override
-  public CommentDto createComment(CommentDto dto) {
+  public CommentDto createComment(String postSlug, CommentDto dto) {
     // use lighter query, to later get entity reference
-    var post = postRepository.findPostUuidWithSlug(dto.getPostSlug())
+    var post = postRepository.findPostUuidWithSlug(postSlug)
                              .map(postRepository::getById)
                              .orElseThrow(PostNotFoundException::new);
     var parentComment = commentRepository.getCommentUuidWithAnchor(dto.getParentCommentAnchor())

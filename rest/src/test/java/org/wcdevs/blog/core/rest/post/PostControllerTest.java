@@ -1,5 +1,6 @@
 package org.wcdevs.blog.core.rest.post;
 
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -18,16 +19,32 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.wcdevs.blog.core.rest.DocUtil.ANCHOR;
+import static org.wcdevs.blog.core.rest.DocUtil.ANCHOR_DESC;
+import static org.wcdevs.blog.core.rest.DocUtil.BODY;
+import static org.wcdevs.blog.core.rest.DocUtil.BODY_DESC;
+import static org.wcdevs.blog.core.rest.DocUtil.COMMENTS_RESPONSE_FIELDS;
+import static org.wcdevs.blog.core.rest.DocUtil.PARENT_COMMENT_ANCHOR;
+import static org.wcdevs.blog.core.rest.DocUtil.PARENT_COMMENT_ANCHOR_DESC;
+import static org.wcdevs.blog.core.rest.DocUtil.POST_SLUG;
+import static org.wcdevs.blog.core.rest.DocUtil.POST_SLUG_DESC;
+import static org.wcdevs.blog.core.rest.DocUtil.PUBLISHED_BY;
+import static org.wcdevs.blog.core.rest.DocUtil.PUBLISHED_BY_DESC;
 import static org.wcdevs.blog.core.rest.TestsUtil.ERROR_RESPONSE_FIELDS;
 import static org.wcdevs.blog.core.rest.TestsUtil.MAPPER;
 import static org.wcdevs.blog.core.rest.TestsUtil.samplePostSlug;
 
+import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,16 +53,20 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.RequestFieldsSnippet;
 import org.springframework.restdocs.payload.ResponseFieldsSnippet;
 import org.springframework.restdocs.request.PathParametersSnippet;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.wcdevs.blog.core.common.comment.CommentService;
 import org.wcdevs.blog.core.common.post.PostNotFoundException;
 import org.wcdevs.blog.core.common.post.PostService;
+import org.wcdevs.blog.core.persistence.comment.CommentDto;
 import org.wcdevs.blog.core.persistence.post.PartialPostDto;
 import org.wcdevs.blog.core.persistence.post.PostDto;
 import org.wcdevs.blog.core.rest.AppExceptionHandler;
@@ -83,12 +104,22 @@ class PostControllerTest {
           .description("Post slug. This value must be used to identify (and retrieve) the post "
                        + "later"));
 
+  private static final ResponseFieldsSnippet ANCHOR_RES_FIELD
+      = responseFields(fieldWithPath(ANCHOR).description(ANCHOR_DESC));
+
+
+  private static final PathParametersSnippet POST_SLUG_PATH_PARAMETER
+      = pathParameters(parameterWithName(POST_SLUG).description(POST_SLUG_DESC));
+
   @Autowired
   private WebApplicationContext context;
   private MockMvc mockMvc;
 
   @MockBean
   private PostService postService;
+
+  @MockBean
+  private CommentService commentService;
 
   @BeforeEach
   void setUp(RestDocumentationContextProvider restDocumentation) {
@@ -318,5 +349,79 @@ class PostControllerTest {
     mockMvc.perform(delete(BASE_URL + "{postSlug}", TestsUtil.samplePostSlug().getSlug()))
            .andExpect(status().isNoContent())
            .andDo(document("delete_post", SLUG_PATH_PARAMETER));
+  }
+
+  private static Stream<Arguments> createCommentArgs() {
+    var rootPrototype = TestsUtil.sampleRootComment();
+    var rootComment = CommentDto.builder()
+                                .body(rootPrototype.getBody())
+                                .publishedBy(rootPrototype.getPublishedBy())
+                                .build();
+    var childPrototype = TestsUtil.sampleChildComment();
+    var childComment = CommentDto.builder()
+                                 .body(childPrototype.getBody())
+                                 .publishedBy(childPrototype.getPublishedBy())
+                                 .parentCommentAnchor(childPrototype.getParentCommentAnchor())
+                                 .build();
+
+    FieldDescriptor[] rootCommentReqFields = {
+        fieldWithPath(BODY).description(BODY_DESC),
+        fieldWithPath(PUBLISHED_BY).description(PUBLISHED_BY_DESC),
+        };
+
+    FieldDescriptor[] childCommentReqFields
+        = unionOf(rootCommentReqFields,
+                  fieldWithPath(PARENT_COMMENT_ANCHOR).description(PARENT_COMMENT_ANCHOR_DESC));
+
+    return Stream.of(arguments("create_root_comment", rootComment, rootPrototype.getAnchor(),
+                               rootCommentReqFields),
+                     arguments("create_child_comment", childComment, childPrototype.getAnchor(),
+                               childCommentReqFields));
+  }
+
+  @SuppressWarnings("unchecked")
+  private static <T> T[] unionOf(T[] arr1, T... arr2) {
+    return Stream.concat(Arrays.stream(arr1), Arrays.stream(arr2))
+                 .toArray(ignored -> (T[]) Array.newInstance(arr1.getClass().getComponentType(),
+                                                             arr1.length + arr2.length));
+  }
+
+  @ParameterizedTest
+  @MethodSource("createCommentArgs")
+  void createComment(String docId, CommentDto dto, String anchor,
+                     FieldDescriptor[] requestFieldDescriptors) throws Exception {
+    var post = TestsUtil.samplePostSlug();
+    when(commentService.createComment(post.getSlug(), dto))
+        .thenReturn(CommentDto.builder().anchor(anchor).build());
+
+    mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/{postSlug}/comment", post.getSlug())
+                                          .contentType(MediaType.APPLICATION_JSON)
+                                          .characterEncoding(StandardCharsets.UTF_8)
+                                          .content(MAPPER.writeValueAsString(dto)))
+           .andExpect(status().isCreated())
+           .andDo(document(docId, requestFields(requestFieldDescriptors), ANCHOR_RES_FIELD));
+  }
+
+  @Test
+  void getRootPostComments() throws Exception {
+    var comments = TestsUtil.sampleRootComments();
+    var postSlug = TestsUtil.samplePostSlug().getSlug();
+    when(commentService.getRootPostComments(postSlug)).thenReturn(comments);
+
+    mockMvc.perform(get(BASE_URL + "{postSlug}/comment/root", postSlug))
+           .andExpect(status().isOk())
+           .andDo(document("get_root_comments", POST_SLUG_PATH_PARAMETER,
+                           COMMENTS_RESPONSE_FIELDS));
+  }
+
+  @Test
+  void getAllPostComments() throws Exception {
+    var comments = TestsUtil.sampleComments();
+    var postSlug = TestsUtil.samplePostSlug().getSlug();
+    when(commentService.getAllPostComments(postSlug)).thenReturn(comments);
+
+    mockMvc.perform(get(BASE_URL + "{postSlug}/comment/all", postSlug))
+           .andExpect(status().isOk())
+           .andDo(document("get_all_comments", POST_SLUG_PATH_PARAMETER, COMMENTS_RESPONSE_FIELDS));
   }
 }

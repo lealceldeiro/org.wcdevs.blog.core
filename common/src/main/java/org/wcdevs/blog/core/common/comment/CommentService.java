@@ -9,7 +9,7 @@ import org.wcdevs.blog.core.persistence.comment.PartialCommentDto;
  * Provides services to handle the business logic concerning the {@link Comment}s data.
  */
 public interface CommentService {
-  CommentDto createComment(CommentDto commentDto);
+  CommentDto createComment(String postSlug, CommentDto commentDto);
 
   CommentDto getComment(String commentAnchor);
 
