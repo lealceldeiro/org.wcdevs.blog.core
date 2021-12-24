@@ -105,8 +105,8 @@ public class CommentServiceImpl implements CommentService {
 
   @Override
   @Transactional(readOnly = true)
-  public Collection<CommentDto> getCommentChildComments(String commentAnchor) {
-    var comments = commentRepository.findAllChildCommentsWithParentAnchor(commentAnchor);
+  public Collection<CommentDto> getParentCommentChildren(String parentCommentAnchor) {
+    var comments = commentRepository.findAllChildCommentsWithParentAnchor(parentCommentAnchor);
     setChildrenCountToComments(comments);
 
     return comments;

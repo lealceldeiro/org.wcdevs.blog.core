@@ -21,5 +21,5 @@ public interface CommentService {
 
   Collection<CommentDto> getRootPostComments(String postSlug);
 
-  Collection<CommentDto> getCommentChildComments(String commentAnchor);
+  Collection<CommentDto> getParentCommentChildren(String parentCommentAnchor);
 }

@@ -231,7 +231,7 @@ class CommentServiceImplTest {
     when(commentRepository.getById(uuid.get())).thenReturn(mock(Comment.class));
     when(commentRepository.countAllByParentComment(any(Comment.class))).thenReturn(childrenCount);
 
-    var actual = commentService.getCommentChildComments(postSlug);
+    var actual = commentService.getParentCommentChildren(postSlug);
     assertEquals(expected, actual);
     expected.forEach(iExpected -> verify(iExpected, times(1)).setChildrenCount(childrenCount));
   }

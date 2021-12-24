@@ -252,7 +252,7 @@ class CommentControllerTest {
   void getChildren() throws Exception {
     var comments = TestsUtil.sampleChildComments();
     var parentCommentAnchor = comments.get(0).getParentCommentAnchor();
-    when(commentService.getCommentChildComments(parentCommentAnchor)).thenReturn(comments);
+    when(commentService.getParentCommentChildren(parentCommentAnchor)).thenReturn(comments);
 
     mockMvc.perform(get(BASE_URL + "children/{parentAnchor}", parentCommentAnchor))
            .andExpect(status().isOk())

@@ -49,7 +49,7 @@ public class CommentController {
 
   @GetMapping("/children/{parentAnchor}")
   public ResponseEntity<Collection<CommentDto>> getChildren(@PathVariable String parentAnchor) {
-    return new ResponseEntity<>(commentService.getCommentChildComments(parentAnchor),
+    return new ResponseEntity<>(commentService.getParentCommentChildren(parentAnchor),
                                 HttpStatus.OK);
   }
 
