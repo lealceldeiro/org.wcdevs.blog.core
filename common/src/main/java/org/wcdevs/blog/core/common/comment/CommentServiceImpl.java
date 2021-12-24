@@ -99,7 +99,7 @@ public class CommentServiceImpl implements CommentService {
     return comments;
   }
 
-  private void setChildrenCountToComments(final Set<CommentDto> comments) {
+  private void setChildrenCountToComments(Set<CommentDto> comments) {
     comments.forEach(c -> c.setChildrenCount(commentChildrenCount(c.getAnchor())));
   }
 
