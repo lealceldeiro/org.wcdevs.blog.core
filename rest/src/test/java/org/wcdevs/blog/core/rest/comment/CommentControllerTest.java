@@ -38,7 +38,6 @@ import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.restdocs.payload.RequestFieldsSnippet;
 import org.springframework.restdocs.payload.ResponseFieldsSnippet;
 import org.springframework.restdocs.request.PathParametersSnippet;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -80,6 +79,7 @@ class CommentControllerTest {
   private static final String ANCHOR_DESC
       = "Comment anchor. This is generated during the creation of the comment and should be used"
         + " later to identify (and retrieve,i.e., any information) about the comment later";
+  private static final ResponseFieldsSnippet ANCHOR_RES_FIELD = responseFields(fieldWithPath(ANCHOR).description(ANCHOR_DESC));
 
   private static final String PARENT_COMMENT_ANCHOR_PARAM = "parentAnchor";
   private static final String PARENT_COMMENT_ANCHOR_PARAM_DESC
@@ -114,16 +114,15 @@ class CommentControllerTest {
                            .description(PARENT_COMMENT_ANCHOR_PARAM_DESC));
 
   private static final FieldDescriptor[] fields = {
-      fieldWithPath(POST_SLUG).description(POST_SLUG_DESC),
+      fieldWithPath(ANCHOR).optional().type(STRING_TYPE).description(ANCHOR_DESC),
       fieldWithPath(BODY).description(BODY_DESC),
       fieldWithPath(PUBLISHED_BY).description(PUBLISHED_BY_DESC),
-      fieldWithPath(PARENT_COMMENT_ANCHOR).optional().type(STRING_TYPE)
-          .description(PARENT_COMMENT_ANCHOR_DESC),
-      fieldWithPath(ANCHOR).optional().type(STRING_TYPE).description(ANCHOR_DESC),
-      fieldWithPath(CHILDREN_COUNT).optional().type(INTEGER_TYPE).description(CHILDREN_COUNT_DESC),
       fieldWithPath(LAST_UPDATED).optional().type(LOCAL_DATE_TIME_TYPE)
-          .description(LAST_UPDATED_DESC)
-  };
+          .description(LAST_UPDATED_DESC),
+      fieldWithPath(CHILDREN_COUNT).optional().type(INTEGER_TYPE).description(CHILDREN_COUNT_DESC),
+      fieldWithPath(POST_SLUG).optional().ignored(),
+      fieldWithPath(PARENT_COMMENT_ANCHOR).optional().ignored(),
+      };
 
   private static final FieldDescriptor[] arrFields
       = Stream.concat(Stream.of(fieldWithPath("[]").description("List of comments")),
@@ -185,12 +184,10 @@ class CommentControllerTest {
         = unionOf(rootCommentReqFields,
                   fieldWithPath(PARENT_COMMENT_ANCHOR).description(PARENT_COMMENT_ANCHOR_DESC));
 
-    var resFields = responseFields(fieldWithPath(ANCHOR).description(ANCHOR_DESC));
-
     return Stream.of(arguments("create_root_comment", rootComment, rootPrototype.getAnchor(),
-                               requestFields(rootCommentReqFields), resFields),
+                               rootCommentReqFields),
                      arguments("create_child_comment", childComment, childPrototype.getAnchor(),
-                               requestFields(childCommentReqFields), resFields));
+                               childCommentReqFields));
   }
 
   @SuppressWarnings("unchecked")
@@ -202,8 +199,8 @@ class CommentControllerTest {
 
   @ParameterizedTest
   @MethodSource("createCommentArgs")
-  void createComment(String docId, CommentDto dto, String anchor, RequestFieldsSnippet requestDocs,
-                     ResponseFieldsSnippet responseDocs) throws Exception {
+  void createComment(String docId, CommentDto dto, String anchor,
+                     FieldDescriptor[] requestFieldDescriptors) throws Exception {
     when(commentService.createComment(dto)).thenReturn(CommentDto.builder().anchor(anchor).build());
 
     mockMvc.perform(post(BASE_URL)
@@ -211,7 +208,7 @@ class CommentControllerTest {
                         .characterEncoding(StandardCharsets.UTF_8)
                         .content(MAPPER.writeValueAsString(dto)))
            .andExpect(status().isCreated())
-           .andDo(document(docId, requestDocs, responseDocs));
+           .andDo(document(docId, requestFields(requestFieldDescriptors), ANCHOR_RES_FIELD));
   }
 
   @Test
