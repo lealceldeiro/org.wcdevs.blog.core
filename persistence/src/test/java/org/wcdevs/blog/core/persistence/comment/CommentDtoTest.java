@@ -40,36 +40,28 @@ class CommentDtoTest {
     assertEquals(parentCommentAnchor, dto.getParentCommentAnchor());
   }
 
-  private static Stream<Arguments> dtoWithAnchorParentCommentAnchorAndPostSlugAreEqualArgs() {
+  private static Stream<Arguments> dtoWithAnchorParentCommentAnchorAreEqualArgs() {
     var anchorA = "anchorA";
     var anchorB = "anchorB";
     var parentCommentAnchorA = "parentCommentAnchorA";
     var parentCommentAnchorB = "parentCommentAnchorB";
-    var postSlugA = "postSlugA";
-    var postSlugB = "postSlugB";
 
-    return Stream.of(arguments(anchorA, parentCommentAnchorA, postSlugA,
-                               anchorA, parentCommentAnchorA, postSlugA,
-                               true), // equals for the three of them matching
-                     arguments(anchorA, parentCommentAnchorA, postSlugA,
-                               anchorB, parentCommentAnchorA, postSlugA,
+    return Stream.of(arguments(anchorA, parentCommentAnchorA,
+                               anchorA, parentCommentAnchorA,
+                               true), // equals for the 2 of them matching
+                     arguments(anchorA, parentCommentAnchorA,
+                               anchorB, parentCommentAnchorA,
                                false),
-                     arguments(anchorA, parentCommentAnchorA, postSlugA,
-                               anchorA, parentCommentAnchorB, postSlugA,
-                               false),
-                     arguments(anchorA, parentCommentAnchorA, postSlugA,
-                               anchorA, parentCommentAnchorA, postSlugB,
+                     arguments(anchorA, parentCommentAnchorA,
+                               anchorA, parentCommentAnchorB,
                                false));
   }
 
   @ParameterizedTest
-  @MethodSource("dtoWithAnchorParentCommentAnchorAndPostSlugAreEqualArgs")
-  void dtoWithAnchorParentCommentAnchorAndPostSlugAreEqual(String anchor1,
-                                                           String parentCommentAnchor1,
-                                                           String postSlug1,
-                                                           String anchor2,
-                                                           String parentCommentAnchor2,
-                                                           String postSlug2, boolean equal) {
+  @MethodSource("dtoWithAnchorParentCommentAnchorAreEqualArgs")
+  void dtoWithAnchorParentCommentAnchorAreEqual(String anchor1, String parentCommentAnchor1,
+                                                String anchor2, String parentCommentAnchor2,
+                                                boolean equal) {
     var dto1 = CommentDto.builder()
                          .anchor(anchor1)
                          .parentCommentAnchor(parentCommentAnchor1)
