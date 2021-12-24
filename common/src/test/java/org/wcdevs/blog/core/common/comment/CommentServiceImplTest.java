@@ -10,7 +10,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.security.SecureRandom;
 import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
@@ -101,27 +100,18 @@ class CommentServiceImplTest {
   @Test
   void getComment() {
     var anchor = TestsUtil.aString();
-    var comment = mock(Comment.class);
-    var childrenCount = new SecureRandom().nextInt();
-    var uuid = Optional.of(UUID.randomUUID());
-
-    when(commentRepository.findByAnchor(anchor)).thenReturn(Optional.of(comment));
-    when(commentRepository.getCommentUuidWithAnchor(anchor)).thenReturn(uuid);
-    when(commentRepository.getById(uuid.get())).thenReturn(mock(Comment.class));
-    when(commentRepository.countAllByParentComment(any(Comment.class))).thenReturn(childrenCount);
 
     var expected = mock(CommentDto.class);
-    when(commentTransformer.dtoFromEntity(comment)).thenReturn(expected);
+    when(commentRepository.findCommentWithAnchor(anchor)).thenReturn(expected);
 
     var actual = commentService.getComment(anchor);
 
     assertEquals(expected, actual);
-    verify(expected, times(1)).setChildrenCount(childrenCount);
   }
 
   @Test
   void getCommentThrowsCommentNotFoundException() {
-    when(commentRepository.findByAnchor(any())).thenReturn(Optional.empty());
+    when(commentRepository.findCommentWithAnchor(any())).thenReturn(null);
     var anchor = TestsUtil.aString();
 
     assertThrows(CommentNotFoundException.class, () -> commentService.getComment(anchor));
@@ -131,25 +121,17 @@ class CommentServiceImplTest {
   void updateComment() {
     var anchor = TestsUtil.aString();
     var comment = mock(Comment.class);
-    var childrenCount = new SecureRandom().nextInt();
-    var uuid = Optional.of(UUID.randomUUID());
+    when(comment.getAnchor()).thenReturn(anchor);
 
     when(commentRepository.findByAnchor(anchor)).thenReturn(Optional.of(comment));
-    when(commentRepository.getCommentUuidWithAnchor(anchor)).thenReturn(uuid);
-    when(commentRepository.getById(uuid.get())).thenReturn(mock(Comment.class));
-    when(commentRepository.countAllByParentComment(any(Comment.class))).thenReturn(childrenCount);
-
-    var expected = mock(CommentDto.class);
-    when(commentTransformer.dtoFromEntity(comment)).thenReturn(expected);
 
     var partialCommentDto = mock(PartialCommentDto.class);
     var actual = commentService.updateComment(anchor, partialCommentDto);
 
     assertNotNull(actual);
-    assertEquals(expected, actual);
+    assertEquals(anchor, actual.getAnchor());
     verify(commentTransformer, times(1)).updateNonNullValues(comment, partialCommentDto);
     verify(commentRepository, times(1)).save(comment);
-    verify(expected, times(1)).setChildrenCount(childrenCount);
   }
 
   @Test
@@ -185,17 +167,10 @@ class CommentServiceImplTest {
     var expected = IntStream.rangeClosed(0, new Random().nextInt(13))
                             .mapToObj(i -> mock(CommentDto.class))
                             .collect(Collectors.toSet());
-    var childrenCount = new SecureRandom().nextInt();
-    var uuid = Optional.of(UUID.randomUUID());
-
-    when(commentRepository.findAllWithPostSlug(postSlug)).thenReturn(expected);
-    when(commentRepository.getCommentUuidWithAnchor(any())).thenReturn(uuid);
-    when(commentRepository.getById(uuid.get())).thenReturn(mock(Comment.class));
-    when(commentRepository.countAllByParentComment(any(Comment.class))).thenReturn(childrenCount);
+    when(commentRepository.findAllCommentsWithPostSlug(postSlug)).thenReturn(expected);
 
     var actual = commentService.getAllPostComments(postSlug);
     assertEquals(expected, actual);
-    expected.forEach(iExpected -> verify(iExpected, times(1)).setChildrenCount(childrenCount));
   }
 
   @Test
@@ -204,17 +179,10 @@ class CommentServiceImplTest {
     var expected = IntStream.rangeClosed(0, new Random().nextInt(13))
                             .mapToObj(i -> mock(CommentDto.class))
                             .collect(Collectors.toSet());
-    var childrenCount = new SecureRandom().nextInt();
-    var uuid = Optional.of(UUID.randomUUID());
-
-    when(commentRepository.findAllRootCommentsWithPostSlug(postSlug)).thenReturn(expected);
-    when(commentRepository.getCommentUuidWithAnchor(any())).thenReturn(uuid);
-    when(commentRepository.getById(uuid.get())).thenReturn(mock(Comment.class));
-    when(commentRepository.countAllByParentComment(any(Comment.class))).thenReturn(childrenCount);
+    when(commentRepository.findRootCommentsWithPostSlug(postSlug)).thenReturn(expected);
 
     var actual = commentService.getRootPostComments(postSlug);
     assertEquals(expected, actual);
-    expected.forEach(iExpected -> verify(iExpected, times(1)).setChildrenCount(childrenCount));
   }
 
   @Test
@@ -223,16 +191,10 @@ class CommentServiceImplTest {
     var expected = IntStream.rangeClosed(0, new Random().nextInt(13))
                             .mapToObj(i -> mock(CommentDto.class))
                             .collect(Collectors.toSet());
-    var childrenCount = new SecureRandom().nextInt();
-    var uuid = Optional.of(UUID.randomUUID());
 
-    when(commentRepository.findAllChildCommentsWithParentAnchor(postSlug)).thenReturn(expected);
-    when(commentRepository.getCommentUuidWithAnchor(any())).thenReturn(uuid);
-    when(commentRepository.getById(uuid.get())).thenReturn(mock(Comment.class));
-    when(commentRepository.countAllByParentComment(any(Comment.class))).thenReturn(childrenCount);
+    when(commentRepository.findChildCommentsWithParentAnchor(postSlug)).thenReturn(expected);
 
     var actual = commentService.getParentCommentChildren(postSlug);
     assertEquals(expected, actual);
-    expected.forEach(iExpected -> verify(iExpected, times(1)).setChildrenCount(childrenCount));
   }
 }

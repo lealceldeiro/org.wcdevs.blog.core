@@ -129,18 +129,20 @@ class CommentDtoTest {
 
   @Test
   void newCommentDto() {
-    var parentCommentAnchor = aString();
+    var random = new Random();
+
     var body = aString();
     var publishedBy = aString();
     var anchor = aString();
-    var lastUpdated = LocalDateTime.now().minusDays(new Random().nextInt(31));
-    var commentDto = new CommentDto(parentCommentAnchor, body, publishedBy, anchor, lastUpdated);
+    var lastUpdated = LocalDateTime.now().minusDays(random.nextInt(31));
+    var childCount = random.nextLong();
+    var commentDto = new CommentDto(anchor, body, publishedBy, lastUpdated, childCount);
 
     assertNotNull(commentDto);
-    assertEquals(parentCommentAnchor, commentDto.getParentCommentAnchor());
     assertEquals(body, commentDto.getBody());
     assertEquals(publishedBy, commentDto.getPublishedBy());
     assertEquals(anchor, commentDto.getAnchor());
     assertEquals(lastUpdated, commentDto.getLastUpdated());
+    assertEquals((int) childCount, commentDto.getChildrenCount());
   }
 }

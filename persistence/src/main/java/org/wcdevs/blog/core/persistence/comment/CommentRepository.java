@@ -17,29 +17,40 @@ public interface CommentRepository extends JpaRepository<Comment, UUID> {
   Optional<Comment> findByAnchor(String anchor);
 
   @Query("select new org.wcdevs.blog.core.persistence.comment.CommentDto("
-         + "pc.anchor, c.body, c.publishedBy, c.anchor, c.lastUpdated) "
+         + "c.anchor, c.body, c.publishedBy, c.lastUpdated, count (childC.uuid)) "
+         + "from Comment c "
+         + "left join Comment childC on (c.uuid = childC.parentComment.uuid) "
+         + "where c.anchor = :anchor "
+         + "group by c.anchor, c.body, c.publishedBy, c.lastUpdated")
+  CommentDto findCommentWithAnchor(String anchor);
+
+  @Query("select new org.wcdevs.blog.core.persistence.comment.CommentDto("
+         + "c.anchor, c.body, c.publishedBy, c.lastUpdated, count (childC.uuid)) "
+         + "from Comment c "
+         + "inner join c.post p "
+         + "left join Comment childC on (c.uuid = childC.parentComment.uuid) "
+         + "where p.slug = :slug "
+         + "group by c.anchor, c.body, c.publishedBy, c.lastUpdated")
+  Set<CommentDto> findAllCommentsWithPostSlug(String slug);
+
+  @Query("select new org.wcdevs.blog.core.persistence.comment.CommentDto("
+         + "c.anchor, c.body, c.publishedBy, c.lastUpdated, count (childC.uuid)) "
          + "from Comment c "
          + "inner join c.post p "
          + "left join c.parentComment pc "
-         + "where p.slug = :slug")
-  Set<CommentDto> findAllWithPostSlug(String slug);
+         + "left join Comment childC on (c.uuid = childC.parentComment.uuid) "
+         + "where p.slug = :slug and pc is null "
+         + "group by c.anchor, c.body, c.publishedBy, c.lastUpdated")
+  Set<CommentDto> findRootCommentsWithPostSlug(String slug);
 
   @Query("select new org.wcdevs.blog.core.persistence.comment.CommentDto("
-         + "pc.anchor, c.body, c.publishedBy, c.anchor, c.lastUpdated) "
-         + "from Comment c "
-         + "inner join c.post p "
-         + "left join c.parentComment pc "
-         + "where p.slug = :slug and pc is null")
-  Set<CommentDto> findAllRootCommentsWithPostSlug(String slug);
-
-  @Query("select new org.wcdevs.blog.core.persistence.comment.CommentDto("
-         + "pc.anchor, c.body, c.publishedBy, c.anchor, c.lastUpdated) "
+         + "c.anchor, c.body, c.publishedBy, c.lastUpdated, count (childC.uuid)) "
          + "from Comment c "
          + "inner join c.parentComment pc "
-         + "where pc is not null and pc.anchor = :anchor")
-  Set<CommentDto> findAllChildCommentsWithParentAnchor(String anchor);
-
-  int countAllByParentComment(Comment parentComment);
+         + "left join Comment childC on (c.uuid = childC.parentComment.uuid) "
+         + "where pc is not null and pc.anchor = :anchor "
+         + "group by c.anchor, c.body, c.publishedBy, c.lastUpdated")
+  Set<CommentDto> findChildCommentsWithParentAnchor(String anchor);
 
   @Query("delete from Comment c where c.anchor = :anchor")
   @Modifying
