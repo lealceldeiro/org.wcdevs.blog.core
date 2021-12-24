@@ -53,7 +53,7 @@ public class Comment {
   @JoinColumn(name = "post_uuid")
   private Post post;
 
-  @ManyToOne(cascade = CascadeType.REMOVE)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
   @JoinColumn(name = "parent_comment_uuid")
   private Comment parentComment;
 
