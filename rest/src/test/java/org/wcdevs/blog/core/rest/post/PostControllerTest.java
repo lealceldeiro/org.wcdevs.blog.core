@@ -22,6 +22,7 @@ import static org.wcdevs.blog.core.rest.TestsUtil.ERROR_RESPONSE_FIELDS;
 import static org.wcdevs.blog.core.rest.TestsUtil.MAPPER;
 import static org.wcdevs.blog.core.rest.TestsUtil.samplePostSlug;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -130,6 +131,7 @@ class PostControllerTest {
     var postDto = TestsUtil.sampleFullPost();
     mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
                         .content(MAPPER.writeValueAsString(postDto)))
            .andExpect(status().isCreated())
            .andDo(document("create_post", REQUEST_FIELDS, SLUG_INFO_RESPONSE_FIELDS));
@@ -142,6 +144,7 @@ class PostControllerTest {
     when(postService.createPost(postDto)).thenThrow(new DataIntegrityViolationException(err));
     mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
                         .content(MAPPER.writeValueAsString(postDto)))
            .andExpect(status().isConflict());
   }
@@ -174,6 +177,7 @@ class PostControllerTest {
 
     mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
                         .content(MAPPER.writeValueAsString(postDto)))
            .andExpect(status().isConflict())
            .andDo(document("create_post_db_error", REQUEST_FIELDS, ERROR_RESPONSE_FIELDS));
@@ -185,6 +189,7 @@ class PostControllerTest {
 
     mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
                         .content("/" + MAPPER.writeValueAsString(postDto)))
            .andExpect(status().isBadRequest())
            .andDo(document("create_post_bad_format"));
@@ -207,6 +212,7 @@ class PostControllerTest {
 
     mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
                         .content(MAPPER.writeValueAsString(postDto)))
            .andExpect(status().isBadRequest())
            .andDo(document("create_post_wrong_title"));
@@ -223,6 +229,7 @@ class PostControllerTest {
 
     mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
                         .content(MAPPER.writeValueAsString(postDto)))
            .andExpect(status().isBadRequest())
            .andDo(document("create_post_wrong_body"));
@@ -244,6 +251,7 @@ class PostControllerTest {
 
     mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
                         .content(MAPPER.writeValueAsString(postDto)))
            .andExpect(status().isBadRequest())
            .andDo(document("create_post_wrong_slug"));
@@ -282,6 +290,7 @@ class PostControllerTest {
     var postDto = TestsUtil.sampleFullPost();
     mockMvc.perform(patch(BASE_URL + "{postSlug}", postDto.getSlug())
                         .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
                         .content(MAPPER.writeValueAsString(postDto)))
            .andExpect(status().isOk())
            .andDo(document("partial_update_post",
@@ -295,6 +304,7 @@ class PostControllerTest {
     var postDto = TestsUtil.sampleFullPost();
     mockMvc.perform(put(BASE_URL + "{postSlug}", postDto.getSlug())
                         .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
                         .content(MAPPER.writeValueAsString(postDto)))
            .andExpect(status().isOk())
            .andDo(document("full_update_post",
