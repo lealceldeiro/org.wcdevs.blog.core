@@ -21,10 +21,7 @@ final class CommentTransformer implements Transformer<Comment, CommentDto, Parti
 
   @Override
   public CommentDto dtoFromEntity(Comment entity) {
-    var parentComment = entity.getParentComment();
     return CommentDto.builder()
-                     .postSlug(entity.getPost().getSlug())
-                     .parentCommentAnchor(parentComment != null ? parentComment.getAnchor() : null)
                      .body(entity.getBody())
                      .publishedBy(entity.getPublishedBy())
                      .anchor(entity.getAnchor())

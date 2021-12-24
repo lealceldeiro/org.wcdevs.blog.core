@@ -2,8 +2,6 @@ package org.wcdevs.blog.core.common.comment;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -12,12 +10,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.wcdevs.blog.core.common.TestsUtil;
 import org.wcdevs.blog.core.common.util.StringUtils;
 import org.wcdevs.blog.core.persistence.comment.Comment;
@@ -66,28 +60,14 @@ class CommentTransformerTest {
     }
   }
 
-  private static Stream<Arguments> dtoFromEntityArgs() {
-    var parentComment = mock(Comment.class);
-    when(parentComment.getAnchor()).thenReturn(TestsUtil.aString());
-    return Stream.of(arguments((Comment) null), arguments(parentComment));
-  }
-
-  @ParameterizedTest
-  @MethodSource("dtoFromEntityArgs")
-  void dtoFromEntity(Comment parentComment) {
-    var postSlug = TestsUtil.aString();
-
-    var post = mock(Post.class);
-    when(post.getSlug()).thenReturn(postSlug);
-
+  @Test
+  void dtoFromEntity() {
     var body = TestsUtil.aString();
     var publishedBy = TestsUtil.aString();
     var anchor = TestsUtil.aString();
     var lastUpdated = TestsUtil.randomLocalDateTime();
 
     var comment = mock(Comment.class);
-    when(comment.getPost()).thenReturn(post);
-    when(comment.getParentComment()).thenReturn(parentComment);
     when(comment.getBody()).thenReturn(body);
     when(comment.getPublishedBy()).thenReturn(publishedBy);
     when(comment.getAnchor()).thenReturn(anchor);
@@ -96,9 +76,6 @@ class CommentTransformerTest {
     var dto = transformer.dtoFromEntity(comment);
 
     assertNotNull(dto);
-    assertEquals(postSlug, dto.getPostSlug());
-    assertTrue(parentComment == null
-               || dto.getParentCommentAnchor().equals(parentComment.getAnchor()));
     assertEquals(body, dto.getBody());
     assertEquals(publishedBy, dto.getPublishedBy());
     assertEquals(anchor, dto.getAnchor());
