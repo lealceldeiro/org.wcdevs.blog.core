@@ -53,13 +53,13 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.RequestFieldsSnippet;
 import org.springframework.restdocs.payload.ResponseFieldsSnippet;
 import org.springframework.restdocs.request.PathParametersSnippet;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -394,12 +394,14 @@ class PostControllerTest {
     when(commentService.createComment(post.getSlug(), dto))
         .thenReturn(CommentDto.builder().anchor(anchor).build());
 
-    mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/{postSlug}/comment", post.getSlug())
-                                          .contentType(MediaType.APPLICATION_JSON)
-                                          .characterEncoding(StandardCharsets.UTF_8)
-                                          .content(MAPPER.writeValueAsString(dto)))
+    mockMvc.perform(RestDocumentationRequestBuilders.post(BASE_URL + "{postSlug}/comment",
+                                                          post.getSlug())
+                                                    .contentType(MediaType.APPLICATION_JSON)
+                                                    .characterEncoding(StandardCharsets.UTF_8)
+                                                    .content(MAPPER.writeValueAsString(dto)))
            .andExpect(status().isCreated())
-           .andDo(document(docId, requestFields(requestFieldDescriptors), ANCHOR_RES_FIELD));
+           .andDo(document(docId, POST_SLUG_PATH_PARAMETER, requestFields(requestFieldDescriptors),
+                           ANCHOR_RES_FIELD));
   }
 
   @Test

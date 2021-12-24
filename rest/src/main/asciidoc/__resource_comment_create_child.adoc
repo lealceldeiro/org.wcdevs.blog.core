@@ -6,6 +6,10 @@ This service is only available to users with enough permissions to create a new 
 
 include::__H_REQUEST.adoc[]
 
+include::__H_REQUEST_PATH_PARAMS.adoc[]
+
+include::{snippets}/create_child_comment/path-parameters.adoc[]
+
 include::__H_REQUEST_FIELDS.adoc[]
 
 include::{snippets}/create_child_comment/request-fields.adoc[]

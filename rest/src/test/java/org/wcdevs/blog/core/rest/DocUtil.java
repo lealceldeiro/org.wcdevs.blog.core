@@ -25,7 +25,7 @@ public final class DocUtil {
   public static final String ANCHOR = "anchor";
   public static final String ANCHOR_DESC
       = "Comment anchor. This is generated during the creation of the comment and should be used"
-        + " later to identify (and retrieve,i.e., any information) about the comment later";
+        + " later to identify and retrieve any information about the comment";
 
   public static final String PARENT_COMMENT_ANCHOR_PARAM = "parentAnchor";
   public static final String PARENT_COMMENT_ANCHOR_PARAM_DESC
