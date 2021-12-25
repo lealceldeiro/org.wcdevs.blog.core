@@ -1,5 +1,5 @@
 spring:
-  # see https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.external-config
+  # https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.external-config
   datasource:
     driver-class-name: ${CORE_APP_DB_DRIVER}
     url: ${CORE_APP_DB_URL}
@@ -52,7 +52,7 @@ management:
 core-app:
   allowedOrigins: ${ALLOWED_ORIGINS}
 
-# see https://docs.awspring.io/spring-cloud-aws/docs/2.3.2/reference/html/index.html#amazon-sdk-configuration
+# https://docs.awspring.io/spring-cloud-aws/docs/2.3.2/reference/html/index.html#amazon-sdk-configuration
 logging:
   level:
     com:
