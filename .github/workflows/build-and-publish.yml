@@ -39,6 +39,7 @@ jobs:
     env:
       STAGING_INFRA: ${{ secrets.STAGING_INFRA }}
       PROD_INFRA: ${{ secrets.PROD_INFRA }}
+
     steps:
       - name: Identify environment
         run: |
