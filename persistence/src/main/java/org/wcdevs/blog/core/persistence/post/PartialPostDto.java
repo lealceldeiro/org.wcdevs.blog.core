@@ -3,7 +3,6 @@ package org.wcdevs.blog.core.persistence.post;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import java.time.LocalDateTime;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -14,7 +13,7 @@ import lombok.ToString;
 
 /**
  * Data transfer object which contains optional post information. This should be generally used
- * for  data transfer for updating existing posts.
+ * for data transfer for updating existing posts.
  */
 @Getter
 @Builder
@@ -49,7 +48,4 @@ public class PartialPostDto {
   @NotBlank
   @Size(max = 30)
   private String updatedBy;
-
-  private LocalDateTime publishedOn;
-  private LocalDateTime updatedOn;
 }

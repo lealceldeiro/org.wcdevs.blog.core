@@ -1,5 +1,6 @@
 package org.wcdevs.blog.core.persistence.post;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
@@ -59,7 +60,9 @@ public class PostDto {
   private String updatedBy;
 
   // only to be sent to clients
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   private LocalDateTime publishedOn;
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   private LocalDateTime updatedOn;
 
   /**

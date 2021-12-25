@@ -29,6 +29,11 @@ spring:
   sql:
     init:
       mode: never
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: UTC
+    default-property-inclusion: non_null
+    locale: en
 
 server:
   port: ${CORE_APP_LISTEN_PORT}

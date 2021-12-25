@@ -20,8 +20,10 @@ import static org.wcdevs.blog.core.common.TestsUtil.dtoBuilder;
 
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.wcdevs.blog.core.common.util.StringUtils;
 import org.wcdevs.blog.core.persistence.post.PartialPostDto;
 import org.wcdevs.blog.core.persistence.post.Post;
 import org.wcdevs.blog.core.persistence.util.ClockUtil;
@@ -34,7 +36,7 @@ class PostTransformerTest {
       mockedClock.when(ClockUtil::utcNow).thenReturn(now);
       var dto = dtoBuilder().slug(null).updatedOn(null).publishedOn(null).updatedBy(null).build();
 
-      var entity = PostTransformer.newEntityFromDto(dto);
+      var entity = new PostTransformer().newEntityFromDto(dto);
 
       assertNotNull(entity.getSlug());
       assertEquals(now, entity.getPublishedOn());
@@ -51,7 +53,7 @@ class PostTransformerTest {
       mockedClock.when(ClockUtil::utcNow).thenReturn(now);
       var dto = dtoBuilder().build();
 
-      var entity = PostTransformer.newEntityFromDto(dto);
+      var entity = new PostTransformer().newEntityFromDto(dto);
 
       assertEquals(dto.getUpdatedBy(), entity.getUpdatedBy());
     }
@@ -62,7 +64,7 @@ class PostTransformerTest {
   void entityFromDtoWithComplexPostTitle(String title) {
     var dto = dtoBuilder().slug(null).title(title).build();
 
-    var entity = PostTransformer.newEntityFromDto(dto);
+    var entity = new PostTransformer().newEntityFromDto(dto);
 
     assertNotNull(entity.getSlug());
     assertFalse(entity.getSlug().contains("--"));
@@ -93,16 +95,16 @@ class PostTransformerTest {
   void entityFromDtoWithLengthyTitle(String title) {
     var dto = dtoBuilder().title(title).slug(null).build();
 
-    var entity = PostTransformer.newEntityFromDto(dto);
+    var entity = new PostTransformer().newEntityFromDto(dto);
 
     assertNotNull(entity.getSlug());
-    assertEquals(PostTransformer.SLUG_MAX_LENGTH, entity.getSlug().length());
+    assertEquals(StringUtils.SLUG_MAX_LENGTH, entity.getSlug().length());
   }
 
   @Test
   void entityFromFullDto() {
     var dto = buildDto();
-    var entity = PostTransformer.newEntityFromDto(dto);
+    var entity = new PostTransformer().newEntityFromDto(dto);
 
     assertEquals(entity.getTitle(), dto.getTitle());
     assertEquals(entity.getSlug(), dto.getSlug());
@@ -116,7 +118,8 @@ class PostTransformerTest {
     var now = LocalDateTime.now();
     var dto = buildDto(aString(), aString(), null, null, now, now, aString(), aString());
 
-    assertThrows(NullPointerException.class, () -> PostTransformer.newEntityFromDto(dto));
+    Executable newEntityFromDto = () -> new PostTransformer().newEntityFromDto(dto);
+    assertThrows(NullPointerException.class, newEntityFromDto);
   }
 
   @Test
@@ -129,7 +132,7 @@ class PostTransformerTest {
     var now = LocalDateTime.now();
     var dto = buildDto(aString(), aString(), aString(), excerpt, now, now, aString(), aString());
 
-    var post = PostTransformer.newEntityFromDto(dto);
+    var post = new PostTransformer().newEntityFromDto(dto);
 
     assertEquals(excerpt, post.getExcerpt());
   }
@@ -151,7 +154,7 @@ class PostTransformerTest {
     var now = LocalDateTime.now();
     var dto = buildDto(aString(), aString(), aString(), excerpt, now, now, aString(), aString());
 
-    var post = PostTransformer.newEntityFromDto(dto);
+    var post = new PostTransformer().newEntityFromDto(dto);
 
     assertTrue(post.getExcerpt().endsWith(" word"));
   }
@@ -159,7 +162,7 @@ class PostTransformerTest {
   @Test
   void slugInfoFromSlug() {
     var slug = aString();
-    var dto = PostTransformer.slugInfo(slug);
+    var dto = new PostTransformer().slugInfo(slug);
     assertEquals(slug, dto.getSlug());
   }
 
@@ -169,7 +172,7 @@ class PostTransformerTest {
     var postMock = mock(Post.class);
     when(postMock.getSlug()).thenReturn(slug);
 
-    var dto = PostTransformer.slugInfo(postMock);
+    var dto = new PostTransformer().slugInfo(postMock);
 
     assertEquals(dto.getSlug(), slug);
   }
@@ -179,7 +182,7 @@ class PostTransformerTest {
     var postMock = mock(Post.class);
     var emptyDto = PartialPostDto.builder().build();
 
-    PostTransformer.updatePostWithNonNullValues(postMock, emptyDto);
+    new PostTransformer().updateNonNullValues(postMock, emptyDto);
     verify(postMock, never()).setTitle(any());
     verify(postMock, never()).setBody(any());
     verify(postMock, never()).setExcerpt(any());
@@ -193,7 +196,7 @@ class PostTransformerTest {
     var postMock = mock(Post.class);
     var dtoWithValues = buildPartialDto();
 
-    PostTransformer.updatePostWithNonNullValues(postMock, dtoWithValues);
+    new PostTransformer().updateNonNullValues(postMock, dtoWithValues);
     verify(postMock, times(1)).setTitle(dtoWithValues.getTitle());
     verify(postMock, times(1)).setBody(dtoWithValues.getBody());
     verify(postMock, times(1)).setExcerpt(dtoWithValues.getExcerpt());
@@ -207,7 +210,7 @@ class PostTransformerTest {
     var postMock = mock(Post.class);
     var dtoWithValues = buildDto();
 
-    PostTransformer.updatePost(postMock, dtoWithValues);
+    new PostTransformer().update(postMock, dtoWithValues);
     verify(postMock, times(1)).setTitle(dtoWithValues.getTitle());
     verify(postMock, times(1)).setBody(dtoWithValues.getBody());
     verify(postMock, times(1)).setExcerpt(dtoWithValues.getExcerpt());
@@ -229,7 +232,7 @@ class PostTransformerTest {
     Post entity = new Post(title, slug, body, excerpt, publishedOn, updatedOn, publishedBy,
                            updatedBy);
 
-    var dto = PostTransformer.dtoFromEntity(entity);
+    var dto = new PostTransformer().dtoFromEntity(entity);
 
     assertEquals(title, dto.getTitle());
     assertEquals(slug, dto.getSlug());

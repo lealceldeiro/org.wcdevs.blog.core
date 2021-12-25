@@ -22,8 +22,8 @@ import org.hibernate.Hibernate;
 @Table(name = "post")
 @Getter
 @Setter
-@ToString(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
+@ToString(onlyExplicitlyIncluded = true)
 public class Post {
   @Id
   @GeneratedValue

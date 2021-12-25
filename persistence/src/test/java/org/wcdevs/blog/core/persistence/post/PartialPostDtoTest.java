@@ -32,8 +32,6 @@ class PartialPostDtoTest {
     assertEquals(slug, dto.getSlug());
     assertEquals(body, dto.getBody());
     assertEquals(excerpt, dto.getExcerpt());
-    assertEquals(publishedOn, dto.getPublishedOn());
-    assertEquals(updatedOn, dto.getUpdatedOn());
     assertEquals(updatedBy, dto.getUpdatedBy());
   }
 
@@ -58,10 +56,6 @@ class PartialPostDtoTest {
     assertNotNull(dto2);
     assertEquals(areEquals, dto1.equals(dto2));
     assertEquals(areEquals, dto1.hashCode() == dto2.hashCode());
-  }
-
-  private PartialPostDto buildDto() {
-    return buildDto(aString(), aString());
   }
 
   private PartialPostDto buildDto(String title, String slug) {
@@ -89,8 +83,6 @@ class PartialPostDtoTest {
                          .slug(slug)
                          .body(body)
                          .excerpt(excerpt)
-                         .publishedOn(publishedOn)
-                         .updatedOn(updatedOn)
                          .updatedBy(updatedBy);
   }
 

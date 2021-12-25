@@ -1,0 +1,25 @@
+[[resource-comment-delete-not-now-allowed]]
+==== Method not allowed errors
+
+When there's a method (`GET`, `POST`, `PUT`, etc.) used to perform a request and the target
+endpoint doesn't support that method there's a `405` Method Not Allowed status returned. Example:
+
+include::__H_REQUEST.adoc[]
+
+include::__H_REQUEST_PATH_PARAMS.adoc[]
+
+include::{snippets}/get_child_comments_method_not_allowed/path-parameters.adoc[]
+
+include::__H_EXAMPLE.adoc[]
+
+include::{snippets}/get_child_comments_method_not_allowed/http-request.adoc[]
+
+include::__H_RESPONSE.adoc[]
+
+include::__H_RESPONSE_FIELDS.adoc[]
+
+include::{snippets}/get_child_comments_method_not_allowed/response-fields.adoc[]
+
+include::__H_EXAMPLE_BARE.adoc[]
+
+include::{snippets}/get_child_comments_method_not_allowed/http-response.adoc[]
