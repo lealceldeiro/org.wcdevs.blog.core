@@ -36,17 +36,20 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      STAGING_INFRA: ${{ secrets.STAGING_INFRA }}
+      PROD_INFRA: ${{ secrets.PROD_INFRA }}
 
     # https://docs.github.com/en/actions/learn-github-actions/expressions#endswith
     # https://docs.github.com/en/actions/learn-github-actions/workflow-commands-for-github-actions#setting-an-environment-variable
     steps:
       - name: Set env to staging
-        if: ${{ startsWith(github.ref, '/develop') && endsWith(github.ref, '/develop') && secrets.STAGING_INFRA == 'up' }}
+        if: ${{ startsWith(github.ref, '/develop') && endsWith(github.ref, '/develop') && env.STAGING_INFRA == 'up' }}
         run: |
           echo "DEPLOY_ENV=staging" >> $GITHUB_ENV
 
       - name: Set env to prod
-        if: ${{ startsWith(github.ref, '/main') && endsWith(github.ref, '/main') && secrets.PROD_INFRA == 'up' }}
+        if: ${{ startsWith(github.ref, '/main') && endsWith(github.ref, '/main') && env.PROD_INFRA == 'up' }}
         run: |
           echo "DEPLOY_ENV=prod" >> $GITHUB_ENV
 
