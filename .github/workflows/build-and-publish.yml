@@ -41,12 +41,12 @@ jobs:
       # https://docs.github.com/en/actions/learn-github-actions/expressions#endswith
       # https://docs.github.com/en/actions/learn-github-actions/workflow-commands-for-github-actions#setting-an-environment-variable
       - name: Set env to staging
-        if: ${{ startsWith(github.ref, '/develop') && endsWith(github.ref, '/develop') && !endsWith(github.event.head_commit.message, 'no-deploy') }}
+        if: ${{ startsWith(github.ref, '/develop') && endsWith(github.ref, '/develop') && !(endsWith(github.event.head_commit.message, 'no-deploy')) }}
         run: |
           echo "DEPLOY_ENV=staging" >> $GITHUB_ENV
 
       - name: Set env to prod
-        if: ${{ startsWith(github.ref, '/main') && endsWith(github.ref, '/main') && !endsWith(github.event.head_commit.message, 'no-deploy')  }}
+        if: ${{ startsWith(github.ref, '/main') && endsWith(github.ref, '/main') && !(endsWith(github.event.head_commit.message, 'no-deploy')) }}
         run: |
           echo "DEPLOY_ENV=prod" >> $GITHUB_ENV
 
