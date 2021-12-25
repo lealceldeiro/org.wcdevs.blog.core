@@ -39,10 +39,14 @@ jobs:
     env:
       STAGING_INFRA: ${{ secrets.STAGING_INFRA }}
       PROD_INFRA: ${{ secrets.PROD_INFRA }}
-
-    # https://docs.github.com/en/actions/learn-github-actions/expressions#endswith
-    # https://docs.github.com/en/actions/learn-github-actions/workflow-commands-for-github-actions#setting-an-environment-variable
     steps:
+      - name: Identify environment
+        run: |
+          echo Prod: "$PROD_INFRA"
+          echo Staging: "$STAGING_INFRA"
+
+      # https://docs.github.com/en/actions/learn-github-actions/expressions#endswith
+      # https://docs.github.com/en/actions/learn-github-actions/workflow-commands-for-github-actions#setting-an-environment-variable
       - name: Set env to staging
         if: ${{ startsWith(github.ref, '/develop') && endsWith(github.ref, '/develop') && env.STAGING_INFRA == 'up' }}
         run: |
