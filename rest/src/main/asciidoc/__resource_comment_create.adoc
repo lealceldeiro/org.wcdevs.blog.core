@@ -1,0 +1,29 @@
+[[resource-comment-create]]
+==== Creating a new comment
+
+A `POST` request adds a new _Comment_ entry in the DB.
+This service is only available to users with enough permissions to create a new comments.
+
+include::__H_REQUEST.adoc[]
+
+include::__H_REQUEST_PATH_PARAMS.adoc[]
+
+include::{snippets}/create_root_comment/path-parameters.adoc[]
+
+include::__H_REQUEST_FIELDS.adoc[]
+
+include::{snippets}/create_root_comment/request-fields.adoc[]
+
+include::__H_EXAMPLE.adoc[]
+
+include::{snippets}/create_root_comment/http-request.adoc[]
+
+include::__H_RESPONSE.adoc[]
+
+include::__H_RESPONSE_FIELDS.adoc[]
+
+include::{snippets}/create_root_comment/response-fields.adoc[]
+
+include::__H_EXAMPLE_BARE.adoc[]
+
+include::{snippets}/create_root_comment/http-response.adoc[]

@@ -1,0 +1,21 @@
+[[resources-comment]]
+=== Comment
+
+The comment resource is used to create, update, get and delete information related to the concept of
+a "Comment".
+
+include::__resource_comment_create.adoc[]
+
+include::__resource_comment_create_child.adoc[]
+
+include::__resource_comment_update.adoc[]
+
+include::__resource_comment_list_all_post_comments.adoc[]
+
+include::__resource_comment_list_root_post_comments.adoc[]
+
+include::__resource_comment_list_child_comments.adoc[]
+
+include::__resource_comment_get.adoc[]
+
+include::__resource_comment_delete.adoc[]

@@ -11,3 +11,5 @@ is unique for that resource, the result will be a list, but with only one item *
 there will be always only one element which has that attribute.
 
 include::__resource_post_index.adoc[]
+
+include::__resource_comment_index.adoc[]

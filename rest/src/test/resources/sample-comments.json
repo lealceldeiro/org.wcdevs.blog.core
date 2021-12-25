@@ -1,0 +1,16 @@
+[
+  {
+    "parentCommentAnchor": "a-parent-comment-fusce-eu-sagittis-tortor-2011460723",
+    "body": "A child comment lorem ipsum dolor sit amet. Nec rhoncus leo facilisis. Nam scelerisque nibh sed nisl pellentesque, vel aliquam orci laoreet.",
+    "publishedBy": "julia",
+    "anchor": "a-child-comment-lorem-ipsum-2011460781",
+    "lastUpdated": "2021-12-06 14:57:49"
+  },
+  {
+    "parentCommentAnchor": null,
+    "body": "A parent comment fusce eu sagittis tortor. Morbi magna libero, interdum gravida ultricies a, vulputate vitae sem.",
+    "publishedBy": "sam",
+    "anchor": "a-parent-comment-fusce-eu-sagittis-tortor-2011460723",
+    "lastUpdated": "2021-11-06 14:57:49"
+  }
+]

@@ -78,43 +78,56 @@ class PostTest {
   @Test
   void testAccessors() {
     var uuid = UUID.randomUUID();
-    var updatedOn = LocalDateTime.now();
-    var publishedOn = LocalDateTime.now().minusDays(1);
-    var body = TestsUtil.aString();
-    var slug = TestsUtil.aString();
     var title = TestsUtil.aString();
+    var slug = TestsUtil.aString();
+    var body = TestsUtil.aString();
+    var excerpt = TestsUtil.aString();
+    var publishedOn = LocalDateTime.now().minusDays(1);
+    var updatedOn = LocalDateTime.now();
+    var publishedBy = TestsUtil.aString();
+    var updatedBy = TestsUtil.aString();
 
     var post = new Post();
     post.setUuid(uuid);
-    post.setUpdatedOn(updatedOn);
-    post.setPublishedOn(publishedOn);
-    post.setBody(body);
-    post.setSlug(slug);
     post.setTitle(title);
+    post.setSlug(slug);
+    post.setBody(body);
+    post.setExcerpt(excerpt);
+    post.setPublishedOn(publishedOn);
+    post.setUpdatedOn(updatedOn);
+    post.setPublishedBy(publishedBy);
+    post.setUpdatedBy(updatedBy);
 
     assertEquals(uuid, post.getUuid());
-    assertEquals(updatedOn, post.getUpdatedOn());
-    assertEquals(publishedOn, post.getPublishedOn());
-    assertEquals(body, post.getBody());
-    assertEquals(slug, post.getSlug());
     assertEquals(title, post.getTitle());
+    assertEquals(slug, post.getSlug());
+    assertEquals(body, post.getBody());
+    assertEquals(excerpt, post.getExcerpt());
+    assertEquals(publishedOn, post.getPublishedOn());
+    assertEquals(updatedOn, post.getUpdatedOn());
+    assertEquals(publishedBy, post.getPublishedBy());
+    assertEquals(updatedBy, post.getUpdatedBy());
   }
 
   @Test
   void testDefinedConstructor() {
     var updatedOn = LocalDateTime.now();
     var publishedOn = LocalDateTime.now().minusDays(1);
+    var excerpt = TestsUtil.aString();
     var body = TestsUtil.aString();
     var slug = TestsUtil.aString();
     var title = TestsUtil.aString();
+    var publishedBy = TestsUtil.aString();
+    var updatedBy = TestsUtil.aString();
 
-    var post = new Post(title, slug, body, publishedOn, updatedOn);
+    var post = new Post(title, slug, body, excerpt, publishedOn, updatedOn, publishedBy, updatedBy);
 
-    assertEquals(updatedOn, post.getUpdatedOn());
-    assertEquals(publishedOn, post.getPublishedOn());
-    assertEquals(body, post.getBody());
-    assertEquals(slug, post.getSlug());
     assertEquals(title, post.getTitle());
+    assertEquals(slug, post.getSlug());
+    assertEquals(body, post.getBody());
+    assertEquals(excerpt, post.getExcerpt());
+    assertEquals(publishedOn, post.getPublishedOn());
+    assertEquals(updatedOn, post.getUpdatedOn());
   }
 
   @Test

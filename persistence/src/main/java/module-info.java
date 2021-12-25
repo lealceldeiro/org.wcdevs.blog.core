@@ -11,5 +11,6 @@ open module org.wcdevs.blog.core.persistance {
   requires lombok;
 
   exports org.wcdevs.blog.core.persistence.post;
+  exports org.wcdevs.blog.core.persistence.comment;
   exports org.wcdevs.blog.core.persistence.util;
 }

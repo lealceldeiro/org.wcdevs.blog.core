@@ -169,3 +169,8 @@ and [chmod-invocation](http://www.gnu.org/software/coreutils/chmod).
 These are not hard rules, but rather best practices, so, if you enable these git hooks in your local
 copy of the project, and later you need to bypass any of them, you can use the `--no-verify` option
 (although it's highly discouraged to do so) -- example: `git push --no-verify`.
+
+#### Skip deployments
+
+- If the commit message specified when merging to `develop` or `main` branch ends with `no-deploy`,
+the deployment to AWS infrastructure will be skipped.

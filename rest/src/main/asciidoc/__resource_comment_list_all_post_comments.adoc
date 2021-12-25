@@ -1,0 +1,27 @@
+[[resource-comment-list-all-by-post]]
+==== Listing comments
+
+A `GET` request retrieves a list of the comments published for a given post.
+
+This endpoint should rarely be used since maybe it's more useful to retrieve the list of root
+comments (see <<resource-comment-list-root-by-post,retrieve root comments of a post>>) or child comments (see <<resource-comment-list-children,retrieve child comments>>) nested under another comment.
+
+include::__H_REQUEST.adoc[]
+
+include::__H_REQUEST_PATH_PARAMS.adoc[]
+
+include::{snippets}/get_all_comments/path-parameters.adoc[]
+
+include::__H_EXAMPLE.adoc[]
+
+include::{snippets}/get_all_comments/http-request.adoc[]
+
+include::__H_RESPONSE.adoc[]
+
+include::__H_RESPONSE_FIELDS.adoc[]
+
+include::{snippets}/get_all_comments/response-fields.adoc[]
+
+include::__H_EXAMPLE_BARE.adoc[]
+
+include::{snippets}/get_all_comments/http-response.adoc[]

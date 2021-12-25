@@ -1,6 +1,6 @@
 package org.wcdevs.blog.core.common.post;
 
-import java.util.List;
+import java.util.Collection;
 import org.wcdevs.blog.core.persistence.post.PartialPostDto;
 import org.wcdevs.blog.core.persistence.post.Post;
 import org.wcdevs.blog.core.persistence.post.PostDto;
@@ -19,5 +19,5 @@ public interface PostService {
 
   void deletePost(String postSlug);
 
-  List<PostDto> getPosts();
+  Collection<PostDto> getPosts();
 }

@@ -4,8 +4,6 @@ spring:
     username: wcdevsu
     url: jdbc:postgresql://localhost:5432/wcdevsdb
     driver-class-name: org.postgresql.Driver
-  jpa:
-    show-sql: true
 
   security:
     oauth2:
@@ -23,6 +21,18 @@ spring:
           # see http://localhost:8888/auth/realms/wcdevs/.well-known/openid-configuration
           issuerUri: http://localhost:8888/auth/realms/wcdevs
 
+server:
+  port: 8080
+
+management:
+  server:
+    port: 8082
+
 core-app:
   allowedOrigins:
     - "*"
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.type.descriptor.sql: trace

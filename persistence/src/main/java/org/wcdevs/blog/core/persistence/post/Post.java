@@ -22,8 +22,8 @@ import org.hibernate.Hibernate;
 @Table(name = "post")
 @Getter
 @Setter
-@ToString(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
+@ToString(onlyExplicitlyIncluded = true)
 public class Post {
   @Id
   @GeneratedValue
@@ -31,11 +31,11 @@ public class Post {
   @ToString.Include
   private UUID uuid;
 
-  @Column(name = "title", unique = true, nullable = false, length = 200)
+  @Column(name = "title", unique = true, nullable = false, length = 250)
   @ToString.Include
   private String title;
 
-  @Column(name = "slug", unique = true, nullable = false, length = 150)
+  @Column(name = "slug", unique = true, nullable = false, length = 200)
   @ToString.Include
   private String slug;
 
@@ -43,11 +43,20 @@ public class Post {
   @Column(name = "body", nullable = false)
   private String body;
 
+  @Column(name = "excerpt", nullable = false, length = 300)
+  private String excerpt;
+
   @Column(name = "published_on", nullable = false)
   private LocalDateTime publishedOn;
 
   @Column(name = "updated_on", nullable = false)
   private LocalDateTime updatedOn;
+
+  @Column(name = "published_by", nullable = false, length = 100)
+  private String publishedBy;
+
+  @Column(name = "updated_by", nullable = false, length = 100)
+  private String updatedBy;
 
   /**
    * Creates a new {@link Post}.
@@ -57,14 +66,19 @@ public class Post {
    * @param body        Post body
    * @param publishedOn Date time when the post was published.
    * @param updatedOn   Date time when the post was last updated.
+   * @param publishedBy Author of the post.
+   * @param updatedBy   User who last updated it.
    */
-  public Post(String title, String slug, String body, LocalDateTime publishedOn,
-              LocalDateTime updatedOn) {
+  public Post(String title, String slug, String body, String excerpt, LocalDateTime publishedOn,
+              LocalDateTime updatedOn, String publishedBy, String updatedBy) {
     this.title = title;
     this.slug = slug;
     this.body = body;
+    this.excerpt = excerpt;
     this.publishedOn = publishedOn;
     this.updatedOn = updatedOn;
+    this.publishedBy = publishedBy;
+    this.updatedBy = updatedBy;
   }
 
   @Override

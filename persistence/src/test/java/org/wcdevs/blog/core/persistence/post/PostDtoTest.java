@@ -1,41 +1,52 @@
 package org.wcdevs.blog.core.persistence.post;
 
-import java.time.LocalDateTime;
-import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.wcdevs.blog.core.persistence.TestsUtil.aString;
+
+import java.time.LocalDateTime;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import static org.junit.jupiter.params.provider.Arguments.arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import static org.wcdevs.blog.core.persistence.TestsUtil.aString;
 
 class PostDtoTest {
   @Test
   void constructor() {
     var title = aString();
     var slug = aString();
-    var dto = new PostDto(title, slug);
+    var excerpt = aString();
+    var dto = new PostDto(title, slug, excerpt);
     assertEquals(title, dto.getTitle());
     assertEquals(slug, dto.getSlug());
+    assertEquals(excerpt, dto.getExcerpt());
   }
 
   @Test
   void builder() {
-    var body = aString();
-    var slug = aString();
-    var publishedOn = LocalDateTime.now().minusDays(1);
     var title = aString();
+    var slug = aString();
+    var body = aString();
+    var excerpt = aString();
+    var publishedOn = LocalDateTime.now().minusDays(1);
     var updatedOn = LocalDateTime.now();
-    var dto = buildDto(title, slug, body, publishedOn, updatedOn);
+    var publishedBy = aString();
+    var updatedBy = aString();
+
+    var dto = buildDto(title, slug, body, excerpt, publishedOn, updatedOn, publishedBy, updatedBy);
+
     assertNotNull(dto);
-    assertEquals(body, dto.getBody());
     assertEquals(title, dto.getTitle());
     assertEquals(slug, dto.getSlug());
+    assertEquals(body, dto.getBody());
+    assertEquals(excerpt, dto.getExcerpt());
     assertEquals(publishedOn, dto.getPublishedOn());
     assertEquals(updatedOn, dto.getUpdatedOn());
+    assertEquals(publishedBy, dto.getPublishedBy());
+    assertEquals(updatedBy, dto.getUpdatedBy());
   }
 
   static Stream<Arguments> dtoWithTitleAndSlugAreEqualsArgs() {
@@ -66,18 +77,22 @@ class PostDtoTest {
   }
 
   private PostDto buildDto(String title, String slug) {
-    return buildDto(title, slug, aString(), LocalDateTime.now().minusDays(1),
-                    LocalDateTime.now());
+    return buildDto(title, slug, aString(), aString(), LocalDateTime.now().minusDays(1),
+                    LocalDateTime.now(), aString(), aString());
   }
 
-  private PostDto buildDto(String title, String slug, String body, LocalDateTime publishedOn,
-                           LocalDateTime updatedOn) {
+  private PostDto buildDto(String title, String slug, String body, String excerpt,
+                           LocalDateTime publishedOn, LocalDateTime updatedOn, String publishedBy,
+                           String updatedBy) {
     return PostDto.builder()
                   .title(title)
                   .slug(slug)
                   .body(body)
+                  .excerpt(excerpt)
                   .publishedOn(publishedOn)
                   .updatedOn(updatedOn)
+                  .publishedBy(publishedBy)
+                  .updatedBy(updatedBy)
                   .build();
   }
 
@@ -86,8 +101,6 @@ class PostDtoTest {
     var toString = buildDto().toString();
     assertTrue(toString.contains("title="));
     assertTrue(toString.contains("slug="));
-    assertTrue(toString.contains("publishedOn="));
-    assertTrue(toString.contains("updatedOn="));
   }
 
 

@@ -1,91 +1,102 @@
 package org.wcdevs.blog.core.common.post;
 
-import java.util.Locale;
 import java.util.Objects;
+import org.springframework.stereotype.Component;
+import org.wcdevs.blog.core.common.Transformer;
+import org.wcdevs.blog.core.common.util.StringUtils;
 import org.wcdevs.blog.core.persistence.post.PartialPostDto;
 import org.wcdevs.blog.core.persistence.post.Post;
 import org.wcdevs.blog.core.persistence.post.PostDto;
 import org.wcdevs.blog.core.persistence.util.ClockUtil;
 
 /**
- * Transformer for classes User and UserDto.
+ * Transformer for classes Post and PostDto.
  */
-final class PostTransformer {
-  private static final String SLUG_REPLACEMENT = "-";
-  private static final String SLUG_REPLACE_REGEX = "[^a-z0-9]++";
-  static final int SLUG_MAX_LENGTH = 150;
-  static final int TITLE_MAX_LENGTH = 200;
+@Component
+final class PostTransformer implements Transformer<Post, PostDto, PartialPostDto> {
+  static final int EXCERPT_MAX_LENGTH = 250;
 
-  private PostTransformer() {
-    // do not allow instantiation
-  }
-
-  static Post entityFromDto(PostDto dto) {
+  @Override
+  public Post newEntityFromDto(PostDto dto) {
     var now = ClockUtil.utcNow();
 
-    var slug = dto.getSlug() != null ? dto.getSlug() : slugFromTitle(dto.getTitle());
-    var publishedOn = dto.getPublishedOn() != null ? dto.getPublishedOn() : now;
-    var updatedOn = dto.getUpdatedOn() != null ? dto.getUpdatedOn() : now;
+    var slug = Objects.nonNull(dto.getSlug()) // allow user the option to specify a custom slug
+               ? dto.getSlug()
+               : StringUtils.slugFrom(dto.getTitle());
+    var excerpt = excerptFrom(dto.getExcerpt(), dto.getBody());
+    var updatedBy = Objects.nonNull(dto.getUpdatedBy()) ? dto.getUpdatedBy() : dto.getPublishedBy();
 
-    return new Post(sizedTitleFrom(dto.getTitle()), sizedSlugFrom(slug), dto.getBody(),
-                    publishedOn, updatedOn);
+    // publishedOn and updatedOn will always be determined in the core app
+    return new Post(dto.getTitle(), slug, dto.getBody(), excerpt, now, now, dto.getPublishedBy(),
+                    updatedBy);
   }
 
-  private static String sizedSlugFrom(String candidateSlug) {
-    return candidateSlug.length() <= SLUG_MAX_LENGTH
-           ? candidateSlug
-           : candidateSlug.substring(candidateSlug.length() - SLUG_MAX_LENGTH);
+  private static String excerptFrom(String excerptCandidate, String bodyToCreateExcerpt) {
+    var candidate = Objects.nonNull(excerptCandidate) ? excerptCandidate : bodyToCreateExcerpt;
+    if (candidate.length() <= EXCERPT_MAX_LENGTH) {
+      return candidate;
+    }
+    var stripped = Objects.requireNonNull(candidate).strip();
+    var trimmed = stripped.substring(0, EXCERPT_MAX_LENGTH);
+
+    if (!" ".equals(stripped.substring(EXCERPT_MAX_LENGTH, EXCERPT_MAX_LENGTH + 1))) {
+      var spaceIndex = trimmed.lastIndexOf(" ");
+      return spaceIndex != -1 ? trimmed.substring(0, spaceIndex) : trimmed;
+    }
+
+    return trimmed;
   }
 
-  private static String sizedTitleFrom(String candidateTitle) {
-    return candidateTitle.length() <= TITLE_MAX_LENGTH
-           ? candidateTitle
-           : candidateTitle.substring(0, TITLE_MAX_LENGTH - 3) + "...";
-  }
-
-  static PostDto slugInfo(String slug) {
+  PostDto slugInfo(String slug) {
     return PostDto.builder().slug(slug).build();
   }
 
-  static PostDto slugInfo(Post post) {
+  PostDto slugInfo(Post post) {
     return slugInfo(post.getSlug());
   }
 
-  private static String slugFromTitle(String title) {
-    var sanitized = Objects.requireNonNull(title)
-                           .toLowerCase(Locale.ENGLISH)
-                           .strip()
-                           .replaceAll(SLUG_REPLACE_REGEX, SLUG_REPLACEMENT);
-    return sanitized
-           + (!sanitized.endsWith(SLUG_REPLACEMENT) ? SLUG_REPLACEMENT : "")
-           + Math.abs(Objects.hash(sanitized));
-  }
-
-  static void updatePostWithNonNullValues(Post post, PartialPostDto newPostDto) {
-    if (isNotNull(newPostDto.getTitle())) {
-      post.setTitle(sizedTitleFrom(newPostDto.getTitle()));
+  @Override
+  public void updateNonNullValues(Post post, PartialPostDto newPostDto) {
+    if (Objects.nonNull(newPostDto.getTitle())) {
+      post.setTitle(newPostDto.getTitle());
     }
-    if (isNotNull(newPostDto.getBody())) {
+    if (Objects.nonNull(newPostDto.getSlug())) {
+      post.setSlug(newPostDto.getSlug());
+    }
+    if (Objects.nonNull(newPostDto.getBody())) {
       post.setBody(newPostDto.getBody());
     }
+    if (Objects.nonNull(newPostDto.getExcerpt())) {
+      post.setExcerpt(newPostDto.getExcerpt());
+    }
+    if (Objects.nonNull(newPostDto.getUpdatedBy())) {
+      post.setUpdatedBy(newPostDto.getUpdatedBy());
+    }
+    post.setUpdatedOn(ClockUtil.utcNow());
   }
 
-  static void updatePost(Post post, PostDto newPostDto) {
-    post.setTitle(sizedTitleFrom(newPostDto.getTitle()));
+  @Override
+  public void update(Post post, PostDto newPostDto) {
+    post.setTitle(newPostDto.getTitle());
     post.setBody(newPostDto.getBody());
+    post.setExcerpt(newPostDto.getExcerpt());
+    post.setSlug(newPostDto.getSlug());
+    post.setUpdatedBy(newPostDto.getUpdatedBy());
+
+    post.setUpdatedOn(ClockUtil.utcNow());
   }
 
-  private static boolean isNotNull(Object o) {
-    return null != o;
-  }
-
-  static PostDto dtoFromEntity(Post postEntity) {
+  @Override
+  public PostDto dtoFromEntity(Post postEntity) {
     return PostDto.builder()
                   .title(postEntity.getTitle())
                   .slug(postEntity.getSlug())
                   .body(postEntity.getBody())
+                  .excerpt(postEntity.getExcerpt())
                   .publishedOn(postEntity.getPublishedOn())
                   .updatedOn(postEntity.getUpdatedOn())
+                  .publishedBy(postEntity.getPublishedBy())
+                  .updatedBy(postEntity.getUpdatedBy())
                   .build();
   }
 }
