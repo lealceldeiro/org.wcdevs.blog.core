@@ -1,4 +1,4 @@
-package org.wcdevs.blog.core.rest.converter;
+package org.wcdevs.blog.core.rest.auth;
 
 import static java.util.Collections.emptyMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -18,7 +18,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.wcdevs.blog.core.rest.TestsUtil;
 
-class AbstractJwtAuthTokenConverterTest {
+class JwtAbstractConverterTest {
   @Test
   void convert() {
     // given
@@ -36,7 +36,7 @@ class AbstractJwtAuthTokenConverterTest {
       var expected = new JwtAuthenticationToken(jwtMock, auth);
 
       // when
-      var actual = new CognitoJwtAuthTokenConverter().convert(jwtMock);
+      var actual = new JwtCognitoConverter().convert(jwtMock);
 
       // then
       assertEquals(expected, actual);
@@ -53,7 +53,7 @@ class AbstractJwtAuthTokenConverterTest {
         (mock, context) -> when(mock.convert(any())).thenReturn(expected))
     ) {
       // when
-      var actual = new CognitoJwtAuthTokenConverter().standardAuthorities(mock(Jwt.class));
+      var actual = new JwtCognitoConverter().standardAuthorities(mock(Jwt.class));
 
       // then
       assertEquals(expected, actual);

@@ -1,4 +1,4 @@
-package org.wcdevs.blog.core.rest.converter;
+package org.wcdevs.blog.core.rest.auth;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -14,18 +14,18 @@ import org.junit.jupiter.api.Test;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 
-class KeycloakJwtAuthTokenConverterTest {
+class JwtKeycloakConverterTest {
   @Test
   void providerAuthorities() {
     // given
-    KeycloakJwtAuthTokenConverter converter = new KeycloakJwtAuthTokenConverter();
+    JwtKeycloakConverter converter = new JwtKeycloakConverter();
 
     var rolePrefix = aString();
 
-    var realmStub = Map.of(KeycloakJwtAuthTokenConverter.ROLES, List.of(aString(), aString()));
+    var realmStub = Map.of(JwtKeycloakConverter.ROLES, List.of(aString(), aString()));
     Map<String, Object> claimsStub = Map.of(aString(), aString(),
-                                            KeycloakJwtAuthTokenConverter.REALM_ACCESS, realmStub);
-    var expected = realmStub.get(KeycloakJwtAuthTokenConverter.ROLES)
+                                            JwtKeycloakConverter.REALM_ACCESS, realmStub);
+    var expected = realmStub.get(JwtKeycloakConverter.ROLES)
                             .stream()
                             .map(roleMock -> rolePrefix + roleMock)
                             .map(SimpleGrantedAuthority::new)

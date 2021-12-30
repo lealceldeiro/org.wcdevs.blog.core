@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +23,7 @@ import org.wcdevs.blog.core.common.post.PostService;
 import org.wcdevs.blog.core.persistence.comment.CommentDto;
 import org.wcdevs.blog.core.persistence.post.PartialPostDto;
 import org.wcdevs.blog.core.persistence.post.PostDto;
+import org.wcdevs.blog.core.rest.auth.AuthAttributeExtractor;
 
 /**
  * Controller providing webservices to perform post-related requests.
@@ -31,34 +34,81 @@ import org.wcdevs.blog.core.persistence.post.PostDto;
 public class PostController {
   private final PostService postService;
   private final CommentService commentService;
+  private final AuthAttributeExtractor<Jwt> jwtAttributeExtractor;
 
   @GetMapping("/")
   public ResponseEntity<Collection<PostDto>> getPosts() {
     return new ResponseEntity<>(postService.getPosts(), HttpStatus.OK);
   }
 
+  /**
+   * Creates a new post.
+   *
+   * @param token   Auth token.
+   * @param postDto Post info.
+   *
+   * @return The newly created post.
+   */
   @PostMapping("/")
   @PreAuthorize("hasAnyRole('EDITOR', 'AUTHOR')")
-  public ResponseEntity<PostDto> createPost(@Validated @RequestBody PostDto postDto) {
+  public ResponseEntity<PostDto> createPost(@AuthenticationPrincipal Jwt token,
+                                            @Validated @RequestBody PostDto postDto) {
+    String username = jwtAttributeExtractor.principalUsername(token);
+    postDto.setPublishedBy(username);
+    postDto.setUpdatedBy(username);
+
     return new ResponseEntity<>(postService.createPost(postDto), HttpStatus.CREATED);
   }
 
+  /**
+   * Returns a post info.
+   *
+   * @param postSlug Post info to retrieve the data for.
+   *
+   * @return The info for the post with the given {@code postSlug}.
+   */
   @GetMapping("/{postSlug}")
   public ResponseEntity<PostDto> getPost(@PathVariable String postSlug) {
     return new ResponseEntity<>(postService.getPost(postSlug), HttpStatus.OK);
   }
 
+  /**
+   * Updates a post info. Only those attributes which are not null.
+   *
+   * @param postSlug Slug of the post to be updated.
+   * @param token    Auth token
+   * @param newDto   New info to be updated in the post.
+   *
+   * @return The newly updated post info.
+   */
   @PatchMapping("/{postSlug}")
   @PreAuthorize("hasAnyRole('EDITOR', 'AUTHOR')")
   public ResponseEntity<PostDto> partialUpdatePost(@PathVariable String postSlug,
+                                                   @AuthenticationPrincipal Jwt token,
                                                    @Validated @RequestBody PartialPostDto newDto) {
+    String username = jwtAttributeExtractor.principalUsername(token);
+    newDto.setUpdatedBy(username);
+
     return new ResponseEntity<>(postService.partialUpdate(postSlug, newDto), HttpStatus.OK);
   }
 
+  /**
+   * Updates a Post.
+   *
+   * @param postSlug Slug of the post to be updated.
+   * @param token    Auth token.
+   * @param newDto   DTO holding the post new data.
+   *
+   * @return The newly updated post info.
+   */
   @PutMapping("/{postSlug}")
   @PreAuthorize("hasAnyRole('EDITOR', 'AUTHOR')")
   public ResponseEntity<PostDto> fullyUpdatePost(@PathVariable String postSlug,
+                                                 @AuthenticationPrincipal Jwt token,
                                                  @Validated @RequestBody PostDto newDto) {
+    String username = jwtAttributeExtractor.principalUsername(token);
+    newDto.setUpdatedBy(username);
+
     return new ResponseEntity<>(postService.fullUpdate(postSlug, newDto), HttpStatus.OK);
   }
 
@@ -69,9 +119,23 @@ public class PostController {
     postService.deletePost(postSlug);
   }
 
+  /**
+   * Creates a new comment.
+   *
+   * @param postSlug Post slug.
+   * @param token    Auth token.
+   * @param dto      Payload dto.
+   *
+   * @return Created comment info.
+   */
+  @PreAuthorize("isAuthenticated()")
   @PostMapping("/{postSlug}/comment")
   public ResponseEntity<CommentDto> createComment(@PathVariable String postSlug,
+                                                  @AuthenticationPrincipal Jwt token,
                                                   @Validated @RequestBody CommentDto dto) {
+    String username = jwtAttributeExtractor.principalUsername(token);
+    dto.setPublishedBy(username);
+
     return new ResponseEntity<>(commentService.createComment(postSlug, dto), HttpStatus.CREATED);
   }
 

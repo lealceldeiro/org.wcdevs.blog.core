@@ -3,12 +3,12 @@ package org.wcdevs.blog.core.persistence.post;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 /**
@@ -45,7 +45,6 @@ public class PartialPostDto {
   @Size(min = 3, max = 250)
   private String excerpt;
 
-  @NotBlank
-  @Size(max = 30)
+  @Setter
   private String updatedBy;
 }

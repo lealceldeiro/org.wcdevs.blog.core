@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import java.time.LocalDateTime;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -13,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 /**
@@ -52,11 +52,10 @@ public class PostDto {
   @Size(min = 3, max = 250)
   private String excerpt;
 
-  @NotBlank
-  @Size(max = 30)
+  @Setter
   private String publishedBy;
 
-  @Size(max = 30)
+  @Setter
   private String updatedBy;
 
   // only to be sent to clients

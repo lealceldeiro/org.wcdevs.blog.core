@@ -1,4 +1,4 @@
-package org.wcdevs.blog.core.rest.converter;
+package org.wcdevs.blog.core.rest.auth;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 import static org.wcdevs.blog.core.rest.TestsUtil.aString;
 
-class CognitoJwtAuthTokenConverterTest {
+class JwtCognitoConverterTest {
   private static Stream<Arguments> providerAuthoritiesArgs() {
     return Stream.of(arguments(List.of(aString(), aString()), arguments(emptyList())),
                      arguments((List<String>) null));
@@ -34,15 +34,15 @@ class CognitoJwtAuthTokenConverterTest {
   @MethodSource("providerAuthoritiesArgs")
   void providerAuthorities(List<String> groupsStub) {
     // given
-    CognitoJwtAuthTokenConverter converter = new CognitoJwtAuthTokenConverter();
+    JwtCognitoConverter converter = new JwtCognitoConverter();
 
     var rolePrefix = aString();
     Map<String, Object> claimsStub = new HashMap<>();
     claimsStub.put(aString(), aString());
-    claimsStub.put(CognitoJwtAuthTokenConverter.COGNITO_GROUPS, groupsStub);
+    claimsStub.put(JwtCognitoConverter.COGNITO_GROUPS, groupsStub);
 
     var expected = groupsStub != null
-                   ? ((List<String>) claimsStub.get(CognitoJwtAuthTokenConverter.COGNITO_GROUPS))
+                   ? ((List<String>) claimsStub.get(JwtCognitoConverter.COGNITO_GROUPS))
                        .stream()
                        .map(roleMock -> rolePrefix + roleMock)
                        .map(SimpleGrantedAuthority::new)
@@ -66,7 +66,7 @@ class CognitoJwtAuthTokenConverterTest {
   @Test
   void providerAuthoritiesClassCastException() {
     // given
-    CognitoJwtAuthTokenConverter converter = new CognitoJwtAuthTokenConverter();
+    JwtCognitoConverter converter = new JwtCognitoConverter();
 
     var jwtMock = mock(Jwt.class);
     Map claims = new TreeMap();// force cast error

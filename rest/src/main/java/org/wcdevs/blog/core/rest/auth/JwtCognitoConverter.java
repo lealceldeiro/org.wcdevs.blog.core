@@ -1,10 +1,11 @@
-package org.wcdevs.blog.core.rest.converter;
+package org.wcdevs.blog.core.rest.auth;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.stream.Collectors.toSet;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -19,7 +20,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @Profile("aws")
-class CognitoJwtAuthTokenConverter extends AbstractJwtAuthTokenConverter {
+class JwtCognitoConverter extends JwtAbstractConverter {
   // https://docs.aws.amazon.com/cognito/latest/developerguide/role-based-access-control.html
   static final String COGNITO_GROUPS = "cognito:groups";
 
@@ -49,5 +50,11 @@ class CognitoJwtAuthTokenConverter extends AbstractJwtAuthTokenConverter {
       log.error("The claims map does not accept the '{}' string as a key.", COGNITO_GROUPS);
       return defaultGroups;
     }
+  }
+
+  @NonNull
+  @Override
+  protected Map<String, Object> customClaims(@NonNull Jwt jwt) {
+    return Collections.emptyMap();
   }
 }
