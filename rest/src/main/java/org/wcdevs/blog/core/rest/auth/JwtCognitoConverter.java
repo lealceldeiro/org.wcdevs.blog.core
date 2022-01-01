@@ -5,13 +5,13 @@ import static java.util.Collections.emptyMap;
 import static java.util.stream.Collectors.toSet;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 class JwtCognitoConverter extends JwtAbstractConverter {
   // https://docs.aws.amazon.com/cognito/latest/developerguide/role-based-access-control.html
   static final String COGNITO_GROUPS = "cognito:groups";
+  static final String PREFERRED_USERNAME = "username";
 
   @NonNull
   @Override
@@ -55,6 +56,18 @@ class JwtCognitoConverter extends JwtAbstractConverter {
   @NonNull
   @Override
   protected Map<String, Object> customClaims(@NonNull Jwt jwt) {
-    return Collections.emptyMap();
+    Object principalUsername = Optional.ofNullable(jwt.getClaim(PREFERRED_USERNAME))
+                                       .map(JwtCognitoConverter::toUsername)
+                                       .orElse(ANONYMOUS);
+
+    return Map.of(ConverterUtil.PRINCIPAL_USERNAME, principalUsername);
+  }
+
+  private static Object toUsername(@Nullable Object cognitoUsername) {
+    return Optional.ofNullable(cognitoUsername)
+                   .filter(String.class::isInstance)
+                   .map(s -> ((String) s).trim())
+                   .filter(s -> !s.isEmpty())
+                   .orElse(null);
   }
 }

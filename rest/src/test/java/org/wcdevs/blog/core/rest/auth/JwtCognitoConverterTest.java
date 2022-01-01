@@ -1,12 +1,14 @@
 package org.wcdevs.blog.core.rest.auth;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.oauth2.jwt.Jwt;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.when;
+import static org.wcdevs.blog.core.rest.TestsUtil.aString;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,15 +16,14 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptySet;
-import static org.junit.jupiter.params.provider.Arguments.arguments;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.when;
-import static org.wcdevs.blog.core.rest.TestsUtil.aString;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.wcdevs.blog.core.rest.TestsUtil;
 
 class JwtCognitoConverterTest {
   private static Stream<Arguments> providerAuthoritiesArgs() {
@@ -78,5 +79,27 @@ class JwtCognitoConverterTest {
 
     // then
     Assertions.assertEquals(emptySet(), actual);
+  }
+
+  @Test
+  void customClaimsWithActualValue() {
+    var username = TestsUtil.aString();
+
+    var jwtMock = mock(Jwt.class);
+    when(jwtMock.getClaim(JwtCognitoConverter.PREFERRED_USERNAME)).thenReturn(username);
+
+    var actual = new JwtCognitoConverter().customClaims(jwtMock);
+
+    assertEquals(Map.of(ConverterUtil.PRINCIPAL_USERNAME, username), actual);
+  }
+
+  @Test
+  void customClaimsWithAnonymousValue() {
+    var jwtMock = mock(Jwt.class);
+    when(jwtMock.getClaim(JwtCognitoConverter.PREFERRED_USERNAME)).thenReturn(null);
+
+    var actual = new JwtCognitoConverter().customClaims(jwtMock);
+
+    assertEquals(Map.of(ConverterUtil.PRINCIPAL_USERNAME, JwtCognitoConverter.ANONYMOUS), actual);
   }
 }
