@@ -1,5 +1,6 @@
 package org.wcdevs.blog.core.rest.auth;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -9,10 +10,10 @@ import static org.wcdevs.blog.core.rest.TestsUtil.aString;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.wcdevs.blog.core.rest.TestsUtil;
 
 class JwtKeycloakConverterTest {
   @Test
@@ -41,7 +42,31 @@ class JwtKeycloakConverterTest {
       var actual = converter.providerAuthorities(jwtMock);
 
       // then
-      Assertions.assertEquals(expected, actual);
+      assertEquals(expected, actual);
     }
+  }
+
+  @Test
+  void customClaimsWithActualValue() {
+    var username = TestsUtil.aString();
+    var domain = TestsUtil.aString();
+    var claim = username + "@" + domain;
+
+    var jwtMock = mock(Jwt.class);
+    when(jwtMock.getClaim(JwtKeycloakConverter.PREFERRED_USERNAME)).thenReturn(claim);
+
+    var actual = new JwtKeycloakConverter().customClaims(jwtMock);
+
+    assertEquals(Map.of(ConverterUtil.PRINCIPAL_USERNAME, username), actual);
+  }
+
+  @Test
+  void customClaimsWithAnonymousValue() {
+    var jwtMock = mock(Jwt.class);
+    when(jwtMock.getClaim(JwtKeycloakConverter.PREFERRED_USERNAME)).thenReturn(null);
+
+    var actual = new JwtKeycloakConverter().customClaims(jwtMock);
+
+    assertEquals(Map.of(ConverterUtil.PRINCIPAL_USERNAME, JwtKeycloakConverter.ANONYMOUS), actual);
   }
 }

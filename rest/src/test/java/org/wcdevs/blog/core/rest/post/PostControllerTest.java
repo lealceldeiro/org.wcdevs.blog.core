@@ -71,6 +71,7 @@ import org.wcdevs.blog.core.persistence.post.PartialPostDto;
 import org.wcdevs.blog.core.persistence.post.PostDto;
 import org.wcdevs.blog.core.rest.AppExceptionHandler;
 import org.wcdevs.blog.core.rest.TestsUtil;
+import org.wcdevs.blog.core.rest.auth.AuthAttributeExtractor;
 import org.wcdevs.blog.core.rest.errorhandler.ErrorHandlerFactory;
 import org.wcdevs.blog.core.rest.errorhandler.impl.ArgumentNotValidExceptionHandler;
 import org.wcdevs.blog.core.rest.errorhandler.impl.DataIntegrityViolationErrorHandler;
@@ -93,9 +94,8 @@ class PostControllerTest {
                       fieldWithPath("slug").description("A custom slug. Optional, but unique."),
                       fieldWithPath("body").description("Body of the post. Mandatory."),
                       fieldWithPath("excerpt").description("A custom excerpt. Optional."),
-                      fieldWithPath("publishedBy").description("Author of the post. Mandatory"),
-                      fieldWithPath("updatedBy").description("Last user who edited the post. "
-                                                             + "Optional (default: publishedBy)"),
+                      fieldWithPath("publishedBy").ignored(),
+                      fieldWithPath("updatedBy").ignored(),
                       fieldWithPath("publishedOn").ignored(),
                       fieldWithPath("updatedOn").ignored());
   private static final ResponseFieldsSnippet SLUG_INFO_RESPONSE_FIELDS
@@ -117,9 +117,10 @@ class PostControllerTest {
 
   @MockBean
   private PostService postService;
-
   @MockBean
   private CommentService commentService;
+  @MockBean
+  private AuthAttributeExtractor authAttributeExtractor;
 
   @BeforeEach
   void setUp(RestDocumentationContextProvider restDocumentation) {
@@ -128,14 +129,16 @@ class PostControllerTest {
                              .alwaysDo(print())
                              .build();
 
-    when(postService.createPost(any(PostDto.class))).
-        then(ignored -> TestsUtil.samplePostSlug());
+    when(postService.createPost(any(PostDto.class))).then(ignored -> TestsUtil.samplePostSlug());
     when(postService.getPost(anyString())).then(ignored -> TestsUtil.sampleFullPost());
     when(postService.partialUpdate(anyString(), any(PartialPostDto.class)))
         .then(ignored -> TestsUtil.samplePostSlug());
     when(postService.fullUpdate(anyString(), any(PostDto.class)))
         .then(ignored -> TestsUtil.samplePostSlug());
     when(postService.getPosts()).then(ignored -> TestsUtil.samplePostSlugTitles());
+
+    when(authAttributeExtractor.principalUsername(any()))
+        .thenReturn(TestsUtil.sampleFullPost().getPublishedBy());
   }
 
   @Test

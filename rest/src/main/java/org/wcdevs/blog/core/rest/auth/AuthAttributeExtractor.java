@@ -4,32 +4,30 @@ import org.springframework.lang.Nullable;
 
 /**
  * Extractor that works on fields from the authorization object by extracting certain attributes.
- *
- * @param <T> Type of authorization object to work on.
  */
-public interface AuthAttributeExtractor<T> {
+public interface AuthAttributeExtractor {
   /**
-   * Extract the specified {@code property} from {@code auth}.
+   * Extract the specified {@code property} from {@code principal}.
    *
-   * @param auth     Authorization object to extract the property from.
-   * @param property Property to be extracted from the authorization object.
-   * @param <R>      Type of the resulting extracted property. It must be the same type as the
-   *                 stored property type.
+   * @param principal Authorization object to extract the property from.
+   * @param property  Property to be extracted from the authorization object.
+   * @param <R>       Type of the resulting extracted property. It must be the same type as the
+   *                  stored property type.
    *
-   * @return {@code property} value in {@code auth} or {@code null}.
+   * @return {@code property} value in {@code principal} or {@code null}.
    */
   @Nullable
-  <R> R extract(T auth, String property);
+  <R> R extract(Object principal, String property);
 
   /**
-   * Extract the principal username from {@code auth}.
+   * Extract the principal username from {@code principal}.
    *
-   * @param auth Authorization object to extract the property from.
+   * @param principal Authorization object to extract the property from.
    *
-   * @return The principal username, stored in {@code auth}.
+   * @return The principal username, stored in {@code principal}.
    */
   @Nullable
-  default String principalUsername(T auth) {
-    return extract(auth, ConverterUtil.PRINCIPAL_USERNAME);
+  default String principalUsername(Object principal) {
+    return extract(principal, ConverterUtil.PRINCIPAL_USERNAME);
   }
 }
