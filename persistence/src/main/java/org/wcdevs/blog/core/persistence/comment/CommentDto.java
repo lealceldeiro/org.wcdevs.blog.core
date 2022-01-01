@@ -42,10 +42,10 @@ public class CommentDto {
   @Size(min = 3, max = 2500)
   private String body;
 
+  // only to be sent to clients
   @Setter
   private String publishedBy;
 
-  // only to be sent to clients
   @ToString.Include
   @EqualsAndHashCode.Include
   private String anchor;

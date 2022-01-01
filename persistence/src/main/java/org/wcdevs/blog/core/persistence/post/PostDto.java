@@ -52,13 +52,13 @@ public class PostDto {
   @Size(min = 3, max = 250)
   private String excerpt;
 
+  // only to be sent to clients
   @Setter
   private String publishedBy;
 
   @Setter
   private String updatedBy;
 
-  // only to be sent to clients
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   private LocalDateTime publishedOn;
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
