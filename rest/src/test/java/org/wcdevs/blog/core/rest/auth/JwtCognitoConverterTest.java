@@ -1,22 +1,8 @@
-package org.wcdevs.blog.core.rest.converter;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.oauth2.jwt.Jwt;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+package org.wcdevs.blog.core.rest.auth;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -24,7 +10,22 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 import static org.wcdevs.blog.core.rest.TestsUtil.aString;
 
-class CognitoJwtAuthTokenConverterTest {
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.wcdevs.blog.core.rest.TestsUtil;
+
+class JwtCognitoConverterTest {
   private static Stream<Arguments> providerAuthoritiesArgs() {
     return Stream.of(arguments(List.of(aString(), aString()), arguments(emptyList())),
                      arguments((List<String>) null));
@@ -34,15 +35,15 @@ class CognitoJwtAuthTokenConverterTest {
   @MethodSource("providerAuthoritiesArgs")
   void providerAuthorities(List<String> groupsStub) {
     // given
-    CognitoJwtAuthTokenConverter converter = new CognitoJwtAuthTokenConverter();
+    JwtCognitoConverter converter = new JwtCognitoConverter();
 
     var rolePrefix = aString();
     Map<String, Object> claimsStub = new HashMap<>();
     claimsStub.put(aString(), aString());
-    claimsStub.put(CognitoJwtAuthTokenConverter.COGNITO_GROUPS, groupsStub);
+    claimsStub.put(JwtCognitoConverter.COGNITO_GROUPS, groupsStub);
 
     var expected = groupsStub != null
-                   ? ((List<String>) claimsStub.get(CognitoJwtAuthTokenConverter.COGNITO_GROUPS))
+                   ? ((List<String>) claimsStub.get(JwtCognitoConverter.COGNITO_GROUPS))
                        .stream()
                        .map(roleMock -> rolePrefix + roleMock)
                        .map(SimpleGrantedAuthority::new)
@@ -66,7 +67,7 @@ class CognitoJwtAuthTokenConverterTest {
   @Test
   void providerAuthoritiesClassCastException() {
     // given
-    CognitoJwtAuthTokenConverter converter = new CognitoJwtAuthTokenConverter();
+    JwtCognitoConverter converter = new JwtCognitoConverter();
 
     var jwtMock = mock(Jwt.class);
     Map claims = new TreeMap();// force cast error
@@ -78,5 +79,27 @@ class CognitoJwtAuthTokenConverterTest {
 
     // then
     Assertions.assertEquals(emptySet(), actual);
+  }
+
+  @Test
+  void customClaimsWithActualValue() {
+    var username = TestsUtil.aString();
+
+    var jwtMock = mock(Jwt.class);
+    when(jwtMock.getClaim(JwtCognitoConverter.PREFERRED_USERNAME)).thenReturn(username);
+
+    var actual = new JwtCognitoConverter().customClaims(jwtMock);
+
+    assertEquals(Map.of(ConverterUtil.PRINCIPAL_USERNAME, username), actual);
+  }
+
+  @Test
+  void customClaimsWithAnonymousValue() {
+    var jwtMock = mock(Jwt.class);
+    when(jwtMock.getClaim(JwtCognitoConverter.PREFERRED_USERNAME)).thenReturn(null);
+
+    var actual = new JwtCognitoConverter().customClaims(jwtMock);
+
+    assertEquals(Map.of(ConverterUtil.PRINCIPAL_USERNAME, JwtCognitoConverter.ANONYMOUS), actual);
   }
 }

@@ -128,4 +128,16 @@ class PostDtoTest {
     var dto2 = PostDto.builder().title(title2).slug(slug2).build();
     assertEquals(shouldTheyBeEqual, dto1.equals(dto2));
   }
+
+  @Test
+  void setters() {
+    var publishedBy = aString();
+    var updatedBy = aString();
+    PostDto dto = PostDto.builder().build();
+    dto.setPublishedBy(publishedBy);
+    dto.setUpdatedBy(updatedBy);
+
+    assertEquals(publishedBy, dto.getPublishedBy());
+    assertEquals(updatedBy, dto.getUpdatedBy());
+  }
 }

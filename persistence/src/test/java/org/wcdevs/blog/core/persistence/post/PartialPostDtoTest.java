@@ -1,17 +1,17 @@
 package org.wcdevs.blog.core.persistence.post;
 
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import java.time.LocalDateTime;
+import java.util.stream.Stream;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.wcdevs.blog.core.persistence.TestsUtil.aString;
-
-import java.time.LocalDateTime;
-import java.util.stream.Stream;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 
 class PartialPostDtoTest {
   @Test
@@ -22,10 +22,7 @@ class PartialPostDtoTest {
     var excerpt = aString();
     var updatedBy = aString();
 
-    var publishedOn = LocalDateTime.now().minusDays(1);
-    var updatedOn = LocalDateTime.now();
-
-    var dto = buildDto(title, slug, body, excerpt, publishedOn, updatedOn, updatedBy);
+    var dto = buildDto(title, slug, body, excerpt, updatedBy);
 
     assertNotNull(dto);
     assertEquals(title, dto.getTitle());
@@ -59,25 +56,20 @@ class PartialPostDtoTest {
   }
 
   private PartialPostDto buildDto(String title, String slug) {
-    return buildDto(title, slug, aString(), aString(), LocalDateTime.now().minusDays(1),
-                    LocalDateTime.now(), aString());
+    return buildDto(title, slug, aString(), aString(), aString());
   }
 
   private PartialPostDto buildDto(String title, String slug, String body, String excerpt,
-                                  LocalDateTime publishedOn, LocalDateTime updatedOn,
                                   String updatedBy) {
-    return dtoBuilder(title, slug, body, excerpt, publishedOn, updatedOn, updatedBy).build();
+    return dtoBuilder(title, slug, body, excerpt, updatedBy).build();
   }
 
   private PartialPostDto.PartialPostDtoBuilder dtoBuilder() {
-    return dtoBuilder(aString(), aString(), aString(), aString(), LocalDateTime.now(),
-                      LocalDateTime.now(), aString());
+    return dtoBuilder(aString(), aString(), aString(), aString(), aString());
   }
 
   private PartialPostDto.PartialPostDtoBuilder dtoBuilder(String title, String slug, String body,
-                                                          String excerpt, LocalDateTime publishedOn,
-                                                          LocalDateTime updatedOn,
-                                                          String updatedBy) {
+                                                          String excerpt, String updatedBy) {
     return PartialPostDto.builder()
                          .title(title)
                          .slug(slug)
@@ -118,5 +110,14 @@ class PartialPostDtoTest {
     var dto1 = PartialPostDto.builder().title(title1).slug(slug1).build();
     var dto2 = PartialPostDto.builder().title(title2).slug(slug2).build();
     assertEquals(shouldTheyBeEqual, dto1.equals(dto2));
+  }
+
+  @Test
+  void setters() {
+    var updatedBy = aString();
+    var dto = PartialPostDto.builder().build();
+    dto.setUpdatedBy(updatedBy);
+
+    assertEquals(updatedBy, dto.getUpdatedBy());
   }
 }

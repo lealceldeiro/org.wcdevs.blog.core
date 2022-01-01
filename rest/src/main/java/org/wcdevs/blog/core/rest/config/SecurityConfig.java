@@ -7,7 +7,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.stereotype.Component;
-import org.wcdevs.blog.core.rest.converter.JwtAuthTokenConverter;
+import org.wcdevs.blog.core.rest.auth.JwtConverter;
 
 /**
  * Security configuration class.
@@ -23,7 +23,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       "/docs/index.html"
   };
 
-  private final JwtAuthTokenConverter jwtAuthTokenConverter;
+  private final JwtConverter jwtConverter;
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
@@ -33,6 +33,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
         .antMatchers(HttpMethod.GET, UNPROTECTED_GET_ENDPOINTS).permitAll()
         .anyRequest().authenticated().and()
-        .oauth2ResourceServer().jwt().jwtAuthenticationConverter(jwtAuthTokenConverter);
+        .oauth2ResourceServer().jwt().jwtAuthenticationConverter(jwtConverter);
   }
 }

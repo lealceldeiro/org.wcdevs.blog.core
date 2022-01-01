@@ -1,4 +1,4 @@
-package org.wcdevs.blog.core.rest.converter;
+package org.wcdevs.blog.core.rest.auth;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.wcdevs.blog.core.rest.TestsUtil;
 
 class ConverterUtilTest {
-
   @Test
   void toAuthRoleName() {
     var name = TestsUtil.aString();
