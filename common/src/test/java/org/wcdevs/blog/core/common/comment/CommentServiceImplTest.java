@@ -1,21 +1,5 @@
 package org.wcdevs.blog.core.common.comment;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.params.provider.Arguments.arguments;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.Optional;
-import java.util.Random;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -31,6 +15,22 @@ import org.wcdevs.blog.core.persistence.comment.CommentRepository;
 import org.wcdevs.blog.core.persistence.comment.PartialCommentDto;
 import org.wcdevs.blog.core.persistence.post.Post;
 import org.wcdevs.blog.core.persistence.post.PostRepository;
+import java.util.Optional;
+import java.util.Random;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {CommentService.class, CommentServiceImpl.class})
 class CommentServiceImplTest {
@@ -121,13 +121,15 @@ class CommentServiceImplTest {
   @Test
   void updateComment() {
     var anchor = TestsUtil.aString();
+    var user = TestsUtil.aString();
     var comment = mock(Comment.class);
     when(comment.getAnchor()).thenReturn(anchor);
 
-    when(commentRepository.findByAnchor(anchor)).thenReturn(Optional.of(comment));
+    when(commentRepository.findByAnchorAndPublishedBy(anchor, user))
+        .thenReturn(Optional.of(comment));
 
     var partialCommentDto = mock(PartialCommentDto.class);
-    var actual = commentService.updateComment(anchor, partialCommentDto);
+    var actual = commentService.updateComment(anchor, partialCommentDto, user);
 
     assertNotNull(actual);
     assertEquals(anchor, actual.getAnchor());
@@ -137,29 +139,33 @@ class CommentServiceImplTest {
 
   @Test
   void updateCommentThrowsNotFoundException() {
-    when(commentRepository.findByAnchor(any())).thenReturn(Optional.empty());
+    when(commentRepository.findByAnchorAndPublishedBy(any(), any())).thenReturn(Optional.empty());
     var anchor = TestsUtil.aString();
+    var user = TestsUtil.aString();
     var dto = mock(PartialCommentDto.class);
 
-    assertThrows(CommentNotFoundException.class, () -> commentService.updateComment(anchor, dto));
+    assertThrows(CommentNotFoundException.class,
+                 () -> commentService.updateComment(anchor, dto, user));
   }
 
   @Test
   void deleteComment() {
     var anchor = TestsUtil.aString();
-    when(commentRepository.deleteByAnchor(anchor)).thenReturn(1);
+    var user = TestsUtil.aString();
+    when(commentRepository.deleteByAnchorAndPublishedBy(anchor, user)).thenReturn(1);
 
-    commentService.deleteComment(anchor);
+    commentService.deleteComment(anchor, user);
 
-    verify(commentRepository, times(1)).deleteByAnchor(anchor);
+    verify(commentRepository, times(1)).deleteByAnchorAndPublishedBy(anchor, user);
   }
 
   @Test
   void deleteCommentThrowsNotFoundException() {
-    when(commentRepository.deleteByAnchor(any())).thenReturn(0);
+    when(commentRepository.deleteByAnchorAndPublishedBy(any(), any())).thenReturn(0);
     var anchor = TestsUtil.aString();
+    var user = TestsUtil.aString();
 
-    assertThrows(CommentNotFoundException.class, () -> commentService.deleteComment(anchor));
+    assertThrows(CommentNotFoundException.class, () -> commentService.deleteComment(anchor, user));
   }
 
   @Test

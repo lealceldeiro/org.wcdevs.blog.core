@@ -13,9 +13,9 @@ public interface CommentService {
 
   CommentDto getComment(String commentAnchor);
 
-  CommentDto updateComment(String commentAnchor, PartialCommentDto updateCommentDto);
+  CommentDto updateComment(String commentAnchor, PartialCommentDto updateCommentDto, String user);
 
-  void deleteComment(String commentAnchor);
+  void deleteComment(String commentAnchor, String user);
 
   Collection<CommentDto> getAllPostComments(String postSlug);
 

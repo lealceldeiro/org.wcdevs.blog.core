@@ -4,6 +4,7 @@ import java.util.Collection;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.wcdevs.blog.core.common.comment.CommentService;
 import org.wcdevs.blog.core.persistence.comment.CommentDto;
 import org.wcdevs.blog.core.persistence.comment.PartialCommentDto;
+import org.wcdevs.blog.core.rest.auth.AuthAttributeExtractor;
 
 /**
  * Controller providing webservices to perform comment-related requests.
@@ -25,6 +27,7 @@ import org.wcdevs.blog.core.persistence.comment.PartialCommentDto;
 @RequiredArgsConstructor
 public class CommentController {
   private final CommentService commentService;
+  private final AuthAttributeExtractor authAttributeExtractor;
 
   @GetMapping("/{commentAnchor}")
   public ResponseEntity<CommentDto> getComment(@PathVariable String commentAnchor) {
@@ -37,15 +40,29 @@ public class CommentController {
                                 HttpStatus.OK);
   }
 
+  /**
+   * Updates a comment.
+   *
+   * @param commentAnchor Anchor of the comment to be updated.
+   * @param principal     Authentication principal, automatically resolved by Spring.
+   * @param dto           Payload with the new content to use to update the comment.
+   *
+   * @return The updated comment info.
+   */
   @PutMapping("/{commentAnchor}")
   public ResponseEntity<CommentDto> updateComment(@PathVariable String commentAnchor,
+                                                  @AuthenticationPrincipal Object principal,
                                                   @Validated @RequestBody PartialCommentDto dto) {
-    return new ResponseEntity<>(commentService.updateComment(commentAnchor, dto), HttpStatus.OK);
+    var username = authAttributeExtractor.principalUsername(principal);
+    var comment = commentService.updateComment(commentAnchor, dto, username);
+    return new ResponseEntity<>(comment, HttpStatus.OK);
   }
 
   @DeleteMapping("/{commentAnchor}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void deleteComment(@PathVariable String commentAnchor) {
-    commentService.deleteComment(commentAnchor);
+  public void deleteComment(@PathVariable String commentAnchor,
+                            @AuthenticationPrincipal Object principal) {
+    var username = authAttributeExtractor.principalUsername(principal);
+    commentService.deleteComment(commentAnchor, username);
   }
 }
