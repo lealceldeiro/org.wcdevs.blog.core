@@ -12,7 +12,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.CorsConfigurer;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
-import org.wcdevs.blog.core.rest.converter.JwtAuthTokenConverter;
+import org.wcdevs.blog.core.rest.auth.JwtConverter;
 
 class SecurityConfigTest {
   @Test
@@ -43,7 +43,7 @@ class SecurityConfigTest {
     when(httpSecurity.authorizeRequests()).thenReturn(interceptUrlRegistry);
     when(httpSecurity.oauth2ResourceServer()).thenReturn(auth2ResourceServerConfigurer);
 
-    var jwtAuthTokenConverter = mock(JwtAuthTokenConverter.class);
+    var jwtAuthTokenConverter = mock(JwtConverter.class);
     new SecurityConfig(jwtAuthTokenConverter).configure(httpSecurity);
 
     verify(httpSecurity, times(1)).cors();

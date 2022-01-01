@@ -1,6 +1,7 @@
-package org.wcdevs.blog.core.rest.converter;
+package org.wcdevs.blog.core.rest.auth;
 
 class ConverterUtil {
+  static final String PRINCIPAL_USERNAME = "username";
   static final String ROLE_PREFIX = "ROLE_";
 
   private ConverterUtil() {
