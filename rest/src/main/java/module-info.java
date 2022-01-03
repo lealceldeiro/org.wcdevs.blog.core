@@ -15,7 +15,7 @@ open module org.wcdevs.blog.core.rest {
 
   requires lombok;
 
-  requires org.slf4j;
+  requires org.apache.logging.log4j;
   requires com.fasterxml.jackson.databind;
 
   requires aws.java.sdk.cognitoidp;

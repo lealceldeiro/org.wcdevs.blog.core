@@ -1,7 +1,7 @@
 package org.wcdevs.blog.core.rest.errorhandler;
 
 import java.time.LocalDateTime;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.WebRequest;
@@ -9,7 +9,7 @@ import org.springframework.web.context.request.WebRequest;
 /**
  * An abstract handler defining the core behavior.
  */
-@Slf4j
+@Log4j2
 public abstract class AbstractErrorHandler implements ErrorHandler {
   private ErrorHandler delegateHandler;
 
