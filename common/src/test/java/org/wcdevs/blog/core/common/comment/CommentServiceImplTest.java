@@ -170,12 +170,20 @@ class CommentServiceImplTest {
   }
 
   @Test
-  void deleteCommentThrowsNotFoundException() {
+  void deleteCommentByAnchorAndUserThrowsNotFoundException() {
     when(commentRepository.deleteByAnchorAndPublishedBy(any(), any())).thenReturn(0);
     var anchor = TestsUtil.aString();
     var user = TestsUtil.aString();
 
     assertThrows(CommentNotFoundException.class, () -> commentService.deleteComment(anchor, user));
+  }
+
+  @Test
+  void deleteCommentByAnchorThrowsNotFoundException() {
+    when(commentRepository.deleteByAnchor(any())).thenReturn(0);
+    var anchor = TestsUtil.aString();
+
+    assertThrows(CommentNotFoundException.class, () -> commentService.deleteComment(anchor));
   }
 
   @Test
