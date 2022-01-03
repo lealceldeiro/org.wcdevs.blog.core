@@ -59,6 +59,13 @@ public class CommentServiceImpl implements CommentService {
   }
 
   @Override
+  public void deleteComment(String commentAnchor) {
+    if (commentRepository.deleteByAnchor(commentAnchor) < 1) {
+      throw new CommentNotFoundException();
+    }
+  }
+
+  @Override
   public void deleteComment(String commentAnchor, String user) {
     if (commentRepository.deleteByAnchorAndPublishedBy(commentAnchor, user) < 1) {
       throw new CommentNotFoundException();
