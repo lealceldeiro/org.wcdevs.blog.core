@@ -4,6 +4,7 @@ import java.util.Collection;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,6 +19,8 @@ import org.wcdevs.blog.core.common.comment.CommentService;
 import org.wcdevs.blog.core.persistence.comment.CommentDto;
 import org.wcdevs.blog.core.persistence.comment.PartialCommentDto;
 import org.wcdevs.blog.core.rest.auth.AuthAttributeExtractor;
+import org.wcdevs.blog.core.rest.auth.Role;
+import org.wcdevs.blog.core.rest.auth.SecurityContextAuthChecker;
 
 /**
  * Controller providing webservices to perform comment-related requests.
@@ -28,6 +31,7 @@ import org.wcdevs.blog.core.rest.auth.AuthAttributeExtractor;
 public class CommentController {
   private final CommentService commentService;
   private final AuthAttributeExtractor authAttributeExtractor;
+  private final SecurityContextAuthChecker securityContextAuthChecker;
 
   @GetMapping("/{commentAnchor}")
   public ResponseEntity<CommentDto> getComment(@PathVariable String commentAnchor) {
@@ -50,6 +54,7 @@ public class CommentController {
    * @return The updated comment info.
    */
   @PutMapping("/{commentAnchor}")
+  @PreAuthorize("isAuthenticated()")
   public ResponseEntity<CommentDto> updateComment(@PathVariable String commentAnchor,
                                                   @AuthenticationPrincipal Object principal,
                                                   @Validated @RequestBody PartialCommentDto dto) {
@@ -58,10 +63,21 @@ public class CommentController {
     return new ResponseEntity<>(comment, HttpStatus.OK);
   }
 
+  /**
+   * Deletes a comment.
+   *
+   * @param commentAnchor Anchor of the comment to be deleted.
+   * @param principal     Auth principal object, resolved by the framework.
+   */
   @DeleteMapping("/{commentAnchor}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
+  @PreAuthorize("isAuthenticated()")
   public void deleteComment(@PathVariable String commentAnchor,
                             @AuthenticationPrincipal Object principal) {
+    if (securityContextAuthChecker.hasAnyRole(Role.EDITOR)) {
+      commentService.deleteComment(commentAnchor);
+      return;
+    }
     var username = authAttributeExtractor.principalUsername(principal);
     commentService.deleteComment(commentAnchor, username);
   }
