@@ -23,6 +23,8 @@ import org.wcdevs.blog.core.persistence.comment.CommentDto;
 import org.wcdevs.blog.core.persistence.post.PartialPostDto;
 import org.wcdevs.blog.core.persistence.post.PostDto;
 import org.wcdevs.blog.core.rest.auth.AuthAttributeExtractor;
+import org.wcdevs.blog.core.rest.auth.Role;
+import org.wcdevs.blog.core.rest.auth.SecurityContextAuthChecker;
 
 /**
  * Controller providing webservices to perform post-related requests.
@@ -34,6 +36,7 @@ public class PostController {
   private final PostService postService;
   private final CommentService commentService;
   private final AuthAttributeExtractor authAttributeExtractor;
+  private final SecurityContextAuthChecker securityContextAuthChecker;
 
   @GetMapping("/")
   public ResponseEntity<Collection<PostDto>> getPosts() {
@@ -49,10 +52,10 @@ public class PostController {
    * @return The newly created post.
    */
   @PostMapping("/")
-  @PreAuthorize("hasAnyRole('EDITOR', 'AUTHOR')")
+  @PreAuthorize("hasAnyRole('AUTHOR')")
   public ResponseEntity<PostDto> createPost(@AuthenticationPrincipal Object principal,
                                             @Validated @RequestBody PostDto postDto) {
-    String username = authAttributeExtractor.principalUsername(principal);
+    var username = authAttributeExtractor.principalUsername(principal);
     postDto.setPublishedBy(username);
     postDto.setUpdatedBy(username);
 
@@ -85,7 +88,7 @@ public class PostController {
   public ResponseEntity<PostDto> partialUpdatePost(@PathVariable String postSlug,
                                                    @AuthenticationPrincipal Object principal,
                                                    @Validated @RequestBody PartialPostDto newDto) {
-    String username = authAttributeExtractor.principalUsername(principal);
+    var username = authAttributeExtractor.principalUsername(principal);
     newDto.setUpdatedBy(username);
 
     return new ResponseEntity<>(postService.partialUpdate(postSlug, newDto), HttpStatus.OK);
@@ -105,17 +108,28 @@ public class PostController {
   public ResponseEntity<PostDto> fullyUpdatePost(@PathVariable String postSlug,
                                                  @AuthenticationPrincipal Object principal,
                                                  @Validated @RequestBody PostDto newDto) {
-    String username = authAttributeExtractor.principalUsername(principal);
+    var username = authAttributeExtractor.principalUsername(principal);
     newDto.setUpdatedBy(username);
 
     return new ResponseEntity<>(postService.fullUpdate(postSlug, newDto), HttpStatus.OK);
   }
 
+  /**
+   * Deletes a post.
+   *
+   * @param postSlug  Slug of the post to be deleted.
+   * @param principal Auth principal resolved by the framework.
+   */
   @DeleteMapping("/{postSlug}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @PreAuthorize("hasAnyRole('EDITOR', 'AUTHOR')")
-  public void deletePost(@PathVariable String postSlug) {
-    postService.deletePost(postSlug);
+  public void deletePost(@PathVariable String postSlug, @AuthenticationPrincipal Object principal) {
+    if (securityContextAuthChecker.hasAnyRole(Role.EDITOR)) {
+      postService.deletePost(postSlug);
+      return;
+    }
+    var username = authAttributeExtractor.principalUsername(principal);
+    postService.deletePost(postSlug, username);
   }
 
   /**
@@ -132,7 +146,7 @@ public class PostController {
   public ResponseEntity<CommentDto> createComment(@PathVariable String postSlug,
                                                   @AuthenticationPrincipal Object principal,
                                                   @Validated @RequestBody CommentDto dto) {
-    String username = authAttributeExtractor.principalUsername(principal);
+    var username = authAttributeExtractor.principalUsername(principal);
     dto.setPublishedBy(username);
 
     return new ResponseEntity<>(commentService.createComment(postSlug, dto), HttpStatus.CREATED);

@@ -19,5 +19,7 @@ public interface PostService {
 
   void deletePost(String postSlug);
 
+  void deletePost(String postSlug, String user);
+
   Collection<PostDto> getPosts();
 }

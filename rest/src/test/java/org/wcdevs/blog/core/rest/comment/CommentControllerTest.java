@@ -1,6 +1,7 @@
 package org.wcdevs.blog.core.rest.comment;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -145,7 +146,7 @@ class CommentControllerTest {
   }
 
   @Test
-  void deleteCommentByAnchorAndUser() throws Exception {
+  void deleteCommentByAuthor() throws Exception {
     var anchor = TestsUtil.sampleComment().getAnchor();
     var user = TestsUtil.sampleComment().getAnchor();
 
@@ -160,15 +161,14 @@ class CommentControllerTest {
   }
 
   @Test
-  void deleteCommentByAnchor() throws Exception {
+  void deleteCommentByEditor() throws Exception {
     var anchor = TestsUtil.sampleComment().getAnchor();
-    var user = TestsUtil.sampleComment().getAnchor();
 
     when(securityContextAuthChecker.hasAnyRole(Role.EDITOR)).thenReturn(true);
 
     mockMvc.perform(delete(BASE_URL + "{commentAnchor}", anchor))
            .andExpect(status().isNoContent());
     verify(commentService, times(1)).deleteComment(anchor);
-    verify(commentService, never()).deleteComment(anchor, user);
+    verify(commentService, never()).deleteComment(eq(anchor), any());
   }
 }

@@ -3,7 +3,11 @@ package org.wcdevs.blog.core.rest.post;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -32,6 +36,7 @@ import static org.wcdevs.blog.core.rest.DocUtil.PUBLISHED_BY;
 import static org.wcdevs.blog.core.rest.DocUtil.PUBLISHED_BY_DESC;
 import static org.wcdevs.blog.core.rest.TestsUtil.ERROR_RESPONSE_FIELDS;
 import static org.wcdevs.blog.core.rest.TestsUtil.MAPPER;
+import static org.wcdevs.blog.core.rest.TestsUtil.aString;
 import static org.wcdevs.blog.core.rest.TestsUtil.samplePostSlug;
 
 import java.lang.reflect.Array;
@@ -72,6 +77,8 @@ import org.wcdevs.blog.core.persistence.post.PostDto;
 import org.wcdevs.blog.core.rest.AppExceptionHandler;
 import org.wcdevs.blog.core.rest.TestsUtil;
 import org.wcdevs.blog.core.rest.auth.AuthAttributeExtractor;
+import org.wcdevs.blog.core.rest.auth.Role;
+import org.wcdevs.blog.core.rest.auth.SecurityContextAuthChecker;
 import org.wcdevs.blog.core.rest.errorhandler.ErrorHandlerFactory;
 import org.wcdevs.blog.core.rest.errorhandler.impl.ArgumentNotValidExceptionHandler;
 import org.wcdevs.blog.core.rest.errorhandler.impl.DataIntegrityViolationErrorHandler;
@@ -121,6 +128,8 @@ class PostControllerTest {
   private CommentService commentService;
   @MockBean
   private AuthAttributeExtractor authAttributeExtractor;
+  @MockBean
+  private SecurityContextAuthChecker securityContextAuthChecker;
 
   @BeforeEach
   void setUp(RestDocumentationContextProvider restDocumentation) {
@@ -348,10 +357,29 @@ class PostControllerTest {
   }
 
   @Test
-  void deletePost() throws Exception {
-    mockMvc.perform(delete(BASE_URL + "{postSlug}", TestsUtil.samplePostSlug().getSlug()))
+  void deletePostByAuthor() throws Exception {
+    var slug = TestsUtil.samplePostSlug().getSlug();
+    var user = aString();
+    when(securityContextAuthChecker.hasAnyRole(Role.EDITOR)).thenReturn(false);
+    when(authAttributeExtractor.principalUsername(any())).thenReturn(user);
+
+    mockMvc.perform(delete(BASE_URL + "{postSlug}", slug))
            .andExpect(status().isNoContent())
            .andDo(document("delete_post", SLUG_PATH_PARAMETER));
+
+    verify(postService, times(1)).deletePost(slug, user);
+    verify(postService, never()).deletePost(slug);
+  }
+
+  @Test
+  void deletePostByEditor() throws Exception {
+    var slug = samplePostSlug().getSlug();
+    when(securityContextAuthChecker.hasAnyRole(Role.EDITOR)).thenReturn(true);
+
+    mockMvc.perform(delete(BASE_URL + "{postSlug}", slug)).andExpect(status().isNoContent());
+
+    verify(postService, times(1)).deletePost(slug);
+    verify(postService, never()).deletePost(eq(slug), any());
   }
 
   private static Stream<Arguments> createCommentArgs() {
