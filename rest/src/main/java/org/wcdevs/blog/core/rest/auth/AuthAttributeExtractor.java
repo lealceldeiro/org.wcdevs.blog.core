@@ -28,6 +28,6 @@ public interface AuthAttributeExtractor {
    */
   @Nullable
   default String principalUsername(Object principal) {
-    return extract(principal, ConverterUtil.PRINCIPAL_USERNAME);
+    return extract(principal, JwtConverter.PRINCIPAL_USERNAME);
   }
 }

@@ -40,7 +40,7 @@ class AuthJwtAttributeExtractorTest {
   @Test
   void principalUsernameReturnsCorrectlyTheProperty() {
     var expectedValue = TestsUtil.aString();
-    var property = ConverterUtil.PRINCIPAL_USERNAME;
+    var property = JwtConverter.PRINCIPAL_USERNAME;
 
     var jwt = mock(Jwt.class);
     when(jwt.getClaims()).thenReturn(Map.of(property, expectedValue));
