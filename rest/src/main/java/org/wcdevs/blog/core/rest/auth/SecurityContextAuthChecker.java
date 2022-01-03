@@ -21,7 +21,7 @@ public class SecurityContextAuthChecker {
    *
    * @param roles {@link Role}s to be checked for presence in the authentication principal.
    *
-   * @return {@code true} the conditions described above are met, {@code false} otherwise.
+   * @return {@code true} if the conditions described above are met, {@code false} otherwise.
    */
   public boolean hasAnyRole(Role... roles) {
     return hasAnyAuthority(stream(roles).map(Role::toString).toArray(String[]::new));
@@ -32,7 +32,7 @@ public class SecurityContextAuthChecker {
    *
    * @param authorities Authorities to be checked for presence in the authentication principal.
    *
-   * @return {@code true} the conditions described above are met, {@code false} otherwise.
+   * @return {@code true} if the conditions described above are met, {@code false} otherwise.
    */
   public boolean hasAnyAuthority(String... authorities) {
     var auth = SecurityContextHolder.getContext().getAuthentication();

@@ -65,7 +65,7 @@ class JwtCognitoConverterTest {
 
     var jwtMock = mock(Jwt.class);
     @SuppressWarnings("rawtypes")
-    Map claims = new TreeMap();// force cast error
+    Map claims = new TreeMap(); // force cast error
     claims.put(1, aString());
     when(jwtMock.getClaims()).thenReturn(claims);
 
