@@ -52,6 +52,10 @@ public interface CommentRepository extends JpaRepository<Comment, UUID> {
          + "group by c.anchor, c.body, c.publishedBy, c.lastUpdated")
   Set<CommentDto> findChildCommentsWithParentAnchor(String anchor);
 
+  @Query("delete from Comment c where c.anchor = :anchor")
+  @Modifying
+  int deleteByAnchor(String anchor);
+
   @Query("delete from Comment c where c.anchor = :anchor and c.publishedBy = :user")
   @Modifying
   int deleteByAnchorAndPublishedBy(String anchor, String user);
