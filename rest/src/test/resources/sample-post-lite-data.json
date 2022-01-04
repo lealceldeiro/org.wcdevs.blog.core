@@ -1,0 +1,20 @@
+[
+  {
+    "title": "Lorem Ipsum",
+    "slug": "lorem-ipsum-2011460781",
+    "excerpt": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur ullamcorper ex at turpis fermentum",
+    "commentsCount": 2
+  },
+  {
+    "title": "Integer in pretium turpis",
+    "slug": "integer-in-pretium-turpis-2011460751",
+    "excerpt": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur ullamcorper ex at turpis fermentum",
+    "commentsCount": 7
+  },
+  {
+    "title": "Fusce eu sagittis tortor",
+    "slug": "fusce-eu-sagittis-tortor-2011460723",
+    "excerpt": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur ullamcorper ex at turpis fermentum",
+    "commentsCount": 0
+  }
+]

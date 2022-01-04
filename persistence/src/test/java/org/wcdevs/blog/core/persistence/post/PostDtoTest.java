@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.wcdevs.blog.core.persistence.TestsUtil.aString;
 
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
@@ -16,13 +17,17 @@ import org.junit.jupiter.params.provider.MethodSource;
 class PostDtoTest {
   @Test
   void constructor() {
+    var random = new SecureRandom();
     var title = aString();
     var slug = aString();
     var excerpt = aString();
-    var dto = new PostDto(title, slug, excerpt);
+    var commentsCount = Math.abs(random.nextInt());
+    var dto = new PostDto(title, slug, excerpt, commentsCount);
+
     assertEquals(title, dto.getTitle());
     assertEquals(slug, dto.getSlug());
     assertEquals(excerpt, dto.getExcerpt());
+    assertEquals(commentsCount, dto.getCommentsCount());
   }
 
   @Test

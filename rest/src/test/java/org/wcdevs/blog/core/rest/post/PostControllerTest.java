@@ -144,7 +144,7 @@ class PostControllerTest {
         .then(ignored -> TestsUtil.samplePostSlug());
     when(postService.fullUpdate(anyString(), any(PostDto.class)))
         .then(ignored -> TestsUtil.samplePostSlug());
-    when(postService.getPosts()).then(ignored -> TestsUtil.samplePostSlugTitles());
+    when(postService.getPosts()).then(ignored -> TestsUtil.samplePostsLiteData());
 
     when(authAttributeExtractor.principalUsername(any()))
         .thenReturn(TestsUtil.sampleFullPost().getPublishedBy());
@@ -152,21 +152,18 @@ class PostControllerTest {
 
   @Test
   void getPosts() throws Exception {
+    var fields
+        = responseFields(fieldWithPath("[]").description("List of posts information"),
+                         fieldWithPath("[*].title").description("Post title"),
+                         fieldWithPath("[*].slug")
+                             .description("Post slug. Used to get the post information later"),
+                         fieldWithPath("[*].excerpt")
+                             .description("An excerpt of the post content"),
+                         fieldWithPath("[*].commentsCount")
+                             .description("Number of comments published in each post"));
     mockMvc.perform(get(BASE_URL))
            .andExpect(status().isOk())
-           .andDo(document("get_posts",
-                           responseFields(fieldWithPath("[]")
-                                              .description("List of posts information"),
-                                          fieldWithPath("[*].title")
-                                              .description("Post title"),
-                                          fieldWithPath("[*].slug")
-                                              .description("Post slug. This value can be used to "
-                                                           + "retrieve the post later"),
-                                          fieldWithPath("[*].excerpt")
-                                              .description("An excerpt of the post content")
-                                         )
-                          )
-                 );
+           .andDo(document("get_posts", fields));
   }
 
   @Test
@@ -251,7 +248,7 @@ class PostControllerTest {
     var now = LocalDateTime.now();
     var postDto = new PostDto(title, prototype.getSlug(), prototype.getBody(),
                               prototype.getExcerpt(), prototype.getPublishedBy(),
-                              prototype.getUpdatedBy(), now, now);
+                              prototype.getUpdatedBy(), now, now, 0);
 
     mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -268,7 +265,7 @@ class PostControllerTest {
     var now = LocalDateTime.now();
     var postDto = new PostDto(prototype.getTitle(), prototype.getSlug(), body,
                               prototype.getExcerpt(), prototype.getPublishedBy(),
-                              prototype.getUpdatedBy(), now, now);
+                              prototype.getUpdatedBy(), now, now, 0);
 
     mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -290,7 +287,7 @@ class PostControllerTest {
     var now = LocalDateTime.now();
     var postDto = new PostDto(prototype.getTitle(), slug, prototype.getBody(),
                               prototype.getExcerpt(), prototype.getPublishedBy(),
-                              prototype.getUpdatedBy(), now, now);
+                              prototype.getUpdatedBy(), now, now, 0);
 
     mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)

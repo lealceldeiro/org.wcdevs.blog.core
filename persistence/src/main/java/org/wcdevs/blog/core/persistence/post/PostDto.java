@@ -64,16 +64,20 @@ public class PostDto {
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   private LocalDateTime updatedOn;
 
+  private Integer commentsCount;
+
   /**
    * Creates a new {@link PostDto} with only title, slug and excerpt into.
    *
-   * @param title   Post title
-   * @param slug    Post slug
-   * @param excerpt Post excerpt
+   * @param title            Post title
+   * @param slug             Post slug
+   * @param excerpt          Post excerpt
+   * @param rawCommentsCount Comments count.
    */
-  public PostDto(String title, String slug, String excerpt) {
+  public PostDto(String title, String slug, String excerpt, long rawCommentsCount) {
     this.title = title;
     this.slug = slug;
     this.excerpt = excerpt;
+    this.commentsCount = (int) rawCommentsCount;
   }
 }
