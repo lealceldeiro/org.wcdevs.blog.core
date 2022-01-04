@@ -100,19 +100,17 @@ class CommentDtoTest {
   void setters() {
     var parentComment = mock(Comment.class);
     var post = mock(Post.class);
-    var childrenCount = new SecureRandom().nextInt();
     var publishedBy = aString();
 
     var dto = CommentDto.builder().build();
     dto.setParentComment(parentComment);
     dto.setPost(post);
-    dto.setChildrenCount(childrenCount);
     dto.setPublishedBy(publishedBy);
 
     assertNotNull(dto);
     assertEquals(parentComment, dto.getParentComment());
     assertEquals(post, dto.getPost());
-    assertEquals(childrenCount, dto.getChildrenCount());
+    assertEquals(0, dto.getChildrenCount());
     assertEquals(publishedBy, dto.getPublishedBy());
   }
 
