@@ -4,9 +4,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 import static org.wcdevs.blog.core.rest.TestsUtil.aString;
 
@@ -37,15 +35,15 @@ class JwtCognitoConverterTest {
     // given
     JwtCognitoConverter converter = new JwtCognitoConverter();
 
-    var rolePrefix = aString();
     Map<String, Object> claimsStub = new HashMap<>();
     claimsStub.put(aString(), aString());
     claimsStub.put(JwtCognitoConverter.COGNITO_GROUPS, groupsStub);
 
+    @SuppressWarnings("unchecked")
     var expected = groupsStub != null
                    ? ((List<String>) claimsStub.get(JwtCognitoConverter.COGNITO_GROUPS))
                        .stream()
-                       .map(roleMock -> rolePrefix + roleMock)
+                       .map(roleMock -> Role.PREFIX + roleMock)
                        .map(SimpleGrantedAuthority::new)
                        .collect(Collectors.toSet())
                    : emptySet();
@@ -53,15 +51,11 @@ class JwtCognitoConverterTest {
     var jwtMock = mock(Jwt.class);
     when(jwtMock.getClaims()).thenReturn(claimsStub);
 
-    try (var mockedConverterUtil = mockStatic(ConverterUtil.class)) {
-      mockedConverterUtil.when(() -> ConverterUtil.toAuthRoleName(anyString()))
-                         .then(invocationOnMock -> rolePrefix + invocationOnMock.getArgument(0));
-      // when
-      var actual = converter.providerAuthorities(jwtMock);
+    // when
+    var actual = converter.providerAuthorities(jwtMock);
 
-      // then
-      Assertions.assertEquals(expected, actual);
-    }
+    // then
+    Assertions.assertEquals(expected, actual);
   }
 
   @Test
@@ -70,7 +64,8 @@ class JwtCognitoConverterTest {
     JwtCognitoConverter converter = new JwtCognitoConverter();
 
     var jwtMock = mock(Jwt.class);
-    Map claims = new TreeMap();// force cast error
+    @SuppressWarnings("rawtypes")
+    Map claims = new TreeMap(); // force cast error
     claims.put(1, aString());
     when(jwtMock.getClaims()).thenReturn(claims);
 
@@ -90,7 +85,7 @@ class JwtCognitoConverterTest {
 
     var actual = new JwtCognitoConverter().customClaims(jwtMock);
 
-    assertEquals(Map.of(ConverterUtil.PRINCIPAL_USERNAME, username), actual);
+    assertEquals(Map.of(JwtConverter.PRINCIPAL_USERNAME, username), actual);
   }
 
   @Test
@@ -100,6 +95,6 @@ class JwtCognitoConverterTest {
 
     var actual = new JwtCognitoConverter().customClaims(jwtMock);
 
-    assertEquals(Map.of(ConverterUtil.PRINCIPAL_USERNAME, JwtCognitoConverter.ANONYMOUS), actual);
+    assertEquals(Map.of(JwtConverter.PRINCIPAL_USERNAME, JwtCognitoConverter.ANONYMOUS), actual);
   }
 }

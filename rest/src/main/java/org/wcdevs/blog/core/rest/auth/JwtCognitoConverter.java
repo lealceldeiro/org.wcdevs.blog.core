@@ -36,7 +36,7 @@ class JwtCognitoConverter extends JwtAbstractConverter {
                claims);
     }
     return cognitoGroups.stream()
-                        .map(ConverterUtil::toAuthRoleName)
+                        .map(Role::toAuthRoleName)
                         .map(SimpleGrantedAuthority::new)
                         .collect(toSet());
   }
@@ -60,7 +60,7 @@ class JwtCognitoConverter extends JwtAbstractConverter {
                                        .map(JwtCognitoConverter::toUsername)
                                        .orElse(ANONYMOUS);
 
-    return Map.of(ConverterUtil.PRINCIPAL_USERNAME, principalUsername);
+    return Map.of(JwtConverter.PRINCIPAL_USERNAME, principalUsername);
   }
 
   private static Object toUsername(@Nullable Object cognitoUsername) {

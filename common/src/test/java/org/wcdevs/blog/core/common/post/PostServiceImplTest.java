@@ -2,8 +2,11 @@ package org.wcdevs.blog.core.common.post;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -135,18 +138,38 @@ class PostServiceImplTest {
   }
 
   @Test
-  void deletePostNotFound() {
+  void deletePostBySlugNotFound() {
     var slug = aString();
     when(postRepository.deleteBySlug(slug)).thenReturn(0);
     assertThrows(PostNotFoundException.class, () -> postService.deletePost(slug));
   }
 
   @Test
-  void deletePost() {
+  void deletePostBySlug() {
     var slug = aString();
     when(postRepository.deleteBySlug(slug)).thenReturn(1);
     postService.deletePost(slug);
 
     verify(postRepository, times(1)).deleteBySlug(slug);
+    verify(postRepository, never()).deleteBySlugAndPublishedBy(eq(slug), any());
+  }
+
+  @Test
+  void deletePostBySlugAndUserNotFound() {
+    var slug = aString();
+    var user = aString();
+    when(postRepository.deleteBySlugAndPublishedBy(slug, user)).thenReturn(0);
+    assertThrows(PostNotFoundException.class, () -> postService.deletePost(slug, user));
+  }
+
+  @Test
+  void deletePostBySlugAndUser() {
+    var slug = aString();
+    var user = aString();
+    when(postRepository.deleteBySlugAndPublishedBy(slug, user)).thenReturn(1);
+    postService.deletePost(slug, user);
+
+    verify(postRepository, times(1)).deleteBySlugAndPublishedBy(slug, user);
+    verify(postRepository, never()).deleteBySlug(slug);
   }
 }

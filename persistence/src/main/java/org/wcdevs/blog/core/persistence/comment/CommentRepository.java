@@ -14,7 +14,7 @@ public interface CommentRepository extends JpaRepository<Comment, UUID> {
   @Query("select c.uuid from Comment c where c.anchor = :anchor")
   Optional<UUID> getCommentUuidWithAnchor(String anchor);
 
-  Optional<Comment> findByAnchor(String anchor);
+  Optional<Comment> findByAnchorAndPublishedBy(String anchor, String user);
 
   @Query("select new org.wcdevs.blog.core.persistence.comment.CommentDto("
          + "c.anchor, c.body, c.publishedBy, c.lastUpdated, count (childC.uuid)) "
@@ -55,4 +55,8 @@ public interface CommentRepository extends JpaRepository<Comment, UUID> {
   @Query("delete from Comment c where c.anchor = :anchor")
   @Modifying
   int deleteByAnchor(String anchor);
+
+  @Query("delete from Comment c where c.anchor = :anchor and c.publishedBy = :user")
+  @Modifying
+  int deleteByAnchorAndPublishedBy(String anchor, String user);
 }

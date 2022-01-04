@@ -1,5 +1,8 @@
 package org.wcdevs.blog.core.rest.comment;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -24,6 +27,7 @@ import static org.wcdevs.blog.core.rest.DocUtil.PARENT_COMMENT_ANCHOR_PARAM;
 import static org.wcdevs.blog.core.rest.DocUtil.PARENT_COMMENT_ANCHOR_PARAM_DESC;
 import static org.wcdevs.blog.core.rest.TestsUtil.ERROR_RESPONSE_FIELDS;
 import static org.wcdevs.blog.core.rest.TestsUtil.MAPPER;
+import static org.wcdevs.blog.core.rest.TestsUtil.aString;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,6 +48,9 @@ import org.wcdevs.blog.core.common.comment.CommentService;
 import org.wcdevs.blog.core.persistence.comment.PartialCommentDto;
 import org.wcdevs.blog.core.rest.AppExceptionHandler;
 import org.wcdevs.blog.core.rest.TestsUtil;
+import org.wcdevs.blog.core.rest.auth.AuthAttributeExtractor;
+import org.wcdevs.blog.core.rest.auth.Role;
+import org.wcdevs.blog.core.rest.auth.SecurityContextAuthChecker;
 import org.wcdevs.blog.core.rest.errorhandler.ErrorHandlerFactory;
 import org.wcdevs.blog.core.rest.errorhandler.impl.ArgumentNotValidExceptionHandler;
 import org.wcdevs.blog.core.rest.errorhandler.impl.DataIntegrityViolationErrorHandler;
@@ -71,6 +78,10 @@ class CommentControllerTest {
 
   @MockBean
   private CommentService commentService;
+  @MockBean
+  private AuthAttributeExtractor authAttributeExtractor;
+  @MockBean
+  private SecurityContextAuthChecker securityContextAuthChecker;
 
   @BeforeEach
   void setUp(RestDocumentationContextProvider restDocumentationContextProvider) {
@@ -119,9 +130,11 @@ class CommentControllerTest {
   void updateComment() throws Exception {
     var sample = TestsUtil.sampleComment();
     var anchor = sample.getAnchor();
+    var username = aString();
     var dto = PartialCommentDto.builder().body(sample.getBody()).build();
 
-    when(commentService.updateComment(anchor, dto)).thenReturn(sample);
+    when(authAttributeExtractor.principalUsername(any())).thenReturn(username);
+    when(commentService.updateComment(anchor, dto, username)).thenReturn(sample);
 
     mockMvc.perform(put(BASE_URL + "{commentAnchor}", anchor)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -133,12 +146,29 @@ class CommentControllerTest {
   }
 
   @Test
-  void deleteComment() throws Exception {
+  void deleteCommentByAuthor() throws Exception {
     var anchor = TestsUtil.sampleComment().getAnchor();
+    var user = TestsUtil.sampleComment().getAnchor();
+
+    when(securityContextAuthChecker.hasAnyRole(Role.EDITOR)).thenReturn(false);
+    when(authAttributeExtractor.principalUsername(any())).thenReturn(user);
 
     mockMvc.perform(delete(BASE_URL + "{commentAnchor}", anchor))
            .andExpect(status().isNoContent())
            .andDo(document("delete_comment", ANCHOR_PATH_PARAMETER));
+    verify(commentService, times(1)).deleteComment(anchor, user);
+    verify(commentService, never()).deleteComment(anchor);
+  }
+
+  @Test
+  void deleteCommentByEditor() throws Exception {
+    var anchor = TestsUtil.sampleComment().getAnchor();
+
+    when(securityContextAuthChecker.hasAnyRole(Role.EDITOR)).thenReturn(true);
+
+    mockMvc.perform(delete(BASE_URL + "{commentAnchor}", anchor))
+           .andExpect(status().isNoContent());
     verify(commentService, times(1)).deleteComment(anchor);
+    verify(commentService, never()).deleteComment(eq(anchor), any());
   }
 }

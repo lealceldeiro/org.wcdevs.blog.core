@@ -34,7 +34,7 @@ class JwtKeycloakConverter extends JwtAbstractConverter {
                    .orElse(emptyMap())
                    .getOrDefault(ROLES, emptyList())
                    .stream()
-                   .map(ConverterUtil::toAuthRoleName)
+                   .map(Role::toAuthRoleName)
                    .map(SimpleGrantedAuthority::new)
                    .collect(toSet());
   }
@@ -46,7 +46,7 @@ class JwtKeycloakConverter extends JwtAbstractConverter {
                                        .map(JwtKeycloakConverter::toUsername)
                                        .orElse(ANONYMOUS);
 
-    return Map.of(ConverterUtil.PRINCIPAL_USERNAME, principalUsername);
+    return Map.of(JwtConverter.PRINCIPAL_USERNAME, principalUsername);
   }
 
   private static Object toUsername(@Nullable Object email) {
