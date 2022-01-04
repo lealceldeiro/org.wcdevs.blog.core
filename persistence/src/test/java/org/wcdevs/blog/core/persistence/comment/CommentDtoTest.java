@@ -2,12 +2,12 @@ package org.wcdevs.blog.core.persistence.comment;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.mock;
 import static org.wcdevs.blog.core.persistence.TestsUtil.aString;
 
-import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Random;
 import java.util.stream.Stream;
@@ -110,7 +110,7 @@ class CommentDtoTest {
     assertNotNull(dto);
     assertEquals(parentComment, dto.getParentComment());
     assertEquals(post, dto.getPost());
-    assertEquals(0, dto.getChildrenCount());
+    assertNull(dto.getChildrenCount());
     assertEquals(publishedBy, dto.getPublishedBy());
   }
 
