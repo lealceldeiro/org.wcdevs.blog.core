@@ -32,7 +32,7 @@ public final class TestsUtil {
   private static final Random RANDOM = new SecureRandom();
 
   private static List<PostDto> SAMPLE_SLUG_DATA;
-  private static List<PostDto> SAMPLE_SLUG_TITLE_DATA;
+  private static List<PostDto> SAMPLE_POST_LITE_DATA;
   private static List<PostDto> SAMPLE_TITLE_BODY_DATA;
   private static List<PostDto> SAMPLE_FULL_POST_DATA;
   private static List<CommentDto> SAMPLE_COMMENTS;
@@ -46,7 +46,7 @@ public final class TestsUtil {
   static {
     try {
       SAMPLE_SLUG_DATA = readPosts("sample-post-slugs.json");
-      SAMPLE_SLUG_TITLE_DATA = readPosts("sample-post-excerpts-slugs-and-titles.json");
+      SAMPLE_POST_LITE_DATA = readPosts("sample-post-lite-data.json");
       SAMPLE_TITLE_BODY_DATA = readPosts("sample-new-post-payload.json");
       SAMPLE_FULL_POST_DATA = readPosts("sample-full-posts.json");
       SAMPLE_COMMENTS = readComments("sample-comments.json");
@@ -81,8 +81,8 @@ public final class TestsUtil {
     return nextElementFrom(SAMPLE_SLUG_DATA);
   }
 
-  public static List<PostDto> samplePostSlugTitles() {
-    return elements(SAMPLE_SLUG_TITLE_DATA);
+  public static List<PostDto> samplePostsLiteData() {
+    return elements(SAMPLE_POST_LITE_DATA);
   }
 
   private static <T> List<T> elements(List<T> elements) {

@@ -11,8 +11,11 @@ import org.springframework.data.jpa.repository.Query;
  * Repository to handle the DB interaction with the "post" table.
  */
 public interface PostRepository extends JpaRepository<Post, UUID> {
-  @Query("select new org.wcdevs.blog.core.persistence.post.PostDto(p.title, p.slug, p.excerpt) "
-         + "from Post p")
+  @Query("select new org.wcdevs.blog.core.persistence.post.PostDto(p.title, p.slug, p.excerpt,"
+         + "                                                       count(c)) "
+         + "from Post p "
+         + "left join Comment c on (c.post = p) "
+         + "group by p.title, p.slug, p.excerpt")
   List<PostDto> getPosts();
 
   Optional<Post> findBySlug(String slug);
