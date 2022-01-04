@@ -23,4 +23,8 @@ public interface PostRepository extends JpaRepository<Post, UUID> {
   @Query("delete from Post p where p.slug = :slug")
   @Modifying
   int deleteBySlug(String slug);
+
+  @Query("delete from Post p where p.slug = :slug and p.publishedBy = :user")
+  @Modifying
+  int deleteBySlugAndPublishedBy(String slug, String user);
 }

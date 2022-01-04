@@ -121,13 +121,15 @@ class CommentServiceImplTest {
   @Test
   void updateComment() {
     var anchor = TestsUtil.aString();
+    var user = TestsUtil.aString();
     var comment = mock(Comment.class);
     when(comment.getAnchor()).thenReturn(anchor);
 
-    when(commentRepository.findByAnchor(anchor)).thenReturn(Optional.of(comment));
+    when(commentRepository.findByAnchorAndPublishedBy(anchor, user))
+        .thenReturn(Optional.of(comment));
 
     var partialCommentDto = mock(PartialCommentDto.class);
-    var actual = commentService.updateComment(anchor, partialCommentDto);
+    var actual = commentService.updateComment(anchor, partialCommentDto, user);
 
     assertNotNull(actual);
     assertEquals(anchor, actual.getAnchor());
@@ -137,15 +139,28 @@ class CommentServiceImplTest {
 
   @Test
   void updateCommentThrowsNotFoundException() {
-    when(commentRepository.findByAnchor(any())).thenReturn(Optional.empty());
+    when(commentRepository.findByAnchorAndPublishedBy(any(), any())).thenReturn(Optional.empty());
     var anchor = TestsUtil.aString();
+    var user = TestsUtil.aString();
     var dto = mock(PartialCommentDto.class);
 
-    assertThrows(CommentNotFoundException.class, () -> commentService.updateComment(anchor, dto));
+    assertThrows(CommentNotFoundException.class,
+                 () -> commentService.updateComment(anchor, dto, user));
   }
 
   @Test
-  void deleteComment() {
+  void deleteCommentByAnchorAndUser() {
+    var anchor = TestsUtil.aString();
+    var user = TestsUtil.aString();
+    when(commentRepository.deleteByAnchorAndPublishedBy(anchor, user)).thenReturn(1);
+
+    commentService.deleteComment(anchor, user);
+
+    verify(commentRepository, times(1)).deleteByAnchorAndPublishedBy(anchor, user);
+  }
+
+  @Test
+  void deleteCommentByUser() {
     var anchor = TestsUtil.aString();
     when(commentRepository.deleteByAnchor(anchor)).thenReturn(1);
 
@@ -155,7 +170,16 @@ class CommentServiceImplTest {
   }
 
   @Test
-  void deleteCommentThrowsNotFoundException() {
+  void deleteCommentByAnchorAndUserThrowsNotFoundException() {
+    when(commentRepository.deleteByAnchorAndPublishedBy(any(), any())).thenReturn(0);
+    var anchor = TestsUtil.aString();
+    var user = TestsUtil.aString();
+
+    assertThrows(CommentNotFoundException.class, () -> commentService.deleteComment(anchor, user));
+  }
+
+  @Test
+  void deleteCommentByAnchorThrowsNotFoundException() {
     when(commentRepository.deleteByAnchor(any())).thenReturn(0);
     var anchor = TestsUtil.aString();
 

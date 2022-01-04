@@ -49,10 +49,10 @@ public class CommentServiceImpl implements CommentService {
   }
 
   @Override
-  public CommentDto updateComment(String commentAnchor, PartialCommentDto updateCommentDto) {
-    Comment comment = commentRepository.findByAnchor(commentAnchor)
+  public CommentDto updateComment(String commentAnchor, PartialCommentDto dto, String user) {
+    Comment comment = commentRepository.findByAnchorAndPublishedBy(commentAnchor, user)
                                        .orElseThrow(CommentNotFoundException::new);
-    commentTransformer.updateNonNullValues(comment, updateCommentDto);
+    commentTransformer.updateNonNullValues(comment, dto);
     commentRepository.save(comment);
 
     return CommentDto.builder().anchor(comment.getAnchor()).build();
@@ -61,6 +61,13 @@ public class CommentServiceImpl implements CommentService {
   @Override
   public void deleteComment(String commentAnchor) {
     if (commentRepository.deleteByAnchor(commentAnchor) < 1) {
+      throw new CommentNotFoundException();
+    }
+  }
+
+  @Override
+  public void deleteComment(String commentAnchor, String user) {
+    if (commentRepository.deleteByAnchorAndPublishedBy(commentAnchor, user) < 1) {
       throw new CommentNotFoundException();
     }
   }

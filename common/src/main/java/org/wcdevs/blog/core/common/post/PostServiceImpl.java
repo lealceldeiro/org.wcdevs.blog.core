@@ -60,4 +60,11 @@ public class PostServiceImpl implements PostService {
       throw new PostNotFoundException();
     }
   }
+
+  @Override
+  public void deletePost(String postSlug, String user) {
+    if (postRepository.deleteBySlugAndPublishedBy(postSlug, user) < 1) {
+      throw new PostNotFoundException();
+    }
+  }
 }
