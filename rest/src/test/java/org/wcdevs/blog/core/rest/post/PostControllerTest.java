@@ -251,7 +251,7 @@ class PostControllerTest {
     var now = LocalDateTime.now();
     var postDto = new PostDto(title, prototype.getSlug(), prototype.getBody(),
                               prototype.getExcerpt(), prototype.getPublishedBy(),
-                              prototype.getUpdatedBy(), now, now);
+                              prototype.getUpdatedBy(), now, now, 0);
 
     mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -268,7 +268,7 @@ class PostControllerTest {
     var now = LocalDateTime.now();
     var postDto = new PostDto(prototype.getTitle(), prototype.getSlug(), body,
                               prototype.getExcerpt(), prototype.getPublishedBy(),
-                              prototype.getUpdatedBy(), now, now);
+                              prototype.getUpdatedBy(), now, now, 0);
 
     mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -290,7 +290,7 @@ class PostControllerTest {
     var now = LocalDateTime.now();
     var postDto = new PostDto(prototype.getTitle(), slug, prototype.getBody(),
                               prototype.getExcerpt(), prototype.getPublishedBy(),
-                              prototype.getUpdatedBy(), now, now);
+                              prototype.getUpdatedBy(), now, now, 0);
 
     mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
