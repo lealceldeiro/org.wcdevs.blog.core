@@ -1,4 +1,4 @@
-package org.wcdevs.blog.core.rest.errorhandler;
+package org.wcdevs.blog.core.rest.exceptionhandler;
 
 import java.time.LocalDateTime;
 import lombok.extern.slf4j.Slf4j;
@@ -10,11 +10,11 @@ import org.springframework.web.context.request.WebRequest;
  * An abstract handler defining the core behavior.
  */
 @Slf4j
-public abstract class AbstractErrorHandler implements ErrorHandler {
-  private ErrorHandler delegateHandler;
+public abstract class AbstractExceptionHandler implements AppExceptionHandler {
+  private AppExceptionHandler delegateHandler;
 
   @Override
-  public void setDelegateHandler(ErrorHandler delegateHandler) {
+  public void setDelegateHandler(AppExceptionHandler delegateHandler) {
     this.delegateHandler = delegateHandler;
   }
 

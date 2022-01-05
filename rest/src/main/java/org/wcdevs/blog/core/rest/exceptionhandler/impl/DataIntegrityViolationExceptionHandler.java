@@ -1,4 +1,4 @@
-package org.wcdevs.blog.core.rest.errorhandler.impl;
+package org.wcdevs.blog.core.rest.exceptionhandler.impl;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -8,14 +8,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
-import org.wcdevs.blog.core.rest.errorhandler.AbstractErrorHandler;
-import org.wcdevs.blog.core.rest.errorhandler.ErrorMessage;
+import org.wcdevs.blog.core.rest.exceptionhandler.AbstractExceptionHandler;
+import org.wcdevs.blog.core.rest.exceptionhandler.ErrorMessage;
 
 /**
  * 409 because of DB restriction error handler.
  */
 @Component
-public class DataIntegrityViolationErrorHandler extends AbstractErrorHandler {
+public class DataIntegrityViolationExceptionHandler extends AbstractExceptionHandler {
   private static final Pattern FIELD_NAME_MATCHER = Pattern.compile("(?<=\\().*(?=\\)=)");
   private static final Pattern FIELD_VALUE_MATCHER = Pattern.compile("(?<==\\().*(?=\\))");
 
