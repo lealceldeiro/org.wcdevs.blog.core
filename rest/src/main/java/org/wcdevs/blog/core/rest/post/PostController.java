@@ -2,6 +2,8 @@ package org.wcdevs.blog.core.rest.post;
 
 import java.util.Collection;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -38,9 +40,9 @@ public class PostController {
   private final AuthAttributeExtractor authAttributeExtractor;
   private final SecurityContextAuthChecker securityContextAuthChecker;
 
-  @GetMapping("/")
-  public ResponseEntity<Collection<PostDto>> getPosts() {
-    return new ResponseEntity<>(postService.getPosts(), HttpStatus.OK);
+  @GetMapping
+  public Page<PostDto> getPosts(Pageable pageable) {
+    return postService.getPosts(pageable);
   }
 
   /**
