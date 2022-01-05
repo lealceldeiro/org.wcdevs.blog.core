@@ -53,7 +53,7 @@ public class PostController {
    *
    * @return The newly created post.
    */
-  @PostMapping("/")
+  @PostMapping
   @PreAuthorize("hasAnyRole('AUTHOR')")
   public ResponseEntity<PostDto> createPost(@AuthenticationPrincipal Object principal,
                                             @Validated @RequestBody PostDto postDto) {
