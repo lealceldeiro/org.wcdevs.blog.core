@@ -84,4 +84,33 @@ public final class DocUtil {
   private DocUtil() {
     // do not instantiate
   }
+
+  public static FieldDescriptor[] pageableFields() {
+    return Stream
+        .of(fieldWithPath("pageable").ignored(),
+            fieldWithPath("pageable.sort").ignored(),
+            fieldWithPath("pageable.sort.*").ignored(),
+            fieldWithPath("pageable.pageNumber").ignored(),
+            fieldWithPath("pageable.pageSize").ignored(),
+            fieldWithPath("pageable.offset").ignored(),
+            fieldWithPath("pageable.paged").ignored(),
+            fieldWithPath("pageable.unpaged").ignored(),
+
+            fieldWithPath("last").description("true if the current page is the last one, false if no"),
+            fieldWithPath("totalPages").description("Total number of pages"),
+            fieldWithPath("totalElements").description("Total number of elements"),
+            fieldWithPath("first").description("true if the current page is the first one, false if no"),
+            fieldWithPath("number").description("The number of the current page, starting by 0"),
+            fieldWithPath("numberOfElements").description("Number of elements per page"),
+            fieldWithPath("size").description("Same as numberOfElements"),
+
+            fieldWithPath("sort").description("Sorting parameters"),
+            fieldWithPath("sort.sorted")
+                .description("true if the current elements are sorted, false if no"),
+            fieldWithPath("sort.unsorted")
+                .description("true if the current elements are not sorted, false if they are"),
+            fieldWithPath("sort.empty").ignored(),
+            fieldWithPath("empty").ignored())
+        .toArray(FieldDescriptor[]::new);
+  }
 }
