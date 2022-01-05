@@ -11,8 +11,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.wcdevs.blog.core.common.TestsUtil.aString;
+import static org.wcdevs.blog.core.common.TestsUtil.pageable;
 
-import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -38,13 +38,14 @@ class PostServiceImplTest {
 
   @Test
   void getPosts() {
-    var expected = List.of(TestsUtil.buildDto(), TestsUtil.buildDto());
-    when(postRepository.getPosts()).thenReturn(expected);
+    var pageable = pageable();
+    var expected = TestsUtil.pageOf(TestsUtil.buildDto(), TestsUtil.buildDto());
+    when(postRepository.getPosts(any())).thenReturn(expected);
 
-    var actual = postService.getPosts();
+    var actual = postService.getPosts(pageable);
 
     assertEquals(expected, actual);
-    verify(postRepository, times(1)).getPosts();
+    verify(postRepository, times(1)).getPosts(pageable);
   }
 
   @Test
