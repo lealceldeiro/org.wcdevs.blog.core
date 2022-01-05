@@ -74,20 +74,20 @@ import org.wcdevs.blog.core.common.post.PostService;
 import org.wcdevs.blog.core.persistence.comment.CommentDto;
 import org.wcdevs.blog.core.persistence.post.PartialPostDto;
 import org.wcdevs.blog.core.persistence.post.PostDto;
-import org.wcdevs.blog.core.rest.AppExceptionHandler;
+import org.wcdevs.blog.core.rest.exceptionhandler.ControllerExceptionHandler;
 import org.wcdevs.blog.core.rest.TestsUtil;
 import org.wcdevs.blog.core.rest.auth.AuthAttributeExtractor;
 import org.wcdevs.blog.core.rest.auth.Role;
 import org.wcdevs.blog.core.rest.auth.SecurityContextAuthChecker;
-import org.wcdevs.blog.core.rest.errorhandler.ErrorHandlerFactory;
-import org.wcdevs.blog.core.rest.errorhandler.impl.ArgumentNotValidExceptionHandler;
-import org.wcdevs.blog.core.rest.errorhandler.impl.DataIntegrityViolationErrorHandler;
-import org.wcdevs.blog.core.rest.errorhandler.impl.NotFoundErrorHandler;
+import org.wcdevs.blog.core.rest.exceptionhandler.ExceptionHandlerFactory;
+import org.wcdevs.blog.core.rest.exceptionhandler.impl.ArgumentNotValidExceptionHandler;
+import org.wcdevs.blog.core.rest.exceptionhandler.impl.DataIntegrityViolationExceptionHandler;
+import org.wcdevs.blog.core.rest.exceptionhandler.impl.NotFoundExceptionHandler;
 
 @EnableWebMvc
 @SpringBootTest(classes = {
-    PostController.class, AppExceptionHandler.class, ErrorHandlerFactory.class,
-    NotFoundErrorHandler.class, DataIntegrityViolationErrorHandler.class,
+    PostController.class, ControllerExceptionHandler.class, ExceptionHandlerFactory.class,
+    NotFoundExceptionHandler.class, DataIntegrityViolationExceptionHandler.class,
     ArgumentNotValidExceptionHandler.class
 })
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})

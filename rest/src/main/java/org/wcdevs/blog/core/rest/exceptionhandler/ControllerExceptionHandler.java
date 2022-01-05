@@ -1,4 +1,4 @@
-package org.wcdevs.blog.core.rest;
+package org.wcdevs.blog.core.rest.exceptionhandler;
 
 import java.time.LocalDateTime;
 import org.springframework.http.HttpStatus;
@@ -8,24 +8,21 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
-import org.wcdevs.blog.core.rest.errorhandler.ErrorHandler;
-import org.wcdevs.blog.core.rest.errorhandler.ErrorHandlerFactory;
-import org.wcdevs.blog.core.rest.errorhandler.ErrorMessage;
 
 /**
  * Handles exceptions thrown by the business logic.
  */
 @RestControllerAdvice
-public class AppExceptionHandler {
-  private final ErrorHandler chainedErrorHandler;
+public class ControllerExceptionHandler {
+  private final AppExceptionHandler chainedAppExceptionHandler;
 
-  public AppExceptionHandler(ErrorHandlerFactory errorHandlerFactory) {
-    chainedErrorHandler = errorHandlerFactory.getChainedHandler();
+  public ControllerExceptionHandler(ExceptionHandlerFactory exceptionHandlerFactory) {
+    chainedAppExceptionHandler = exceptionHandlerFactory.getChainedHandler();
   }
 
   @ExceptionHandler(Throwable.class)
   public ResponseEntity<ErrorMessage> handleNotFound(Throwable e, WebRequest req) {
-    return chainedErrorHandler.handle(e, req);
+    return chainedAppExceptionHandler.handle(e, req);
   }
 
   @ExceptionHandler(HttpMessageNotReadableException.class)

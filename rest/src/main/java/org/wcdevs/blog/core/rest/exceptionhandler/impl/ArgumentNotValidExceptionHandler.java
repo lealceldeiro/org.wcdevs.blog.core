@@ -1,4 +1,4 @@
-package org.wcdevs.blog.core.rest.errorhandler.impl;
+package org.wcdevs.blog.core.rest.exceptionhandler.impl;
 
 import java.time.LocalDateTime;
 import java.util.regex.Pattern;
@@ -7,15 +7,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.context.request.WebRequest;
-import org.wcdevs.blog.core.rest.errorhandler.AbstractErrorHandler;
-import org.wcdevs.blog.core.rest.errorhandler.ErrorMessage;
+import org.wcdevs.blog.core.rest.exceptionhandler.AbstractExceptionHandler;
+import org.wcdevs.blog.core.rest.exceptionhandler.ErrorMessage;
 
 /**
  * Handler to intercept validation errors from the request, and reported by the validation
  * framework. It will customize the response to client, removing the sensitive information.
  */
 @Component
-public class ArgumentNotValidExceptionHandler extends AbstractErrorHandler {
+public class ArgumentNotValidExceptionHandler extends AbstractExceptionHandler {
   private static final Pattern FIELD_NAME_MATCHER = Pattern.compile("(?<=on field ')\\w+(?=')");
   private static final Pattern FIELD_VALUE_MATCHER
       = Pattern.compile("(?<=rejected value \\[)[^]]*(?=]; codes)");
