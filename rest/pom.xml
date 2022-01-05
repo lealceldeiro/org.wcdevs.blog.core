@@ -80,7 +80,6 @@
       <optional>true</optional>
     </dependency>
 
-
     <!-- use sibling modules as compile time dependencies-->
     <!-- they'll be copied as modules at build time-->
     <dependency>
