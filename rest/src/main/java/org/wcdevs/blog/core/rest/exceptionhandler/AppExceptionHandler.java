@@ -1,4 +1,4 @@
-package org.wcdevs.blog.core.rest.errorhandler;
+package org.wcdevs.blog.core.rest.exceptionhandler;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.WebRequest;
@@ -6,7 +6,7 @@ import org.springframework.web.context.request.WebRequest;
 /**
  * REST error handler. It reports errors to the API callers when appropriate.
  */
-public interface ErrorHandler {
+public interface AppExceptionHandler {
   /**
    * Handles the specified {@code throwable} or, if its implementation can not do it, delegates it
    * to {@code delegatedHandler}.
@@ -18,5 +18,5 @@ public interface ErrorHandler {
    */
   ResponseEntity<ErrorMessage> handle(Throwable throwable, WebRequest request);
 
-  void setDelegateHandler(ErrorHandler delegateHandler);
+  void setDelegateHandler(AppExceptionHandler delegateHandler);
 }
