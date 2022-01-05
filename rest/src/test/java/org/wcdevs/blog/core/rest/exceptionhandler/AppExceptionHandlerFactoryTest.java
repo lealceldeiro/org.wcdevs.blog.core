@@ -1,4 +1,4 @@
-package org.wcdevs.blog.core.rest.errorhandler;
+package org.wcdevs.blog.core.rest.exceptionhandler;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -8,17 +8,17 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-class ErrorHandlerFactoryTest {
+class AppExceptionHandlerFactoryTest {
   @Test
   void throwsIllegalStateExceptionIfNoHandlersFound() {
-    List<ErrorHandler> handlers = Collections.emptyList();
-    assertThrows(IllegalStateException.class, () -> new ErrorHandlerFactory(handlers));
+    List<AppExceptionHandler> handlers = Collections.emptyList();
+    assertThrows(IllegalStateException.class, () -> new ExceptionHandlerFactory(handlers));
   }
 
   @Test
   void getChainedHandler() {
-    List<ErrorHandler> handlers = List.of(Mockito.mock(ErrorHandler.class));
-    var errorHandlerFactory = new ErrorHandlerFactory(handlers);
+    List<AppExceptionHandler> handlers = List.of(Mockito.mock(AppExceptionHandler.class));
+    var errorHandlerFactory = new ExceptionHandlerFactory(handlers);
 
     assertEquals(handlers.get(0), errorHandlerFactory.getChainedHandler());
   }

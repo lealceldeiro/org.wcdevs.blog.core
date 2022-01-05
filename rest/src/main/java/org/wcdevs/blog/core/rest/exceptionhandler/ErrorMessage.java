@@ -1,4 +1,4 @@
-package org.wcdevs.blog.core.rest.errorhandler;
+package org.wcdevs.blog.core.rest.exceptionhandler;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;

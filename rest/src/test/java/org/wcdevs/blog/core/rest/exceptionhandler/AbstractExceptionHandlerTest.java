@@ -1,4 +1,4 @@
-package org.wcdevs.blog.core.rest.errorhandler;
+package org.wcdevs.blog.core.rest.exceptionhandler;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -9,11 +9,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.WebRequest;
 
-class AbstractErrorHandlerTest {
+class AbstractExceptionHandlerTest {
 
   @Test
   void handleWillReturn500ByDefaultIfNoAppropriateHandlerIsFound() {
-    var defaultHandler = new AbstractErrorHandler() {
+    var defaultHandler = new AbstractExceptionHandler() {
       @Override
       protected boolean canHandle(final Throwable throwable) {
         return false;
