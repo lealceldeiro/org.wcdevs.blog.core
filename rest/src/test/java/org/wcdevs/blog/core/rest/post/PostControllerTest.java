@@ -99,18 +99,19 @@ class PostControllerTest {
                            .description("Post slug generated during creation"));
   private static final RequestFieldsSnippet REQUEST_FIELDS
       = requestFields(fieldWithPath("title").description("Post title. Mandatory, unique."),
-                      fieldWithPath("slug").description("A custom slug. Optional, but unique."),
+                      fieldWithPath("slug").optional().type(DocUtil.STRING_TYPE)
+                                           .description("A custom slug. Optional, but unique."),
                       fieldWithPath("body").description("Body of the post. Mandatory."),
-                      fieldWithPath("excerpt").description("A custom excerpt. Optional."),
-                      fieldWithPath("publishedBy").ignored(),
-                      fieldWithPath("updatedBy").ignored(),
-                      fieldWithPath("publishedOn").ignored(),
-                      fieldWithPath("updatedOn").ignored());
+                      fieldWithPath("excerpt").optional().type(DocUtil.STRING_TYPE)
+                                              .description("A custom excerpt. Optional."),
+                      fieldWithPath("publishedBy").optional().type(DocUtil.STRING_TYPE).ignored(),
+                      fieldWithPath("updatedBy").optional().type(DocUtil.STRING_TYPE).ignored(),
+                      fieldWithPath("publishedOn").optional().type(DocUtil.STRING_TYPE).ignored(),
+                      fieldWithPath("updatedOn").optional().type(DocUtil.STRING_TYPE).ignored());
   private static final ResponseFieldsSnippet SLUG_INFO_RESPONSE_FIELDS
-      = responseFields(
-      fieldWithPath("slug")
-          .description("Post slug. This value must be used to identify (and retrieve) the post "
-                       + "later"));
+      = responseFields(fieldWithPath("slug")
+                           .description("Post slug. This value must be used to identify (and "
+                                        + "retrieve) the post later"));
 
   private static final ResponseFieldsSnippet ANCHOR_RES_FIELD
       = responseFields(fieldWithPath(ANCHOR).description(ANCHOR_DESC));
@@ -172,7 +173,7 @@ class PostControllerTest {
 
   @Test
   void createPost() throws Exception {
-    var postDto = TestsUtil.sampleFullPost();
+    var postDto = TestsUtil.samplePostTitleBody();
     mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding(StandardCharsets.UTF_8)
