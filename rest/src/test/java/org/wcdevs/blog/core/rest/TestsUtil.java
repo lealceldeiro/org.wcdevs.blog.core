@@ -114,6 +114,17 @@ public final class TestsUtil {
                   .updatedOn(proto.getUpdatedOn());
   }
 
+  public static CommentDto.CommentDtoBuilder builderFrom(CommentDto proto) {
+    return CommentDto.builder()
+                     .anchor(proto.getAnchor())
+                     .body(proto.getBody())
+                     .parentCommentAnchor(proto.getParentCommentAnchor())
+                     .publishedBy(proto.getPublishedBy())
+                     .lastUpdated(proto.getLastUpdated())
+                     .post(proto.getPost())
+                     .childrenCount(proto.getChildrenCount());
+  }
+
   public static String aString() {
     return UUID.randomUUID().toString();
   }
