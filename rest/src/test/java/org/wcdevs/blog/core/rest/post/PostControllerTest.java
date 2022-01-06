@@ -156,7 +156,7 @@ class PostControllerTest {
 
   @Test
   void getPosts() throws Exception {
-    FieldDescriptor[] customFields = {
+    var fields = DocUtil.pageableFieldsWith(
         fieldWithPath("content.[]").description("List of posts information"),
         fieldWithPath("content.[*].title").description("Post title"),
         fieldWithPath("content.[*].slug")
@@ -165,12 +165,8 @@ class PostControllerTest {
             .description("An excerpt of the post content"),
         fieldWithPath("content.[*].commentsCount")
             .description("Number of comments published in each post")
-    };
-    var pageableFields = DocUtil.pageableFields();
+                                           );
 
-    var fields = responseFields(Stream.concat(Arrays.stream(customFields),
-                                              Arrays.stream(pageableFields))
-                                      .toArray(FieldDescriptor[]::new));
     mockMvc.perform(get(BASE_URL))
            .andExpect(status().isOk())
            .andDo(document("get_posts", fields));
