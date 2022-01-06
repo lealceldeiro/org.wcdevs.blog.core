@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.io.IOException;
 import java.security.SecureRandom;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -18,6 +19,10 @@ import java.util.TimeZone;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.restdocs.payload.ResponseFieldsSnippet;
 import org.springframework.util.ResourceUtils;
 import org.wcdevs.blog.core.persistence.comment.CommentDto;
@@ -125,5 +130,24 @@ public final class TestsUtil {
 
   public static List<CommentDto> sampleComments() {
     return elements(SAMPLE_COMMENTS);
+  }
+
+  public static <T> Page<T> pageOf(List<T> content, Pageable pageable) {
+    return new PageImpl<>(content, pageable, content.size());
+  }
+
+  public static <T> Page<T> pageOf(List<T> content) {
+    return pageOf(content, Pageable.ofSize(10));
+  }
+
+  @SafeVarargs
+  public static <T> Page<T> pageOf(T element, T... elements) {
+    return pageOf(Stream.concat(Arrays.stream(elements),
+                                Stream.of(element))
+                        .collect(Collectors.toList()));
+  }
+
+  public static Pageable pageable() {
+    return Pageable.ofSize(10);
   }
 }

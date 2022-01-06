@@ -1,6 +1,7 @@
 package org.wcdevs.blog.core.common.post;
 
-import java.util.Collection;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.wcdevs.blog.core.persistence.post.PartialPostDto;
 import org.wcdevs.blog.core.persistence.post.Post;
 import org.wcdevs.blog.core.persistence.post.PostDto;
@@ -21,5 +22,5 @@ public interface PostService {
 
   void deletePost(String postSlug, String user);
 
-  Collection<PostDto> getPosts();
+  Page<PostDto> getPosts(Pageable pageable);
 }

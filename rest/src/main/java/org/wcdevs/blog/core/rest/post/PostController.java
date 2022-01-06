@@ -1,9 +1,9 @@
 package org.wcdevs.blog.core.rest.post;
 
-import java.util.Collection;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -38,9 +38,9 @@ public class PostController {
   private final AuthAttributeExtractor authAttributeExtractor;
   private final SecurityContextAuthChecker securityContextAuthChecker;
 
-  @GetMapping("/")
-  public ResponseEntity<Collection<PostDto>> getPosts() {
-    return new ResponseEntity<>(postService.getPosts(), HttpStatus.OK);
+  @GetMapping
+  public Page<PostDto> getPosts(Pageable pageable) {
+    return postService.getPosts(pageable);
   }
 
   /**
@@ -51,15 +51,16 @@ public class PostController {
    *
    * @return The newly created post.
    */
-  @PostMapping("/")
+  @PostMapping
+  @ResponseStatus(HttpStatus.CREATED)
   @PreAuthorize("hasAnyRole('AUTHOR')")
-  public ResponseEntity<PostDto> createPost(@AuthenticationPrincipal Object principal,
-                                            @Validated @RequestBody PostDto postDto) {
+  public PostDto createPost(@AuthenticationPrincipal Object principal,
+                            @Validated @RequestBody PostDto postDto) {
     var username = authAttributeExtractor.principalUsername(principal);
     postDto.setPublishedBy(username);
     postDto.setUpdatedBy(username);
 
-    return new ResponseEntity<>(postService.createPost(postDto), HttpStatus.CREATED);
+    return postService.createPost(postDto);
   }
 
   /**
@@ -70,8 +71,8 @@ public class PostController {
    * @return The info for the post with the given {@code postSlug}.
    */
   @GetMapping("/{postSlug}")
-  public ResponseEntity<PostDto> getPost(@PathVariable String postSlug) {
-    return new ResponseEntity<>(postService.getPost(postSlug), HttpStatus.OK);
+  public PostDto getPost(@PathVariable String postSlug) {
+    return postService.getPost(postSlug);
   }
 
   /**
@@ -85,13 +86,13 @@ public class PostController {
    */
   @PatchMapping("/{postSlug}")
   @PreAuthorize("hasAnyRole('EDITOR', 'AUTHOR')")
-  public ResponseEntity<PostDto> partialUpdatePost(@PathVariable String postSlug,
-                                                   @AuthenticationPrincipal Object principal,
-                                                   @Validated @RequestBody PartialPostDto newDto) {
+  public PostDto partialUpdatePost(@PathVariable String postSlug,
+                                   @AuthenticationPrincipal Object principal,
+                                   @Validated @RequestBody PartialPostDto newDto) {
     var username = authAttributeExtractor.principalUsername(principal);
     newDto.setUpdatedBy(username);
 
-    return new ResponseEntity<>(postService.partialUpdate(postSlug, newDto), HttpStatus.OK);
+    return postService.partialUpdate(postSlug, newDto);
   }
 
   /**
@@ -105,13 +106,13 @@ public class PostController {
    */
   @PutMapping("/{postSlug}")
   @PreAuthorize("hasAnyRole('EDITOR', 'AUTHOR')")
-  public ResponseEntity<PostDto> fullyUpdatePost(@PathVariable String postSlug,
-                                                 @AuthenticationPrincipal Object principal,
-                                                 @Validated @RequestBody PostDto newDto) {
+  public PostDto fullyUpdatePost(@PathVariable String postSlug,
+                                 @AuthenticationPrincipal Object principal,
+                                 @Validated @RequestBody PostDto newDto) {
     var username = authAttributeExtractor.principalUsername(principal);
     newDto.setUpdatedBy(username);
 
-    return new ResponseEntity<>(postService.fullUpdate(postSlug, newDto), HttpStatus.OK);
+    return postService.fullUpdate(postSlug, newDto);
   }
 
   /**
@@ -142,23 +143,24 @@ public class PostController {
    * @return Created comment info.
    */
   @PreAuthorize("isAuthenticated()")
+  @ResponseStatus(HttpStatus.CREATED)
   @PostMapping("/{postSlug}/comment")
-  public ResponseEntity<CommentDto> createComment(@PathVariable String postSlug,
-                                                  @AuthenticationPrincipal Object principal,
-                                                  @Validated @RequestBody CommentDto dto) {
+  public CommentDto createComment(@PathVariable String postSlug,
+                                  @AuthenticationPrincipal Object principal,
+                                  @Validated @RequestBody CommentDto dto) {
     var username = authAttributeExtractor.principalUsername(principal);
     dto.setPublishedBy(username);
 
-    return new ResponseEntity<>(commentService.createComment(postSlug, dto), HttpStatus.CREATED);
+    return commentService.createComment(postSlug, dto);
   }
 
   @GetMapping("{postSlug}/comment/all")
-  public ResponseEntity<Collection<CommentDto>> getAllPostComments(@PathVariable String postSlug) {
-    return new ResponseEntity<>(commentService.getAllPostComments(postSlug), HttpStatus.OK);
+  public Page<CommentDto> getAllPostComments(@PathVariable String postSlug, Pageable pageable) {
+    return commentService.getAllPostComments(postSlug, pageable);
   }
 
   @GetMapping("{postSlug}/comment/root")
-  public ResponseEntity<Collection<CommentDto>> getRootPostComments(@PathVariable String postSlug) {
-    return new ResponseEntity<>(commentService.getRootPostComments(postSlug), HttpStatus.OK);
+  public Page<CommentDto> getRootPostComments(@PathVariable String postSlug, Pageable pageable) {
+    return commentService.getRootPostComments(postSlug, pageable);
   }
 }
