@@ -1,7 +1,10 @@
 [[resource-post-partial-update]]
-==== Updating a post
+==== Updating a post (full and partial update)
 
 A `PATCH` (partial and full update) request updates a post.
+
+By using this update type, only those fields which are sent in the payload are updated, the rest of
+them remain unchanged.
 
 include::__H_REQUEST.adoc[]
 

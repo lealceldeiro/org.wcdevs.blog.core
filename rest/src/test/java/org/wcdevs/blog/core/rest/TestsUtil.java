@@ -98,6 +98,33 @@ public final class TestsUtil {
     return nextElementFrom(SAMPLE_FULL_POST_DATA);
   }
 
+  public static PostDto.PostDtoBuilder sampleFullPostBuilder() {
+    return builderFrom(nextElementFrom(SAMPLE_FULL_POST_DATA));
+  }
+
+  public static PostDto.PostDtoBuilder builderFrom(PostDto proto) {
+    return PostDto.builder()
+                  .title(proto.getTitle())
+                  .slug(proto.getSlug())
+                  .body(proto.getBody())
+                  .excerpt(proto.getExcerpt())
+                  .publishedBy(proto.getPublishedBy())
+                  .updatedBy(proto.getUpdatedBy())
+                  .publishedOn(proto.getPublishedOn())
+                  .updatedOn(proto.getUpdatedOn());
+  }
+
+  public static CommentDto.CommentDtoBuilder builderFrom(CommentDto proto) {
+    return CommentDto.builder()
+                     .anchor(proto.getAnchor())
+                     .body(proto.getBody())
+                     .parentCommentAnchor(proto.getParentCommentAnchor())
+                     .publishedBy(proto.getPublishedBy())
+                     .lastUpdated(proto.getLastUpdated())
+                     .post(proto.getPost())
+                     .childrenCount(proto.getChildrenCount());
+  }
+
   public static String aString() {
     return UUID.randomUUID().toString();
   }

@@ -123,7 +123,10 @@ class CommentControllerTest {
 
   @Test
   void getChildrenMethodNotSupported() throws Exception {
-    var sample = TestsUtil.sampleChildComments().get(0);
+    var sample = TestsUtil.builderFrom(TestsUtil.sampleChildComment())
+                          .publishedBy(null)
+                          .lastUpdated(null)
+                          .build();
 
     mockMvc.perform(put(BASE_URL + "children/{parentAnchor}", sample.getParentCommentAnchor())
                         .contentType(MediaType.APPLICATION_JSON)
