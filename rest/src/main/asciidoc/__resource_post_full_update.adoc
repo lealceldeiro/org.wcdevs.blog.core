@@ -3,6 +3,16 @@
 
 A `PUT` request updates a post.
 
+Despite, from a business logic point of view, some fields are optional to be specified for a
+*Post* (because they're inferred, for example, such as the `slug` when the post is created), when
+doing a full update, all fields described in the table below, must be specified, otherwise they will
+be set to `null` (probably causing some validations to fail).
+
+For those fields which are not wished to be changed there are two options:
+
+1. Send in the payload the same value, without change
+2. Use a partial <<resource-post-partial-update,update (`PATCH`)>> request
+
 include::__H_REQUEST.adoc[]
 
 include::__H_REQUEST_PATH_PARAMS.adoc[]

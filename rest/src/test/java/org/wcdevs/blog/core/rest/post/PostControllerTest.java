@@ -38,7 +38,6 @@ import static org.wcdevs.blog.core.rest.TestsUtil.samplePostSlug;
 
 import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
@@ -205,7 +204,7 @@ class PostControllerTest {
       + "Duplicate key value violates unique constraint. Values (title)=(%s)"
   })
   void createPostDBErrorWithRootCause(String rootCauseMsg) throws Exception {
-    var postDto = TestsUtil.sampleFullPost();
+    var postDto = TestsUtil.samplePostTitleBody();
 
     var rootCauseMessage = !"-".equals(rootCauseMsg)
                            ? (rootCauseMsg.contains("%s")
@@ -235,7 +234,8 @@ class PostControllerTest {
     mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding(StandardCharsets.UTF_8)
-                        .content("/" + MAPPER.writeValueAsString(postDto)))
+                        .content("this_is_a_wrong_token_in_this_JSON_and_will_casue_an_error"
+                                 + MAPPER.writeValueAsString(postDto)))
            .andExpect(status().isBadRequest())
            .andDo(document("create_post_bad_format"));
   }
@@ -249,11 +249,7 @@ class PostControllerTest {
       "a", ""
   })
   void createPostWithIncorrectTitle(String title) throws Exception {
-    var prototype = TestsUtil.sampleFullPost();
-    var now = LocalDateTime.now();
-    var postDto = new PostDto(title, prototype.getSlug(), prototype.getBody(),
-                              prototype.getExcerpt(), prototype.getPublishedBy(),
-                              prototype.getUpdatedBy(), now, now, 0);
+    var postDto = TestsUtil.builderFrom(TestsUtil.samplePostTitleBody()).title(title).build();
 
     mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -264,17 +260,13 @@ class PostControllerTest {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"a", ""})
+  @ValueSource(strings = {"", "a"})
   void createPostWithIncorrectBody(String body) throws Exception {
-    var prototype = TestsUtil.sampleFullPost();
-    var now = LocalDateTime.now();
-    var postDto = new PostDto(prototype.getTitle(), prototype.getSlug(), body,
-                              prototype.getExcerpt(), prototype.getPublishedBy(),
-                              prototype.getUpdatedBy(), now, now, 0);
+    var postDto = TestsUtil.builderFrom(TestsUtil.samplePostTitleBody()).body(body).build();
 
     mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .characterEncoding(StandardCharsets.UTF_8)
+                        //.characterEncoding(StandardCharsets.UTF_8)
                         .content(MAPPER.writeValueAsString(postDto)))
            .andExpect(status().isBadRequest())
            .andDo(document("create_post_wrong_body"));
@@ -288,11 +280,7 @@ class PostControllerTest {
       + "calling-client-with-an-approriate-message"
   })
   void createPostWithIncorrectSlug(String slug) throws Exception {
-    var prototype = TestsUtil.sampleFullPost();
-    var now = LocalDateTime.now();
-    var postDto = new PostDto(prototype.getTitle(), slug, prototype.getBody(),
-                              prototype.getExcerpt(), prototype.getPublishedBy(),
-                              prototype.getUpdatedBy(), now, now, 0);
+    var postDto = TestsUtil.builderFrom(TestsUtil.samplePostTitleBody()).slug(slug).build();
 
     mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -332,7 +320,7 @@ class PostControllerTest {
 
   @Test
   void partiallyUpdatePost() throws Exception {
-    var postDto = TestsUtil.sampleFullPost();
+    var postDto = postForUpdate();
     mockMvc.perform(patch(BASE_URL + "/{postSlug}", postDto.getSlug())
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding(StandardCharsets.UTF_8)
@@ -344,9 +332,18 @@ class PostControllerTest {
                            SLUG_INFO_RESPONSE_FIELDS));
   }
 
+  private static PostDto postForUpdate() {
+    return TestsUtil.sampleFullPostBuilder()
+                    // erase from mock values that are not expected from client
+                    .updatedOn(null).updatedBy(null)
+                    .publishedOn(null).publishedBy(null)
+                    .build();
+  }
+
   @Test
   void fullyUpdatePost() throws Exception {
-    var postDto = TestsUtil.sampleFullPost();
+    var postDto = postForUpdate();
+
     mockMvc.perform(put(BASE_URL + "/{postSlug}", postDto.getSlug())
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding(StandardCharsets.UTF_8)

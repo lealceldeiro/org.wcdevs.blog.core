@@ -102,7 +102,7 @@ public final class TestsUtil {
     return builderFrom(nextElementFrom(SAMPLE_FULL_POST_DATA));
   }
 
-  private static PostDto.PostDtoBuilder builderFrom(PostDto proto) {
+  public static PostDto.PostDtoBuilder builderFrom(PostDto proto) {
     return PostDto.builder()
                   .title(proto.getTitle())
                   .slug(proto.getSlug())
