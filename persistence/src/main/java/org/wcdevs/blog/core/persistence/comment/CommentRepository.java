@@ -1,7 +1,6 @@
 package org.wcdevs.blog.core.persistence.comment;
 
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -52,7 +51,7 @@ public interface CommentRepository extends JpaRepository<Comment, UUID> {
          + "left join Comment childC on (c.uuid = childC.parentComment.uuid) "
          + "where pc is not null and pc.anchor = :anchor "
          + "group by c.anchor, c.body, c.publishedBy, c.lastUpdated")
-  Set<CommentDto> findChildCommentsWithParentAnchor(String anchor);
+  Page<CommentDto> findChildCommentsWithParentAnchor(String anchor, Pageable pageable);
 
   @Query("delete from Comment c where c.anchor = :anchor")
   @Modifying
