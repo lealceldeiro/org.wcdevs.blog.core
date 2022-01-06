@@ -31,8 +31,6 @@ import static org.wcdevs.blog.core.rest.DocUtil.PARENT_COMMENT_ANCHOR;
 import static org.wcdevs.blog.core.rest.DocUtil.PARENT_COMMENT_ANCHOR_DESC;
 import static org.wcdevs.blog.core.rest.DocUtil.POST_SLUG;
 import static org.wcdevs.blog.core.rest.DocUtil.POST_SLUG_DESC;
-import static org.wcdevs.blog.core.rest.DocUtil.PUBLISHED_BY;
-import static org.wcdevs.blog.core.rest.DocUtil.PUBLISHED_BY_DESC;
 import static org.wcdevs.blog.core.rest.TestsUtil.ERROR_RESPONSE_FIELDS;
 import static org.wcdevs.blog.core.rest.TestsUtil.MAPPER;
 import static org.wcdevs.blog.core.rest.TestsUtil.aString;
@@ -389,19 +387,14 @@ class PostControllerTest {
     var rootPrototype = TestsUtil.sampleRootComment();
     var rootComment = CommentDto.builder()
                                 .body(rootPrototype.getBody())
-                                .publishedBy(rootPrototype.getPublishedBy())
                                 .build();
     var childPrototype = TestsUtil.sampleChildComment();
     var childComment = CommentDto.builder()
                                  .body(childPrototype.getBody())
-                                 .publishedBy(childPrototype.getPublishedBy())
                                  .parentCommentAnchor(childPrototype.getParentCommentAnchor())
                                  .build();
 
-    FieldDescriptor[] rootCommentReqFields = {
-        fieldWithPath(BODY).description(BODY_DESC),
-        fieldWithPath(PUBLISHED_BY).description(PUBLISHED_BY_DESC),
-        };
+    FieldDescriptor[] rootCommentReqFields = {fieldWithPath(BODY).description(BODY_DESC)};
 
     FieldDescriptor[] childCommentReqFields
         = unionOf(rootCommentReqFields,

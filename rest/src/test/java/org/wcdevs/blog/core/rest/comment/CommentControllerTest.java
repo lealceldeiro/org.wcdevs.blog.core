@@ -13,10 +13,12 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.wcdevs.blog.core.rest.DocUtil.ANCHOR;
 import static org.wcdevs.blog.core.rest.DocUtil.ANCHOR_DESC;
 import static org.wcdevs.blog.core.rest.DocUtil.BASE_URL;
 import static org.wcdevs.blog.core.rest.DocUtil.BODY;
@@ -46,6 +48,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.wcdevs.blog.core.common.comment.CommentService;
+import org.wcdevs.blog.core.persistence.comment.CommentDto;
 import org.wcdevs.blog.core.persistence.comment.PartialCommentDto;
 import org.wcdevs.blog.core.rest.DocUtil;
 import org.wcdevs.blog.core.rest.TestsUtil;
@@ -138,7 +141,8 @@ class CommentControllerTest {
     var dto = PartialCommentDto.builder().body(sample.getBody()).build();
 
     when(authAttributeExtractor.principalUsername(any())).thenReturn(username);
-    when(commentService.updateComment(anchor, dto, username)).thenReturn(sample);
+    when(commentService.updateComment(anchor, dto, username))
+        .thenReturn(CommentDto.builder().anchor(anchor).build());
 
     mockMvc.perform(put(BASE_URL + "{commentAnchor}", anchor)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -146,7 +150,7 @@ class CommentControllerTest {
            .andExpect(status().isOk())
            .andDo(document("update_comment", ANCHOR_PATH_PARAMETER,
                            requestFields(fieldWithPath(BODY).description(BODY_DESC)),
-                           COMMENT_RESPONSE_FIELDS));
+                           responseFields(fieldWithPath(ANCHOR).description(ANCHOR_DESC))));
   }
 
   @Test
