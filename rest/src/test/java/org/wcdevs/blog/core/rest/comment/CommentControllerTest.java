@@ -21,7 +21,6 @@ import static org.wcdevs.blog.core.rest.DocUtil.ANCHOR_DESC;
 import static org.wcdevs.blog.core.rest.DocUtil.BASE_URL;
 import static org.wcdevs.blog.core.rest.DocUtil.BODY;
 import static org.wcdevs.blog.core.rest.DocUtil.BODY_DESC;
-import static org.wcdevs.blog.core.rest.DocUtil.COMMENTS_RESPONSE_FIELDS;
 import static org.wcdevs.blog.core.rest.DocUtil.COMMENT_RESPONSE_FIELDS;
 import static org.wcdevs.blog.core.rest.DocUtil.PARENT_COMMENT_ANCHOR_PARAM;
 import static org.wcdevs.blog.core.rest.DocUtil.PARENT_COMMENT_ANCHOR_PARAM_DESC;
@@ -35,6 +34,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
@@ -46,18 +47,19 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.wcdevs.blog.core.common.comment.CommentService;
 import org.wcdevs.blog.core.persistence.comment.PartialCommentDto;
-import org.wcdevs.blog.core.rest.exceptionhandler.ControllerExceptionHandler;
+import org.wcdevs.blog.core.rest.DocUtil;
 import org.wcdevs.blog.core.rest.TestsUtil;
 import org.wcdevs.blog.core.rest.auth.AuthAttributeExtractor;
 import org.wcdevs.blog.core.rest.auth.Role;
 import org.wcdevs.blog.core.rest.auth.SecurityContextAuthChecker;
+import org.wcdevs.blog.core.rest.exceptionhandler.ControllerExceptionHandler;
 import org.wcdevs.blog.core.rest.exceptionhandler.ExceptionHandlerFactory;
 import org.wcdevs.blog.core.rest.exceptionhandler.impl.ArgumentNotValidExceptionHandler;
 import org.wcdevs.blog.core.rest.exceptionhandler.impl.DataIntegrityViolationExceptionHandler;
 import org.wcdevs.blog.core.rest.exceptionhandler.impl.NotFoundExceptionHandler;
 
-
 @EnableWebMvc
+@EnableSpringDataWebSupport
 @SpringBootTest(classes = {
     CommentController.class, ControllerExceptionHandler.class, ExceptionHandlerFactory.class,
     NotFoundExceptionHandler.class, DataIntegrityViolationExceptionHandler.class,
@@ -106,12 +108,14 @@ class CommentControllerTest {
   void getChildren() throws Exception {
     var comments = TestsUtil.sampleChildComments();
     var parentCommentAnchor = comments.get(0).getParentCommentAnchor();
-    when(commentService.getParentCommentChildren(parentCommentAnchor)).thenReturn(comments);
+    when(commentService.getParentCommentChildren(eq(parentCommentAnchor), any(Pageable.class)))
+        .thenReturn(TestsUtil.pageOf(comments));
+
+    var responseFields = DocUtil.pageableFieldsWith(DocUtil.COMMENT_ARR_fIELDS);
 
     mockMvc.perform(get(BASE_URL + "children/{parentAnchor}", parentCommentAnchor))
            .andExpect(status().isOk())
-           .andDo(document("get_child_comments", PARENT_COMMENT_ANCHOR_PATH_PARAM,
-                           COMMENTS_RESPONSE_FIELDS));
+           .andDo(document("get_child_comments", PARENT_COMMENT_ANCHOR_PATH_PARAM, responseFields));
   }
 
   @Test

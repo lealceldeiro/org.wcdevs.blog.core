@@ -1,7 +1,8 @@
 package org.wcdevs.blog.core.common.comment;
 
-import java.util.Collection;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.wcdevs.blog.core.common.post.PostNotFoundException;
@@ -74,19 +75,19 @@ public class CommentServiceImpl implements CommentService {
 
   @Override
   @Transactional(readOnly = true)
-  public Collection<CommentDto> getAllPostComments(String postSlug) {
-    return commentRepository.findAllCommentsWithPostSlug(postSlug);
+  public Page<CommentDto> getAllPostComments(String postSlug, Pageable pageable) {
+    return commentRepository.findAllCommentsWithPostSlug(postSlug, pageable);
   }
 
   @Override
   @Transactional(readOnly = true)
-  public Collection<CommentDto> getRootPostComments(String postSlug) {
-    return commentRepository.findRootCommentsWithPostSlug(postSlug);
+  public Page<CommentDto> getRootPostComments(String postSlug, Pageable pageable) {
+    return commentRepository.findRootCommentsWithPostSlug(postSlug, pageable);
   }
 
   @Override
   @Transactional(readOnly = true)
-  public Collection<CommentDto> getParentCommentChildren(String parentCommentAnchor) {
-    return commentRepository.findChildCommentsWithParentAnchor(parentCommentAnchor);
+  public Page<CommentDto> getParentCommentChildren(String parentCommentAnchor, Pageable pageable) {
+    return commentRepository.findChildCommentsWithParentAnchor(parentCommentAnchor, pageable);
   }
 }

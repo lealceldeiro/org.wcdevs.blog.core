@@ -1,8 +1,9 @@
 package org.wcdevs.blog.core.persistence.post;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -16,7 +17,7 @@ public interface PostRepository extends JpaRepository<Post, UUID> {
          + "from Post p "
          + "left join Comment c on (c.post = p) "
          + "group by p.title, p.slug, p.excerpt")
-  List<PostDto> getPosts();
+  Page<PostDto> getPosts(Pageable pageable);
 
   Optional<Post> findBySlug(String slug);
 

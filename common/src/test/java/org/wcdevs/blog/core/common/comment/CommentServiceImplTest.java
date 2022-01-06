@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -23,6 +24,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Pageable;
 import org.wcdevs.blog.core.common.TestsUtil;
 import org.wcdevs.blog.core.common.post.PostNotFoundException;
 import org.wcdevs.blog.core.persistence.comment.Comment;
@@ -189,37 +191,43 @@ class CommentServiceImplTest {
   @Test
   void getAllPostComments() {
     var postSlug = TestsUtil.aString();
-    var expected = IntStream.rangeClosed(0, new Random().nextInt(13))
+    var elements = IntStream.rangeClosed(0, new Random().nextInt(13))
                             .mapToObj(i -> mock(CommentDto.class))
-                            .collect(Collectors.toSet());
-    when(commentRepository.findAllCommentsWithPostSlug(postSlug)).thenReturn(expected);
+                            .collect(Collectors.toList());
+    var expected = TestsUtil.pageOf(elements);
+    when(commentRepository.findAllCommentsWithPostSlug(eq(postSlug), any(Pageable.class)))
+        .thenReturn(expected);
 
-    var actual = commentService.getAllPostComments(postSlug);
+    var actual = commentService.getAllPostComments(postSlug, TestsUtil.pageable());
     assertEquals(expected, actual);
   }
 
   @Test
   void getRootPostComments() {
     var postSlug = TestsUtil.aString();
-    var expected = IntStream.rangeClosed(0, new Random().nextInt(13))
+    var elements = IntStream.rangeClosed(0, new Random().nextInt(13))
                             .mapToObj(i -> mock(CommentDto.class))
-                            .collect(Collectors.toSet());
-    when(commentRepository.findRootCommentsWithPostSlug(postSlug)).thenReturn(expected);
+                            .collect(Collectors.toList());
+    var expected = TestsUtil.pageOf(elements);
+    when(commentRepository.findRootCommentsWithPostSlug(eq(postSlug), any(Pageable.class)))
+        .thenReturn(expected);
 
-    var actual = commentService.getRootPostComments(postSlug);
+    var actual = commentService.getRootPostComments(postSlug, TestsUtil.pageable());
     assertEquals(expected, actual);
   }
 
   @Test
   void getCommentChildComments() {
     var postSlug = TestsUtil.aString();
-    var expected = IntStream.rangeClosed(0, new Random().nextInt(13))
+    var elements = IntStream.rangeClosed(0, new Random().nextInt(13))
                             .mapToObj(i -> mock(CommentDto.class))
-                            .collect(Collectors.toSet());
+                            .collect(Collectors.toList());
+    var expected = TestsUtil.pageOf(elements);
 
-    when(commentRepository.findChildCommentsWithParentAnchor(postSlug)).thenReturn(expected);
+    when(commentRepository.findChildCommentsWithParentAnchor(eq(postSlug), any(Pageable.class)))
+        .thenReturn(expected);
 
-    var actual = commentService.getParentCommentChildren(postSlug);
+    var actual = commentService.getParentCommentChildren(postSlug, TestsUtil.pageable());
     assertEquals(expected, actual);
   }
 }

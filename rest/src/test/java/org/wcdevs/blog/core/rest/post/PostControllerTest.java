@@ -27,7 +27,6 @@ import static org.wcdevs.blog.core.rest.DocUtil.ANCHOR;
 import static org.wcdevs.blog.core.rest.DocUtil.ANCHOR_DESC;
 import static org.wcdevs.blog.core.rest.DocUtil.BODY;
 import static org.wcdevs.blog.core.rest.DocUtil.BODY_DESC;
-import static org.wcdevs.blog.core.rest.DocUtil.COMMENTS_RESPONSE_FIELDS;
 import static org.wcdevs.blog.core.rest.DocUtil.PARENT_COMMENT_ANCHOR;
 import static org.wcdevs.blog.core.rest.DocUtil.PARENT_COMMENT_ANCHOR_DESC;
 import static org.wcdevs.blog.core.rest.DocUtil.POST_SLUG;
@@ -55,6 +54,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
@@ -74,17 +75,19 @@ import org.wcdevs.blog.core.common.post.PostService;
 import org.wcdevs.blog.core.persistence.comment.CommentDto;
 import org.wcdevs.blog.core.persistence.post.PartialPostDto;
 import org.wcdevs.blog.core.persistence.post.PostDto;
-import org.wcdevs.blog.core.rest.exceptionhandler.ControllerExceptionHandler;
+import org.wcdevs.blog.core.rest.DocUtil;
 import org.wcdevs.blog.core.rest.TestsUtil;
 import org.wcdevs.blog.core.rest.auth.AuthAttributeExtractor;
 import org.wcdevs.blog.core.rest.auth.Role;
 import org.wcdevs.blog.core.rest.auth.SecurityContextAuthChecker;
+import org.wcdevs.blog.core.rest.exceptionhandler.ControllerExceptionHandler;
 import org.wcdevs.blog.core.rest.exceptionhandler.ExceptionHandlerFactory;
 import org.wcdevs.blog.core.rest.exceptionhandler.impl.ArgumentNotValidExceptionHandler;
 import org.wcdevs.blog.core.rest.exceptionhandler.impl.DataIntegrityViolationExceptionHandler;
 import org.wcdevs.blog.core.rest.exceptionhandler.impl.NotFoundExceptionHandler;
 
 @EnableWebMvc
+@EnableSpringDataWebSupport
 @SpringBootTest(classes = {
     PostController.class, ControllerExceptionHandler.class, ExceptionHandlerFactory.class,
     NotFoundExceptionHandler.class, DataIntegrityViolationExceptionHandler.class,
@@ -92,7 +95,7 @@ import org.wcdevs.blog.core.rest.exceptionhandler.impl.NotFoundExceptionHandler;
 })
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 class PostControllerTest {
-  private static final String BASE_URL = "/post/";
+  private static final String BASE_URL = "/post";
   private static final PathParametersSnippet SLUG_PATH_PARAMETER
       = pathParameters(parameterWithName("postSlug")
                            .description("Post slug generated during creation"));
@@ -144,7 +147,8 @@ class PostControllerTest {
         .then(ignored -> TestsUtil.samplePostSlug());
     when(postService.fullUpdate(anyString(), any(PostDto.class)))
         .then(ignored -> TestsUtil.samplePostSlug());
-    when(postService.getPosts()).then(ignored -> TestsUtil.samplePostsLiteData());
+    when(postService.getPosts(any(Pageable.class)))
+        .then(ignored -> TestsUtil.pageOf(TestsUtil.samplePostsLiteData()));
 
     when(authAttributeExtractor.principalUsername(any()))
         .thenReturn(TestsUtil.sampleFullPost().getPublishedBy());
@@ -152,15 +156,17 @@ class PostControllerTest {
 
   @Test
   void getPosts() throws Exception {
-    var fields
-        = responseFields(fieldWithPath("[]").description("List of posts information"),
-                         fieldWithPath("[*].title").description("Post title"),
-                         fieldWithPath("[*].slug")
-                             .description("Post slug. Used to get the post information later"),
-                         fieldWithPath("[*].excerpt")
-                             .description("An excerpt of the post content"),
-                         fieldWithPath("[*].commentsCount")
-                             .description("Number of comments published in each post"));
+    var fields = DocUtil.pageableFieldsWith(
+        fieldWithPath("content.[]").description("List of posts information"),
+        fieldWithPath("content.[*].title").description("Post title"),
+        fieldWithPath("content.[*].slug")
+            .description("Post slug. Used to get the post information later"),
+        fieldWithPath("content.[*].excerpt")
+            .description("An excerpt of the post content"),
+        fieldWithPath("content.[*].commentsCount")
+            .description("Number of comments published in each post")
+                                           );
+
     mockMvc.perform(get(BASE_URL))
            .andExpect(status().isOk())
            .andDo(document("get_posts", fields));
@@ -311,7 +317,7 @@ class PostControllerTest {
         fieldWithPath("updatedBy").description("Last user who edited the post. ")
                                        );
 
-    mockMvc.perform(get(BASE_URL + "{postSlug}", postDto.getSlug()))
+    mockMvc.perform(get(BASE_URL + "/{postSlug}", postDto.getSlug()))
            .andExpect(status().isOk())
            .andDo(document("get_post", SLUG_PATH_PARAMETER, responseFields));
   }
@@ -320,7 +326,7 @@ class PostControllerTest {
   void getPostNotFound() throws Exception {
     var slug = samplePostSlug().getSlug();
     when(postService.getPost(slug)).thenThrow(new PostNotFoundException());
-    mockMvc.perform(get(BASE_URL + "{postSlug}", slug))
+    mockMvc.perform(get(BASE_URL + "/{postSlug}", slug))
            .andExpect(status().isNotFound())
            .andDo(document("get_post_not_found", SLUG_PATH_PARAMETER, ERROR_RESPONSE_FIELDS));
   }
@@ -328,7 +334,7 @@ class PostControllerTest {
   @Test
   void partiallyUpdatePost() throws Exception {
     var postDto = TestsUtil.sampleFullPost();
-    mockMvc.perform(patch(BASE_URL + "{postSlug}", postDto.getSlug())
+    mockMvc.perform(patch(BASE_URL + "/{postSlug}", postDto.getSlug())
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .content(MAPPER.writeValueAsString(postDto)))
@@ -342,7 +348,7 @@ class PostControllerTest {
   @Test
   void fullyUpdatePost() throws Exception {
     var postDto = TestsUtil.sampleFullPost();
-    mockMvc.perform(put(BASE_URL + "{postSlug}", postDto.getSlug())
+    mockMvc.perform(put(BASE_URL + "/{postSlug}", postDto.getSlug())
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .content(MAPPER.writeValueAsString(postDto)))
@@ -360,7 +366,7 @@ class PostControllerTest {
     when(securityContextAuthChecker.hasAnyRole(Role.EDITOR)).thenReturn(false);
     when(authAttributeExtractor.principalUsername(any())).thenReturn(user);
 
-    mockMvc.perform(delete(BASE_URL + "{postSlug}", slug))
+    mockMvc.perform(delete(BASE_URL + "/{postSlug}", slug))
            .andExpect(status().isNoContent())
            .andDo(document("delete_post", SLUG_PATH_PARAMETER));
 
@@ -373,7 +379,7 @@ class PostControllerTest {
     var slug = samplePostSlug().getSlug();
     when(securityContextAuthChecker.hasAnyRole(Role.EDITOR)).thenReturn(true);
 
-    mockMvc.perform(delete(BASE_URL + "{postSlug}", slug)).andExpect(status().isNoContent());
+    mockMvc.perform(delete(BASE_URL + "/{postSlug}", slug)).andExpect(status().isNoContent());
 
     verify(postService, times(1)).deletePost(slug);
     verify(postService, never()).deletePost(eq(slug), any());
@@ -422,7 +428,7 @@ class PostControllerTest {
     when(commentService.createComment(post.getSlug(), dto))
         .thenReturn(CommentDto.builder().anchor(anchor).build());
 
-    mockMvc.perform(RestDocumentationRequestBuilders.post(BASE_URL + "{postSlug}/comment",
+    mockMvc.perform(RestDocumentationRequestBuilders.post(BASE_URL + "/{postSlug}/comment",
                                                           post.getSlug())
                                                     .contentType(MediaType.APPLICATION_JSON)
                                                     .characterEncoding(StandardCharsets.UTF_8)
@@ -434,24 +440,28 @@ class PostControllerTest {
 
   @Test
   void getRootPostComments() throws Exception {
-    var comments = TestsUtil.sampleRootComments();
+    var comments = TestsUtil.pageOf(TestsUtil.sampleRootComments());
     var postSlug = TestsUtil.samplePostSlug().getSlug();
-    when(commentService.getRootPostComments(postSlug)).thenReturn(comments);
+    when(commentService.getRootPostComments(eq(postSlug), any(Pageable.class)))
+        .thenReturn(comments);
 
-    mockMvc.perform(get(BASE_URL + "{postSlug}/comment/root", postSlug))
+    var responseFields = DocUtil.pageableFieldsWith(DocUtil.COMMENT_ARR_fIELDS);
+
+    mockMvc.perform(get(BASE_URL + "/{postSlug}/comment/root", postSlug))
            .andExpect(status().isOk())
-           .andDo(document("get_root_comments", POST_SLUG_PATH_PARAMETER,
-                           COMMENTS_RESPONSE_FIELDS));
+           .andDo(document("get_root_comments", POST_SLUG_PATH_PARAMETER, responseFields));
   }
 
   @Test
   void getAllPostComments() throws Exception {
-    var comments = TestsUtil.sampleComments();
+    var comments = TestsUtil.pageOf(TestsUtil.sampleComments());
     var postSlug = TestsUtil.samplePostSlug().getSlug();
-    when(commentService.getAllPostComments(postSlug)).thenReturn(comments);
+    when(commentService.getAllPostComments(eq(postSlug), any(Pageable.class))).thenReturn(comments);
 
-    mockMvc.perform(get(BASE_URL + "{postSlug}/comment/all", postSlug))
+    var responseFields = DocUtil.pageableFieldsWith(DocUtil.COMMENT_ARR_fIELDS);
+
+    mockMvc.perform(get(BASE_URL + "/{postSlug}/comment/all", postSlug))
            .andExpect(status().isOk())
-           .andDo(document("get_all_comments", POST_SLUG_PATH_PARAMETER, COMMENTS_RESPONSE_FIELDS));
+           .andDo(document("get_all_comments", POST_SLUG_PATH_PARAMETER, responseFields));
   }
 }

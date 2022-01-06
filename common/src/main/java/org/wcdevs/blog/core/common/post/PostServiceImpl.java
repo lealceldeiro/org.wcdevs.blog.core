@@ -1,7 +1,8 @@
 package org.wcdevs.blog.core.common.post;
 
-import java.util.Collection;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.wcdevs.blog.core.persistence.post.PartialPostDto;
@@ -21,8 +22,8 @@ public class PostServiceImpl implements PostService {
 
   @Override
   @Transactional(readOnly = true)
-  public Collection<PostDto> getPosts() {
-    return postRepository.getPosts();
+  public Page<PostDto> getPosts(Pageable pageable) {
+    return postRepository.getPosts(pageable);
   }
 
   @Override

@@ -52,7 +52,9 @@ management:
 core-app:
   allowedOrigins: ${ALLOWED_ORIGINS}
 
-# https://docs.awspring.io/spring-cloud-aws/docs/2.3.2/reference/html/index.html#amazon-sdk-configuration
+# https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.logging
 logging:
   level:
+    root: info
+    # https://docs.awspring.io/spring-cloud-aws/docs/2.3.2/reference/html/index.html#amazon-sdk-configuration
     com.amazonaws.util.EC2MetadataUtils: error

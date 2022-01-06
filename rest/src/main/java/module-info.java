@@ -5,6 +5,7 @@ open module org.wcdevs.blog.core.rest {
   requires spring.context;
   requires spring.beans;
   requires spring.core;
+  requires spring.data.commons;
   requires spring.web;
   requires spring.webmvc;
   requires spring.security.config;

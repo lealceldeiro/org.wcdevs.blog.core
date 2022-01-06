@@ -1,9 +1,9 @@
 package org.wcdevs.blog.core.rest.comment;
 
-import java.util.Collection;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -34,14 +34,13 @@ public class CommentController {
   private final SecurityContextAuthChecker securityContextAuthChecker;
 
   @GetMapping("/{commentAnchor}")
-  public ResponseEntity<CommentDto> getComment(@PathVariable String commentAnchor) {
-    return new ResponseEntity<>(commentService.getComment(commentAnchor), HttpStatus.OK);
+  public CommentDto getComment(@PathVariable String commentAnchor) {
+    return commentService.getComment(commentAnchor);
   }
 
   @GetMapping("/children/{parentAnchor}")
-  public ResponseEntity<Collection<CommentDto>> getChildren(@PathVariable String parentAnchor) {
-    return new ResponseEntity<>(commentService.getParentCommentChildren(parentAnchor),
-                                HttpStatus.OK);
+  public Page<CommentDto> getChildren(@PathVariable String parentAnchor, Pageable pageable) {
+    return commentService.getParentCommentChildren(parentAnchor, pageable);
   }
 
   /**
@@ -55,12 +54,11 @@ public class CommentController {
    */
   @PutMapping("/{commentAnchor}")
   @PreAuthorize("isAuthenticated()")
-  public ResponseEntity<CommentDto> updateComment(@PathVariable String commentAnchor,
-                                                  @AuthenticationPrincipal Object principal,
-                                                  @Validated @RequestBody PartialCommentDto dto) {
+  public CommentDto updateComment(@PathVariable String commentAnchor,
+                                  @AuthenticationPrincipal Object principal,
+                                  @Validated @RequestBody PartialCommentDto dto) {
     var username = authAttributeExtractor.principalUsername(principal);
-    var comment = commentService.updateComment(commentAnchor, dto, username);
-    return new ResponseEntity<>(comment, HttpStatus.OK);
+    return commentService.updateComment(commentAnchor, dto, username);
   }
 
   /**
