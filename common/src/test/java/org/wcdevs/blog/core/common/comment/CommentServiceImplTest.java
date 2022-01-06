@@ -219,13 +219,15 @@ class CommentServiceImplTest {
   @Test
   void getCommentChildComments() {
     var postSlug = TestsUtil.aString();
-    var expected = IntStream.rangeClosed(0, new Random().nextInt(13))
+    var elements = IntStream.rangeClosed(0, new Random().nextInt(13))
                             .mapToObj(i -> mock(CommentDto.class))
-                            .collect(Collectors.toSet());
+                            .collect(Collectors.toList());
+    var expected = TestsUtil.pageOf(elements);
 
-    when(commentRepository.findChildCommentsWithParentAnchor(postSlug)).thenReturn(expected);
+    when(commentRepository.findChildCommentsWithParentAnchor(eq(postSlug), any(Pageable.class)))
+        .thenReturn(expected);
 
-    var actual = commentService.getParentCommentChildren(postSlug);
+    var actual = commentService.getParentCommentChildren(postSlug, TestsUtil.pageable());
     assertEquals(expected, actual);
   }
 }

@@ -1,6 +1,5 @@
 package org.wcdevs.blog.core.common.comment;
 
-import java.util.Collection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.wcdevs.blog.core.persistence.comment.Comment;
@@ -25,5 +24,5 @@ public interface CommentService {
 
   Page<CommentDto> getRootPostComments(String postSlug, Pageable pageable);
 
-  Collection<CommentDto> getParentCommentChildren(String parentCommentAnchor);
+  Page<CommentDto> getParentCommentChildren(String parentCommentAnchor, Pageable pageable);
 }

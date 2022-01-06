@@ -1,6 +1,5 @@
 package org.wcdevs.blog.core.common.comment;
 
-import java.util.Collection;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -88,7 +87,7 @@ public class CommentServiceImpl implements CommentService {
 
   @Override
   @Transactional(readOnly = true)
-  public Collection<CommentDto> getParentCommentChildren(String parentCommentAnchor) {
-    return commentRepository.findChildCommentsWithParentAnchor(parentCommentAnchor);
+  public Page<CommentDto> getParentCommentChildren(String parentCommentAnchor, Pageable pageable) {
+    return commentRepository.findChildCommentsWithParentAnchor(parentCommentAnchor, pageable);
   }
 }
