@@ -1,6 +1,5 @@
 package org.wcdevs.blog.core.rest.post;
 
-import java.util.Collection;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -156,12 +155,12 @@ public class PostController {
   }
 
   @GetMapping("{postSlug}/comment/all")
-  public Collection<CommentDto> getAllPostComments(@PathVariable String postSlug) {
-    return commentService.getAllPostComments(postSlug);
+  public Page<CommentDto> getAllPostComments(@PathVariable String postSlug, Pageable pageable) {
+    return commentService.getAllPostComments(postSlug, pageable);
   }
 
   @GetMapping("{postSlug}/comment/root")
-  public Collection<CommentDto> getRootPostComments(@PathVariable String postSlug) {
-    return commentService.getRootPostComments(postSlug);
+  public Page<CommentDto> getRootPostComments(@PathVariable String postSlug, Pageable pageable) {
+    return commentService.getRootPostComments(postSlug, pageable);
   }
 }

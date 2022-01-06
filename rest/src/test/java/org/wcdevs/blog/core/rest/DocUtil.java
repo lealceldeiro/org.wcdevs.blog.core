@@ -60,21 +60,20 @@ public final class DocUtil {
       fieldWithPath(PARENT_COMMENT_ANCHOR).optional().ignored(),
       };
 
-  private static final FieldDescriptor[] COMMENT_ARR_fIELDS
-      = Stream.concat(Stream.of(fieldWithPath("[]").description("List of comments")),
+  public static final FieldDescriptor[] COMMENT_ARR_fIELDS
+      = Stream.concat(Stream.of(fieldWithPath("content.[]").description("List of comments")),
                       Arrays.stream(COMMENTS_FIELDS).map(DocUtil::toArrayFieldDescriptor))
               .toArray(FieldDescriptor[]::new);
 
-  public static final ResponseFieldsSnippet COMMENT_RESPONSE_FIELDS = responseFields(COMMENTS_FIELDS);
-  public static final ResponseFieldsSnippet COMMENTS_RESPONSE_FIELDS
-      = responseFields(COMMENT_ARR_fIELDS);
+  public static final ResponseFieldsSnippet COMMENT_RESPONSE_FIELDS =
+      responseFields(COMMENTS_FIELDS);
 
   private static FieldDescriptor toArrayFieldDescriptor(FieldDescriptor singleFieldDescriptor) {
     var path = singleFieldDescriptor.getPath();
     var description = singleFieldDescriptor.getDescription();
     var type = singleFieldDescriptor.getType();
 
-    var newFd = fieldWithPath("[*]." + path).description(description).type(type);
+    var newFd = fieldWithPath("content.[*]." + path).description(description).type(type);
     if (singleFieldDescriptor.isOptional()) {
       newFd.optional();
     }

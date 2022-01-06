@@ -27,7 +27,6 @@ import static org.wcdevs.blog.core.rest.DocUtil.ANCHOR;
 import static org.wcdevs.blog.core.rest.DocUtil.ANCHOR_DESC;
 import static org.wcdevs.blog.core.rest.DocUtil.BODY;
 import static org.wcdevs.blog.core.rest.DocUtil.BODY_DESC;
-import static org.wcdevs.blog.core.rest.DocUtil.COMMENTS_RESPONSE_FIELDS;
 import static org.wcdevs.blog.core.rest.DocUtil.PARENT_COMMENT_ANCHOR;
 import static org.wcdevs.blog.core.rest.DocUtil.PARENT_COMMENT_ANCHOR_DESC;
 import static org.wcdevs.blog.core.rest.DocUtil.POST_SLUG;
@@ -55,6 +54,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
@@ -147,7 +147,7 @@ class PostControllerTest {
         .then(ignored -> TestsUtil.samplePostSlug());
     when(postService.fullUpdate(anyString(), any(PostDto.class)))
         .then(ignored -> TestsUtil.samplePostSlug());
-    when(postService.getPosts(any()))
+    when(postService.getPosts(any(Pageable.class)))
         .then(ignored -> TestsUtil.pageOf(TestsUtil.samplePostsLiteData()));
 
     when(authAttributeExtractor.principalUsername(any()))
@@ -440,24 +440,28 @@ class PostControllerTest {
 
   @Test
   void getRootPostComments() throws Exception {
-    var comments = TestsUtil.sampleRootComments();
+    var comments = TestsUtil.pageOf(TestsUtil.sampleRootComments());
     var postSlug = TestsUtil.samplePostSlug().getSlug();
-    when(commentService.getRootPostComments(postSlug)).thenReturn(comments);
+    when(commentService.getRootPostComments(eq(postSlug), any(Pageable.class)))
+        .thenReturn(comments);
+
+    var responseFields = DocUtil.pageableFieldsWith(DocUtil.COMMENT_ARR_fIELDS);
 
     mockMvc.perform(get(BASE_URL + "/{postSlug}/comment/root", postSlug))
            .andExpect(status().isOk())
-           .andDo(document("get_root_comments", POST_SLUG_PATH_PARAMETER,
-                           COMMENTS_RESPONSE_FIELDS));
+           .andDo(document("get_root_comments", POST_SLUG_PATH_PARAMETER, responseFields));
   }
 
   @Test
   void getAllPostComments() throws Exception {
-    var comments = TestsUtil.sampleComments();
+    var comments = TestsUtil.pageOf(TestsUtil.sampleComments());
     var postSlug = TestsUtil.samplePostSlug().getSlug();
-    when(commentService.getAllPostComments(postSlug)).thenReturn(comments);
+    when(commentService.getAllPostComments(eq(postSlug), any(Pageable.class))).thenReturn(comments);
+
+    var responseFields = DocUtil.pageableFieldsWith(DocUtil.COMMENT_ARR_fIELDS);
 
     mockMvc.perform(get(BASE_URL + "/{postSlug}/comment/all", postSlug))
            .andExpect(status().isOk())
-           .andDo(document("get_all_comments", POST_SLUG_PATH_PARAMETER, COMMENTS_RESPONSE_FIELDS));
+           .andDo(document("get_all_comments", POST_SLUG_PATH_PARAMETER, responseFields));
   }
 }
