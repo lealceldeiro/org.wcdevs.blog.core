@@ -122,7 +122,7 @@ Branch names should follow the following pattern:
 
 To have a consistent git history the commit messages should follow the following pattern:
 ```text
-<type>(<ITEM ID>?): <subject>
+<type>(US-?#?<ITEM ID>?): <subject>
 ```
 
 ##### `<type>` should be one of:
@@ -139,7 +139,9 @@ To have a consistent git history the commit messages should follow the following
 - `style`: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc.)
 - `test`: Adding missing tests or correcting existing tests
 
-#### `<ITEM ID>` -- The related issue, user story or defect
+#### `<ITEM ID>` -- Optional, the related issue, user story or defect
+
+It can be preceded by `#`, example `feat(#237): User subscription`
 
 - For user stories, you should use `US-` as prefix. i.e.: `feat(US-237): User subscription`
 - For non-related issues or defects you should leave it blank. i.e:
