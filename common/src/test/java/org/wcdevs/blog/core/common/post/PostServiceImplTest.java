@@ -19,11 +19,13 @@ import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Pageable;
 import org.wcdevs.blog.core.common.TestsUtil;
 import org.wcdevs.blog.core.persistence.post.PartialPostDto;
 import org.wcdevs.blog.core.persistence.post.Post;
 import org.wcdevs.blog.core.persistence.post.PostDto;
 import org.wcdevs.blog.core.persistence.post.PostRepository;
+import org.wcdevs.blog.core.persistence.post.PostStatus;
 
 @SpringBootTest(classes = {PostService.class, PostServiceImpl.class})
 class PostServiceImplTest {
@@ -40,12 +42,12 @@ class PostServiceImplTest {
   void getPosts() {
     var pageable = pageable();
     var expected = TestsUtil.pageOf(TestsUtil.buildDto(), TestsUtil.buildDto());
-    when(postRepository.getPosts(any())).thenReturn(expected);
+    when(postRepository.getPosts(any(PostStatus.class), any(Pageable.class))).thenReturn(expected);
 
-    var actual = postService.getPosts(pageable);
+    var actual = postService.getPosts(PostStatus.DRAFT, pageable);
 
     assertEquals(expected, actual);
-    verify(postRepository, times(1)).getPosts(pageable);
+    verify(postRepository, times(1)).getPosts(PostStatus.DRAFT, pageable);
   }
 
   @Test

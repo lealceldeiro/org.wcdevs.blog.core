@@ -26,6 +26,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.wcdevs.blog.core.common.util.StringUtils;
 import org.wcdevs.blog.core.persistence.post.PartialPostDto;
 import org.wcdevs.blog.core.persistence.post.Post;
+import org.wcdevs.blog.core.persistence.post.PostStatus;
 import org.wcdevs.blog.core.persistence.util.ClockUtil;
 
 class PostTransformerTest {
@@ -42,7 +43,7 @@ class PostTransformerTest {
       assertEquals(now, entity.getPublishedOn());
       assertEquals(now, entity.getUpdatedOn());
       assertEquals(dto.getPublishedBy(), entity.getPublishedBy());
-      assertEquals(dto.getPublishedBy(), entity.getUpdatedBy());
+      assertEquals(dto.getUpdatedBy(), entity.getUpdatedBy());
     }
   }
 
@@ -229,8 +230,17 @@ class PostTransformerTest {
     var updatedOn = LocalDateTime.now();
     var publishedBy = aString();
     var updatedBy = aString();
-    Post entity = new Post(title, slug, body, excerpt, publishedOn, updatedOn, publishedBy,
-                           updatedBy);
+    var entity = Post.builder()
+                     .title(title)
+                     .slug(slug)
+                     .body(body)
+                     .excerpt(excerpt)
+                     .publishedOn(publishedOn)
+                     .updatedOn(updatedOn)
+                     .publishedBy(publishedBy)
+                     .updatedBy(updatedBy)
+                     .status(PostStatus.PUBLISHED)
+                     .build();
 
     var dto = new PostTransformer().dtoFromEntity(entity);
 
@@ -241,5 +251,6 @@ class PostTransformerTest {
     assertEquals(updatedOn, dto.getUpdatedOn());
     assertEquals(publishedBy, dto.getPublishedBy());
     assertEquals(updatedBy, dto.getUpdatedBy());
+    assertEquals(PostStatus.PUBLISHED, dto.getStatus());
   }
 }

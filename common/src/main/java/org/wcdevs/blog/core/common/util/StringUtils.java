@@ -2,6 +2,7 @@ package org.wcdevs.blog.core.common.util;
 
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Provides utility methods for common string operations.
@@ -40,5 +41,9 @@ public class StringUtils {
     return candidateSlug.length() <= SLUG_MAX_LENGTH
            ? candidateSlug
            : candidateSlug.substring(candidateSlug.length() - SLUG_MAX_LENGTH);
+  }
+
+  public static String emptyIfNull(String value) {
+    return Optional.of(value).orElse("");
   }
 }
