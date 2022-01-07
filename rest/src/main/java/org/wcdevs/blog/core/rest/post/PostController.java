@@ -22,6 +22,7 @@ import org.wcdevs.blog.core.common.post.PostService;
 import org.wcdevs.blog.core.persistence.comment.CommentDto;
 import org.wcdevs.blog.core.persistence.post.PartialPostDto;
 import org.wcdevs.blog.core.persistence.post.PostDto;
+import org.wcdevs.blog.core.persistence.post.PostStatus;
 import org.wcdevs.blog.core.rest.auth.AuthAttributeExtractor;
 import org.wcdevs.blog.core.rest.auth.Role;
 import org.wcdevs.blog.core.rest.auth.SecurityContextAuthChecker;
@@ -40,7 +41,12 @@ public class PostController {
 
   @GetMapping
   public Page<PostDto> getPosts(Pageable pageable) {
-    return postService.getPosts(pageable);
+    return postService.getPosts(PostStatus.PUBLISHED, pageable);
+  }
+
+  @GetMapping("/status/{postStatus}")
+  public Page<PostDto> getPosts(@PathVariable PostStatus postStatus, Pageable pageable) {
+    return postService.getPosts(postStatus, pageable);
   }
 
   /**

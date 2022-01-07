@@ -72,6 +72,7 @@ import org.wcdevs.blog.core.common.post.PostService;
 import org.wcdevs.blog.core.persistence.comment.CommentDto;
 import org.wcdevs.blog.core.persistence.post.PartialPostDto;
 import org.wcdevs.blog.core.persistence.post.PostDto;
+import org.wcdevs.blog.core.persistence.post.PostStatus;
 import org.wcdevs.blog.core.rest.DocUtil;
 import org.wcdevs.blog.core.rest.TestsUtil;
 import org.wcdevs.blog.core.rest.auth.AuthAttributeExtractor;
@@ -97,7 +98,7 @@ class PostControllerTest {
       = pathParameters(parameterWithName("postSlug")
                            .description("Post slug generated during creation"));
   private static final RequestFieldsSnippet REQUEST_FIELDS
-      = requestFields(fieldWithPath("title").description("Post title. Mandatory, unique."),
+      = requestFields(fieldWithPath("title").description("Post title. Mandatory."),
                       fieldWithPath("slug").optional().type(DocUtil.STRING_TYPE)
                                            .description("A custom slug. Optional, but unique."),
                       fieldWithPath("body").description("Body of the post. Mandatory."),
@@ -145,7 +146,7 @@ class PostControllerTest {
         .then(ignored -> TestsUtil.samplePostSlug());
     when(postService.fullUpdate(anyString(), any(PostDto.class)))
         .then(ignored -> TestsUtil.samplePostSlug());
-    when(postService.getPosts(any(Pageable.class)))
+    when(postService.getPosts(any(PostStatus.class), any(Pageable.class)))
         .then(ignored -> TestsUtil.pageOf(TestsUtil.samplePostsLiteData()));
 
     when(authAttributeExtractor.principalUsername(any()))
@@ -201,7 +202,7 @@ class PostControllerTest {
       "ERROR: duplicate key value violates unique constraint. "
       + "Some other message will yield a not so well formatted response message",
       "ERROR: duplicate key value violates unique constraint. "
-      + "Duplicate key value violates unique constraint. Values (title)=(%s)"
+      + "Duplicate key value violates unique constraint. Values (slug)=(%s)"
   })
   void createPostDBErrorWithRootCause(String rootCauseMsg) throws Exception {
     var postDto = TestsUtil.samplePostTitleBody();
