@@ -16,8 +16,9 @@ public interface PostRepository extends JpaRepository<Post, UUID> {
          + "                                                       count(c)) "
          + "from Post p "
          + "left join Comment c on (c.post = p) "
+         + "where p.status = :status "
          + "group by p.title, p.slug, p.excerpt")
-  Page<PostDto> getPosts(Pageable pageable);
+  Page<PostDto> getPosts(PostStatus status, Pageable pageable);
 
   Optional<Post> findBySlug(String slug);
 

@@ -52,6 +52,8 @@ public class PostDto {
   @Size(min = 3, max = 250)
   private String excerpt;
 
+  private PostStatus status = PostStatus.PUBLISHED;
+
   // only to be sent to clients
   @Setter
   private String publishedBy;
