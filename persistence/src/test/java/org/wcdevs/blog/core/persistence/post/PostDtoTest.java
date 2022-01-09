@@ -22,11 +22,20 @@ class PostDtoTest {
     var slug = aString();
     var excerpt = aString();
     var commentsCount = Math.abs(random.nextInt());
-    var dto = new PostDto(title, slug, excerpt, commentsCount);
+    var publishedBy = aString();
+    var updatedBy = aString();
+    var publishedOn = LocalDateTime.now().minusDays(1);
+    var updatedOn = LocalDateTime.now();
+    var dto = new PostDto(title, slug, excerpt, publishedBy, updatedBy, publishedOn, updatedOn,
+                          commentsCount);
 
     assertEquals(title, dto.getTitle());
     assertEquals(slug, dto.getSlug());
     assertEquals(excerpt, dto.getExcerpt());
+    assertEquals(publishedBy, dto.getPublishedBy());
+    assertEquals(updatedBy, dto.getUpdatedBy());
+    assertEquals(publishedOn, dto.getPublishedOn());
+    assertEquals(updatedOn, dto.getUpdatedOn());
     assertEquals(commentsCount, dto.getCommentsCount());
   }
 

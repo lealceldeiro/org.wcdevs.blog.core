@@ -48,6 +48,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -120,6 +121,9 @@ class PostControllerTest {
   private static final PathParametersSnippet POST_SLUG_PATH_PARAMETER
       = pathParameters(parameterWithName(POST_SLUG).description(POST_SLUG_DESC));
 
+  @Value("${spring.jackson.date-format}")
+  private String dateFormat;
+
   @Autowired
   private WebApplicationContext context;
   private MockMvc mockMvc;
@@ -160,8 +164,13 @@ class PostControllerTest {
         fieldWithPath("content.[*].title").description("Post title"),
         fieldWithPath("content.[*].slug")
             .description("Post slug. Used to get the post information later"),
-        fieldWithPath("content.[*].excerpt")
-            .description("An excerpt of the post content"),
+        fieldWithPath("content.[*].excerpt").description("An excerpt of the post content"),
+        fieldWithPath("content.[*].publishedBy").description("User who published the post"),
+        fieldWithPath("content.[*].updatedBy").description("User who last updated the post"),
+        fieldWithPath("content.[*].publishedOn")
+            .description("Date time (UTC) when the post was published (" + dateFormat + ")"),
+        fieldWithPath("content.[*].updatedOn")
+            .description("Date time (UTC) when the post was last updated (" + dateFormat + ")"),
         fieldWithPath("content.[*].commentsCount")
             .description("Number of comments published in each post")
                                            );
