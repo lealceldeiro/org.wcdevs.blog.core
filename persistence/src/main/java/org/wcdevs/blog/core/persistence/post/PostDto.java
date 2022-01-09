@@ -72,12 +72,21 @@ public class PostDto {
    * @param title            Post title
    * @param slug             Post slug
    * @param excerpt          Post excerpt
+   * @param publishedBy      User who published the post
+   * @param updatedBy        User who last updated the post
+   * @param publishedOn      {@link LocalDateTime} when the post was published
+   * @param updatedOn        {@link LocalDateTime} when the post was last updated
    * @param rawCommentsCount Comments count.
    */
-  public PostDto(String title, String slug, String excerpt, long rawCommentsCount) {
+  public PostDto(String title, String slug, String excerpt, String publishedBy, String updatedBy,
+                 LocalDateTime publishedOn, LocalDateTime updatedOn, long rawCommentsCount) {
     this.title = title;
     this.slug = slug;
     this.excerpt = excerpt;
+    this.publishedBy = publishedBy;
+    this.updatedBy = updatedBy;
+    this.publishedOn = publishedOn;
+    this.updatedOn = updatedOn;
     this.commentsCount = (int) rawCommentsCount;
   }
 }

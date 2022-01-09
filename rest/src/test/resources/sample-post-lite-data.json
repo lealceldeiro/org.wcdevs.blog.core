@@ -3,18 +3,30 @@
     "title": "Lorem Ipsum",
     "slug": "lorem-ipsum-2011460781",
     "excerpt": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur ullamcorper ex at turpis fermentum",
-    "commentsCount": 2
+    "commentsCount": 2,
+    "publishedOn": "2021-12-05 14:40:05",
+    "updatedOn": "2021-12-06 14:57:49",
+    "publishedBy": "john",
+    "updatedBy": "john"
   },
   {
     "title": "Integer in pretium turpis",
     "slug": "integer-in-pretium-turpis-2011460751",
     "excerpt": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur ullamcorper ex at turpis fermentum",
-    "commentsCount": 7
+    "commentsCount": 7,
+    "publishedOn": "2021-12-05 14:40:05",
+    "updatedOn": "2021-12-06 14:57:49",
+    "publishedBy": "edi",
+    "updatedBy": "edi"
   },
   {
     "title": "Fusce eu sagittis tortor",
     "slug": "fusce-eu-sagittis-tortor-2011460723",
     "excerpt": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur ullamcorper ex at turpis fermentum",
-    "commentsCount": 0
+    "commentsCount": 0,
+    "publishedOn": "2021-12-05 14:40:05",
+    "updatedOn": "2021-12-06 14:57:49",
+    "publishedBy": "zara",
+    "updatedBy": "zara"
   }
 ]
