@@ -164,8 +164,8 @@ class PostControllerTest {
         fieldWithPath("content.[*].slug")
             .description("Post slug. Used to get the post information later"),
         fieldWithPath("content.[*].excerpt").description("An excerpt of the post content"),
-        fieldWithPath("content.[*].publishedBy").description("User who last updated the post"),
-        fieldWithPath("content.[*].updatedBy").description("User who published the post"),
+        fieldWithPath("content.[*].publishedBy").description("User who published the post"),
+        fieldWithPath("content.[*].updatedBy").description("User who last updated the post"),
         fieldWithPath("content.[*].publishedOn")
             .description("Date time (UTC) when the post was published (" + dateFormat + ")"),
         fieldWithPath("content.[*].updatedOn")
