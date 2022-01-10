@@ -52,6 +52,8 @@ public class PostDto {
   @Size(min = 3, max = 250)
   private String excerpt;
 
+  @Setter
+  @Builder.Default
   private PostStatus status = PostStatus.PUBLISHED;
 
   // only to be sent to clients
@@ -74,17 +76,20 @@ public class PostDto {
    * @param title            Post title
    * @param slug             Post slug
    * @param excerpt          Post excerpt
+   * @param status           Post status
    * @param publishedBy      User who published the post
    * @param updatedBy        User who last updated the post
    * @param publishedOn      {@link LocalDateTime} when the post was published
    * @param updatedOn        {@link LocalDateTime} when the post was last updated
    * @param rawCommentsCount Comments count.
    */
-  public PostDto(String title, String slug, String excerpt, String publishedBy, String updatedBy,
-                 LocalDateTime publishedOn, LocalDateTime updatedOn, long rawCommentsCount) {
+  public PostDto(String title, String slug, String excerpt, short status, String publishedBy,
+                 String updatedBy, LocalDateTime publishedOn, LocalDateTime updatedOn,
+                 long rawCommentsCount) {
     this.title = title;
     this.slug = slug;
     this.excerpt = excerpt;
+    this.status = PostStatus.fromShortValue(status);
     this.publishedBy = publishedBy;
     this.updatedBy = updatedBy;
     this.publishedOn = publishedOn;
