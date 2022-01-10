@@ -3,6 +3,7 @@ package org.wcdevs.blog.core.common.post;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyShort;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -42,12 +43,12 @@ class PostServiceImplTest {
   void getPosts() {
     var pageable = pageable();
     var expected = TestsUtil.pageOf(TestsUtil.buildDto(), TestsUtil.buildDto());
-    when(postRepository.getPosts(any(PostStatus.class), any(Pageable.class))).thenReturn(expected);
+    when(postRepository.getPosts(anyShort(), any(Pageable.class))).thenReturn(expected);
 
     var actual = postService.getPosts(PostStatus.DRAFT, pageable);
 
     assertEquals(expected, actual);
-    verify(postRepository, times(1)).getPosts(PostStatus.DRAFT, pageable);
+    verify(postRepository, times(1)).getPosts(PostStatus.DRAFT.shortValue(), pageable);
   }
 
   @Test

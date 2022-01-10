@@ -24,7 +24,7 @@ public class PostServiceImpl implements PostService {
   @Override
   @Transactional(readOnly = true)
   public Page<PostDto> getPosts(PostStatus status, Pageable pageable) {
-    return postRepository.getPosts(status, pageable);
+    return postRepository.getPosts(status.shortValue(), pageable);
   }
 
   @Override
