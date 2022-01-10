@@ -13,6 +13,7 @@ open module org.wcdevs.blog.core.rest {
   requires spring.security.core;
   requires spring.security.oauth2.resource.server;
   requires spring.security.oauth2.jose;
+  requires spring.tx;
 
   requires lombok;
 
