@@ -75,7 +75,9 @@ public final class TestsUtil {
   }
 
   public static PostDto samplePostTitleBody() {
-    return nextElementFrom(SAMPLE_TITLE_BODY_DATA);
+    var dto = nextElementFrom(SAMPLE_TITLE_BODY_DATA);
+    dto.setStatus(null);
+    return dto;
   }
 
   private static <T> T nextElementFrom(List<T> collection) {
@@ -83,11 +85,16 @@ public final class TestsUtil {
   }
 
   public static PostDto samplePostSlug() {
-    return nextElementFrom(SAMPLE_SLUG_DATA);
+    var dto = nextElementFrom(SAMPLE_SLUG_DATA);
+    dto.setStatus(null);
+    return dto;
   }
 
   public static List<PostDto> samplePostsLiteData() {
-    return elements(SAMPLE_POST_LITE_DATA);
+    var elements = elements(SAMPLE_POST_LITE_DATA);
+    elements.forEach(e -> e.setStatus(null));
+
+    return elements;
   }
 
   private static <T> List<T> elements(List<T> elements) {
@@ -111,7 +118,8 @@ public final class TestsUtil {
                   .publishedBy(proto.getPublishedBy())
                   .updatedBy(proto.getUpdatedBy())
                   .publishedOn(proto.getPublishedOn())
-                  .updatedOn(proto.getUpdatedOn());
+                  .updatedOn(proto.getUpdatedOn())
+                  .status(null);
   }
 
   public static CommentDto.CommentDtoBuilder builderFrom(CommentDto proto) {

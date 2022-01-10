@@ -4,13 +4,20 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 
 import java.util.Arrays;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.restdocs.payload.ResponseFieldsSnippet;
+import org.wcdevs.blog.core.persistence.post.PostStatus;
 
 public final class DocUtil {
   public static final String BASE_URL = "/comment/";
+
+  public static final String POST_STATUS = "status";
+  public static final String POST_STATUS_DESC
+      = "Status of the post. Optional (default " + PostStatus.PUBLISHED + "). It must be one of "
+        + Arrays.stream(PostStatus.values()).map(Enum::name).collect(Collectors.joining(", "));
 
   public static final String POST_SLUG = "postSlug";
   public static final String POST_SLUG_DESC
