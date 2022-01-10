@@ -130,7 +130,7 @@ class PostTest {
                    .updatedOn(updatedOn)
                    .publishedBy(publishedBy)
                    .updatedBy(updatedBy)
-                   .status(PostStatus.PUBLISHED)
+                   .status(PostStatus.PUBLISHED.shortValue())
                    .build();
 
     assertEquals(title, post.getTitle());

@@ -20,7 +20,7 @@ public interface PostRepository extends JpaRepository<Post, UUID> {
          + "where p.status = :status "
          + "group by "
          + "p.title, p.slug, p.excerpt, p.publishedBy, p.updatedBy, p.publishedOn, p.updatedOn")
-  Page<PostDto> getPosts(PostStatus status, Pageable pageable);
+  Page<PostDto> getPosts(short status, Pageable pageable);
 
   Optional<Post> findBySlug(String slug);
 

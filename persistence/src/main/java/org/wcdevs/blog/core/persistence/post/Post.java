@@ -5,12 +5,11 @@ import java.util.Objects;
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -66,8 +65,17 @@ public class Post {
 
   // see https://www.postgresql.org/docs/current/datatype-numeric.html
   @Column(name = "status", nullable = false, columnDefinition = "smallint")
-  @Enumerated(EnumType.ORDINAL)
-  private PostStatus status;
+  @Setter(AccessLevel.NONE)
+  @Getter(AccessLevel.NONE)
+  private short status;
+
+  public void setStatus(PostStatus status) {
+    this.status = status.shortValue();
+  }
+
+  public PostStatus getStatus() {
+    return PostStatus.fromShortValue(this.status);
+  }
 
   @Override
   public boolean equals(Object other) {
