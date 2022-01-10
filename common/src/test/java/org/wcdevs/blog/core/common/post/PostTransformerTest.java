@@ -239,7 +239,7 @@ class PostTransformerTest {
                      .updatedOn(updatedOn)
                      .publishedBy(publishedBy)
                      .updatedBy(updatedBy)
-                     .status(PostStatus.PUBLISHED)
+                     .status(PostStatus.PUBLISHED.shortValue())
                      .build();
 
     var dto = new PostTransformer().dtoFromEntity(entity);

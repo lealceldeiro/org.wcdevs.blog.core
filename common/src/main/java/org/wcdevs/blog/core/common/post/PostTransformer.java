@@ -24,25 +24,29 @@ final class PostTransformer implements Transformer<Post, PostDto, PartialPostDto
     var now = ClockUtil.utcNow();
     var isDraft = dto.getStatus() == PostStatus.DRAFT;
 
-    // user can specify a custom slug -- draft will have no slug
-    var dtoSlug = dto.getSlug();
-    var nonDraftSlug = dtoSlug != null ? dtoSlug : StringUtils.slugFrom(dto.getTitle());
-    var slug = isDraft ? emptyIfNull(dtoSlug) : nonDraftSlug;
-
-    var excerpt = isDraft
-                  ? emptyIfNull(dto.getExcerpt()) : excerptFrom(dto.getExcerpt(), dto.getBody());
+    var excerpt = isDraft ? emptyIfNull(dto.getExcerpt())
+                          : excerptFrom(dto.getExcerpt(), dto.getBody());
 
     return Post.builder()
                .title(isDraft ? emptyIfNull(dto.getTitle()) : dto.getTitle())
-               .slug(slug)
+               .slug(slug(dto))
                .body(isDraft ? emptyIfNull(dto.getBody()) : dto.getBody())
                .excerpt(excerpt)
                .publishedBy(dto.getPublishedBy())
                .publishedOn(now)
                .updatedOn(now)
                .updatedBy(dto.getUpdatedBy())
-               .status(dto.getStatus())
+               .status(dto.getStatus().shortValue())
                .build();
+  }
+
+  private static String slug(PostDto dto) {
+    var rawSlug = dto.getSlug();
+    if (dto.getStatus() == PostStatus.DRAFT) {
+      return emptyIfNull(rawSlug);
+    }
+    // users can specify a custom slug
+    return rawSlug != null ? rawSlug : StringUtils.slugFrom(dto.getTitle());
   }
 
   private static String excerptFrom(String excerptCandidate, String bodyToCreateExcerpt) {
@@ -86,6 +90,8 @@ final class PostTransformer implements Transformer<Post, PostDto, PartialPostDto
     if (Objects.nonNull(newPostDto.getUpdatedBy())) {
       post.setUpdatedBy(newPostDto.getUpdatedBy());
     }
+    // don't change the status in a partial update: drafts can have missing data
+
     post.setUpdatedOn(ClockUtil.utcNow());
   }
 
