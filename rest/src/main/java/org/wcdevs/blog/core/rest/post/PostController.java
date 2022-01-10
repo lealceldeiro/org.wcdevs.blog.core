@@ -69,6 +69,15 @@ public class PostController {
     return postService.createPost(postDto);
   }
 
+  @PostMapping("/status/DRAFT")
+  @ResponseStatus(HttpStatus.CREATED)
+  @PreAuthorize("hasAnyRole('AUTHOR')")
+  public PostDto createDraft(@AuthenticationPrincipal Object principal,
+                             @RequestBody PostDto draftDto) {
+    draftDto.setStatus(PostStatus.DRAFT);
+    return createPost(principal, draftDto);
+  }
+
   /**
    * Returns a post info.
    *

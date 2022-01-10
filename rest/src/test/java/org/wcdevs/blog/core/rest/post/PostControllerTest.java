@@ -105,6 +105,8 @@ class PostControllerTest {
                       fieldWithPath("body").description("Body of the post. Mandatory."),
                       fieldWithPath("excerpt").optional().type(DocUtil.STRING_TYPE)
                                               .description("A custom excerpt. Optional."),
+                      fieldWithPath(DocUtil.POST_STATUS).optional().type(DocUtil.STRING_TYPE)
+                                                        .description(DocUtil.POST_STATUS_DESC),
                       fieldWithPath("publishedBy").optional().type(DocUtil.STRING_TYPE).ignored(),
                       fieldWithPath("updatedBy").optional().type(DocUtil.STRING_TYPE).ignored(),
                       fieldWithPath("publishedOn").optional().type(DocUtil.STRING_TYPE).ignored(),
@@ -183,6 +185,8 @@ class PostControllerTest {
   @Test
   void createPost() throws Exception {
     var postDto = TestsUtil.samplePostTitleBody();
+    postDto.setStatus(null);
+
     mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding(StandardCharsets.UTF_8)
@@ -308,10 +312,11 @@ class PostControllerTest {
         fieldWithPath("slug").description("Post slug. It can be used to retrieve the post later"),
         fieldWithPath("body").description("Post body"),
         fieldWithPath("excerpt").description("An excerpt of the post content"),
+        fieldWithPath("status").description("Current post status"),
         fieldWithPath("publishedOn").description("Date time where the post was published"),
         fieldWithPath("updatedOn").description("Date time where the post was last updated"),
         fieldWithPath("publishedBy").description("Author of the post"),
-        fieldWithPath("updatedBy").description("Last user who edited the post. ")
+        fieldWithPath("updatedBy").description("Last user who edited the post")
                                        );
 
     mockMvc.perform(get(BASE_URL + "/{postSlug}", postDto.getSlug()))
@@ -347,6 +352,7 @@ class PostControllerTest {
                     // erase from mock values that are not expected from client
                     .updatedOn(null).updatedBy(null)
                     .publishedOn(null).publishedBy(null)
+                    .status(null)
                     .build();
   }
 
