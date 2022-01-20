@@ -98,10 +98,11 @@ final class PostTransformer implements Transformer<Post, PostDto, PartialPostDto
   @Override
   public void update(Post post, PostDto newPostDto) {
     post.setTitle(newPostDto.getTitle());
+    post.setSlug(newPostDto.getSlug());
     post.setBody(newPostDto.getBody());
     post.setExcerpt(newPostDto.getExcerpt());
-    post.setSlug(newPostDto.getSlug());
     post.setUpdatedBy(newPostDto.getUpdatedBy());
+    post.setStatus(newPostDto.getStatus());
 
     post.setUpdatedOn(ClockUtil.utcNow());
   }
