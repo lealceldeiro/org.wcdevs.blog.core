@@ -16,8 +16,9 @@ import org.wcdevs.blog.core.rest.exceptionhandler.ErrorMessage;
  */
 @Component
 public class DataIntegrityViolationExceptionHandler extends AbstractExceptionHandler {
-  private static final Pattern FIELD_NAME_MATCHER = Pattern.compile("(?<=\\().*(?=\\)=)");
-  private static final Pattern FIELD_VALUE_MATCHER = Pattern.compile("(?<==\\().*(?=\\))");
+  private static final Pattern DUPLICATE_FIELD_NAME_MATCHER = Pattern.compile("(?<=\\().*(?=\\)=)");
+  private static final Pattern DUPLICATE_FIELD_VAL_MATCHER = Pattern.compile("(?<==\\().*(?=\\))");
+  private static final Pattern NULL_FIELD_NAME_MATCHER = Pattern.compile("(?<=\").*(?=\")");
 
   @Override
   protected boolean canHandle(Throwable throwable) {
@@ -31,8 +32,13 @@ public class DataIntegrityViolationExceptionHandler extends AbstractExceptionHan
 
     if (rootCauseMessage.contains("ERROR: duplicate key value violates unique constraint")) {
       errorMsg = String.format("There's already a %s with value '%s'",
-                               fieldName(rootCauseMessage), fieldValue(rootCauseMessage));
+                               fieldName(rootCauseMessage, DUPLICATE_FIELD_NAME_MATCHER),
+                               fieldValue(rootCauseMessage));
+    } else if (rootCauseMessage.contains("ERROR: null value in column")) {
+      errorMsg = String.format("'%s' field cannot be null",
+                               fieldName(rootCauseMessage, NULL_FIELD_NAME_MATCHER));
     }
+
     return new ResponseEntity<>(new ErrorMessage(errorMsg, request.getContextPath(),
                                                  LocalDateTime.now()),
                                 HttpStatus.CONFLICT);
@@ -46,12 +52,12 @@ public class DataIntegrityViolationExceptionHandler extends AbstractExceptionHan
            : "";
   }
 
-  private String fieldName(String rootCauseMessage) {
-    return match(rootCauseMessage, FIELD_NAME_MATCHER, "<field_not_found>");
+  private String fieldName(String rootCauseMessage, Pattern pattern) {
+    return match(rootCauseMessage, pattern, "<field_not_found>");
   }
 
   private String fieldValue(String rootCauseMessage) {
-    return match(rootCauseMessage, FIELD_VALUE_MATCHER, "<value_not_found>");
+    return match(rootCauseMessage, DUPLICATE_FIELD_VAL_MATCHER, "<value_not_found>");
   }
 
   private String match(String rootCauseMessage, Pattern pattern, String defaultValue) {
