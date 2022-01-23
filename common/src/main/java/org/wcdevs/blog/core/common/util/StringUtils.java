@@ -44,6 +44,6 @@ public class StringUtils {
   }
 
   public static String emptyIfNull(String value) {
-    return Optional.of(value).orElse("");
+    return Optional.ofNullable(value).orElse("");
   }
 }
