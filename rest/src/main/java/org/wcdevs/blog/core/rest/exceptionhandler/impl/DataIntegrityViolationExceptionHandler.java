@@ -35,7 +35,7 @@ public class DataIntegrityViolationExceptionHandler extends AbstractExceptionHan
                                fieldName(rootCauseMessage, DUPLICATE_FIELD_NAME_MATCHER),
                                fieldValue(rootCauseMessage));
     } else if (rootCauseMessage.contains("ERROR: null value in column")) {
-      errorMsg = String.format("'%s' field cannot be null",
+      errorMsg = String.format("field '%s' cannot be null",
                                fieldName(rootCauseMessage, NULL_FIELD_NAME_MATCHER));
     }
 
