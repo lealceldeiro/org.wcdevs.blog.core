@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.wcdevs.blog.core.persistence.TestsUtil.aRandomPostStatus;
 import static org.wcdevs.blog.core.persistence.TestsUtil.aString;
 
 import java.security.SecureRandom;
@@ -148,11 +149,18 @@ class PostDtoTest {
   void setters() {
     var publishedBy = aString();
     var updatedBy = aString();
+    var slug = aString();
+    var status = aRandomPostStatus();
+
     PostDto dto = PostDto.builder().build();
     dto.setPublishedBy(publishedBy);
     dto.setUpdatedBy(updatedBy);
+    dto.setSlug(slug);
+    dto.setStatus(status);
 
     assertEquals(publishedBy, dto.getPublishedBy());
     assertEquals(updatedBy, dto.getUpdatedBy());
+    assertEquals(slug, dto.getSlug());
+    assertEquals(status, dto.getStatus());
   }
 }

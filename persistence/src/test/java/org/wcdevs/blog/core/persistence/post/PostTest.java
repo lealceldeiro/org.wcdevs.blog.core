@@ -87,6 +87,7 @@ class PostTest {
     var updatedOn = LocalDateTime.now();
     var publishedBy = TestsUtil.aString();
     var updatedBy = TestsUtil.aString();
+    var status = TestsUtil.aRandomPostStatus();
 
     var post = new Post();
     post.setUuid(uuid);
@@ -98,6 +99,7 @@ class PostTest {
     post.setUpdatedOn(updatedOn);
     post.setPublishedBy(publishedBy);
     post.setUpdatedBy(updatedBy);
+    post.setStatus(status);
 
     assertEquals(uuid, post.getUuid());
     assertEquals(title, post.getTitle());
@@ -108,6 +110,7 @@ class PostTest {
     assertEquals(updatedOn, post.getUpdatedOn());
     assertEquals(publishedBy, post.getPublishedBy());
     assertEquals(updatedBy, post.getUpdatedBy());
+    assertEquals(status, post.getStatus());
   }
 
   @Test
