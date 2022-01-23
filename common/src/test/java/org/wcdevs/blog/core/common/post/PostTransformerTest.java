@@ -30,12 +30,18 @@ import org.wcdevs.blog.core.persistence.post.PostStatus;
 import org.wcdevs.blog.core.persistence.util.ClockUtil;
 
 class PostTransformerTest {
-  @Test
-  void newEntityFromDto() {
+  @ParameterizedTest
+  @ValueSource(booleans = {true, false})
+  void newEntityFromDto(boolean isDraft) {
     try (var mockedClock = mockStatic(ClockUtil.class)) {
       var now = LocalDateTime.now().minusDays(1);
       mockedClock.when(ClockUtil::utcNow).thenReturn(now);
-      var dto = dtoBuilder().slug(null).updatedOn(null).publishedOn(null).updatedBy(null).build();
+      var dto = dtoBuilder().slug(null)
+                            .updatedOn(null)
+                            .publishedOn(null)
+                            .updatedBy(null)
+                            .status(isDraft ? PostStatus.DRAFT : PostStatus.PUBLISHED)
+                            .build();
 
       var entity = new PostTransformer().newEntityFromDto(dto);
 
