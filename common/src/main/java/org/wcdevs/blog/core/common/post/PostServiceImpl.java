@@ -66,17 +66,14 @@ public class PostServiceImpl implements PostService {
   public PostDto fullUpdate(String postSlug, PostDto newPostData) {
     var post = postRepository.findBySlug(postSlug).orElseThrow(PostNotFoundException::new);
 
-    if (isNotFriendlySlug(newPostData.getSlug()) && post.getStatus() == PostStatus.DRAFT) {
+    if (StringUtils.isUnfriendlySlug(newPostData.getSlug())
+        && post.getStatus() == PostStatus.DRAFT) {
       newPostData.setSlug(StringUtils.slugFrom(newPostData.getTitle()));
     }
 
     postTransformer.update(post, newPostData);
 
     return postTransformer.slugInfo(post);
-  }
-
-  private boolean isNotFriendlySlug(String slug) {
-    return slug == null || StringUtils.isUuid(slug);
   }
 
   @Override

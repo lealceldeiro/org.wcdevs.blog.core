@@ -48,6 +48,18 @@ public class StringUtils {
     return Optional.ofNullable(value).orElse("");
   }
 
+
+  /**
+   * Returns whether a given slug is user-friendly or not.
+   *
+   * @param slug Slug to be checked.
+   *
+   * @return {@code false} if the slug is user-friendly, {@code false} otherwise.
+   */
+  public static boolean isUnfriendlySlug(String slug) {
+    return slug == null || StringUtils.isUuid(slug);
+  }
+
   /**
    * Returns whether a string value is an UUID or not.
    *
