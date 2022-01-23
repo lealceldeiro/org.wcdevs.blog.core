@@ -42,7 +42,7 @@ public enum PostStatus {
 
   private final int value;
 
-  PostStatus(final int value) {
+  PostStatus(int value) {
     this.value = value;
   }
 

@@ -74,7 +74,7 @@ public class Post {
   }
 
   public PostStatus getStatus() {
-    return PostStatus.fromShortValue(this.status);
+    return PostStatus.fromShortValue(status);
   }
 
   @Override
