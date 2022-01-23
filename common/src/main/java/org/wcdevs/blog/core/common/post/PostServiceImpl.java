@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.wcdevs.blog.core.common.util.StringUtils;
 import org.wcdevs.blog.core.persistence.post.PartialPostDto;
 import org.wcdevs.blog.core.persistence.post.Post;
 import org.wcdevs.blog.core.persistence.post.PostDto;
@@ -64,9 +65,18 @@ public class PostServiceImpl implements PostService {
   @Override
   public PostDto fullUpdate(String postSlug, PostDto newPostData) {
     var post = postRepository.findBySlug(postSlug).orElseThrow(PostNotFoundException::new);
+
+    if (isNotFriendlySlug(newPostData.getSlug()) && post.getStatus() == PostStatus.DRAFT) {
+      newPostData.setSlug(StringUtils.slugFrom(newPostData.getTitle()));
+    }
+
     postTransformer.update(post, newPostData);
 
     return postTransformer.slugInfo(post);
+  }
+
+  private boolean isNotFriendlySlug(String slug) {
+    return slug == null || StringUtils.isUuid(slug);
   }
 
   @Override
