@@ -65,12 +65,11 @@ final class PostTransformer implements Transformer<Post, PostDto, PartialPostDto
     return trimmed;
   }
 
-  PostDto slugInfo(String slug) {
-    return PostDto.builder().slug(slug).build();
-  }
-
   PostDto slugInfo(Post post) {
-    return slugInfo(post.getSlug());
+    return PostDto.builder()
+                  .slug(post.getSlug())
+                  .status(post.getStatus())
+                  .build();
   }
 
   @Override

@@ -161,21 +161,16 @@ class PostTransformerTest {
   }
 
   @Test
-  void slugInfoFromSlug() {
-    var slug = aString();
-    var dto = new PostTransformer().slugInfo(slug);
-    assertEquals(slug, dto.getSlug());
-  }
-
-  @Test
   void slugInfoFromPost() {
     var slug = aString();
     var postMock = mock(Post.class);
     when(postMock.getSlug()).thenReturn(slug);
+    when(postMock.getStatus()).thenReturn(PostStatus.PENDING);
 
     var dto = new PostTransformer().slugInfo(postMock);
 
-    assertEquals(dto.getSlug(), slug);
+    assertEquals(slug, dto.getSlug());
+    assertEquals(PostStatus.PENDING, dto.getStatus());
   }
 
   @Test
