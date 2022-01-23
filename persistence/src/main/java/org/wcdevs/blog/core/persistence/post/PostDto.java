@@ -40,6 +40,7 @@ public class PostDto {
   @Size(min = 3, max = 200)
   private String title;
 
+  @Setter
   @ToString.Include
   @EqualsAndHashCode.Include
   @Pattern(regexp = "[-a-z0-9]{3,150}")
