@@ -195,18 +195,6 @@ class PostControllerTest {
            .andDo(document("create_post", REQUEST_FIELDS, SLUG_INFO_RESPONSE_FIELDS));
   }
 
-  @Test
-  void createPostDBError() throws Exception {
-    var postDto = TestsUtil.samplePostTitleBody();
-    var err = String.format("There's already a post with title %s", postDto.getSlug());
-    when(postService.createPost(postDto)).thenThrow(new DataIntegrityViolationException(err));
-    mockMvc.perform(post(BASE_URL)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .content(MAPPER.writeValueAsString(postDto)))
-           .andExpect(status().isConflict());
-  }
-
   @ParameterizedTest
   @ValueSource(strings = {
       "",
@@ -218,7 +206,7 @@ class PostControllerTest {
       + "Duplicate key value violates unique constraint. Values (slug)=(%s)",
       "ERROR: null value in column \"title\" violates not null constraint."
   })
-  void createPostDBErrorWithRootCause(String rootCauseMsg) throws Exception {
+  void createPostWithDataError(String rootCauseMsg) throws Exception {
     var postDto = TestsUtil.samplePostTitleBody();
 
     var rootCauseMessage = !"-".equals(rootCauseMsg)
@@ -282,7 +270,6 @@ class PostControllerTest {
 
     mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
-                        //.characterEncoding(StandardCharsets.UTF_8)
                         .content(MAPPER.writeValueAsString(postDto)))
            .andExpect(status().isBadRequest())
            .andDo(document("create_post_wrong_body"));
@@ -292,8 +279,8 @@ class PostControllerTest {
   @ValueSource(strings = {
       "", "a",
       "a-very-long-slug-with-more-than-allowed-characters-to-show-the-api-error-handling-feature-"
-      + "which-should-definively-not-be-emulated-at-all-otherwise-an-error-will-be-reported-to-the-"
-      + "calling-client-with-an-approriate-message"
+      + "which-should-definitely-not-be-emulated-at-all-otherwise-an-error-will-be-reported-to-the-"
+      + "calling-client-with-an-appropriate-message"
   })
   void createPostWithIncorrectSlug(String slug) throws Exception {
     var postDto = TestsUtil.builderFrom(TestsUtil.samplePostTitleBody()).slug(slug).build();
