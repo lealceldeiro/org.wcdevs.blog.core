@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.wcdevs.blog.core.persistence.TestsUtil.aRandomPostStatus;
 import static org.wcdevs.blog.core.persistence.TestsUtil.aString;
 
 import java.security.SecureRandom;
@@ -21,13 +22,14 @@ class PostDtoTest {
     var title = aString();
     var slug = aString();
     var excerpt = aString();
+    var status = PostStatus.PUBLISHED.shortValue();
     var commentsCount = Math.abs(random.nextInt());
     var publishedBy = aString();
     var updatedBy = aString();
     var publishedOn = LocalDateTime.now().minusDays(1);
     var updatedOn = LocalDateTime.now();
-    var dto = new PostDto(title, slug, excerpt, publishedBy, updatedBy, publishedOn, updatedOn,
-                          commentsCount);
+    var dto = new PostDto(title, slug, excerpt, status, publishedBy, updatedBy, publishedOn,
+                          updatedOn, commentsCount);
 
     assertEquals(title, dto.getTitle());
     assertEquals(slug, dto.getSlug());
@@ -147,11 +149,18 @@ class PostDtoTest {
   void setters() {
     var publishedBy = aString();
     var updatedBy = aString();
+    var slug = aString();
+    var status = aRandomPostStatus();
+
     PostDto dto = PostDto.builder().build();
     dto.setPublishedBy(publishedBy);
     dto.setUpdatedBy(updatedBy);
+    dto.setSlug(slug);
+    dto.setStatus(status);
 
     assertEquals(publishedBy, dto.getPublishedBy());
     assertEquals(updatedBy, dto.getUpdatedBy());
+    assertEquals(slug, dto.getSlug());
+    assertEquals(status, dto.getStatus());
   }
 }

@@ -26,15 +26,22 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.wcdevs.blog.core.common.util.StringUtils;
 import org.wcdevs.blog.core.persistence.post.PartialPostDto;
 import org.wcdevs.blog.core.persistence.post.Post;
+import org.wcdevs.blog.core.persistence.post.PostStatus;
 import org.wcdevs.blog.core.persistence.util.ClockUtil;
 
 class PostTransformerTest {
-  @Test
-  void newEntityFromDto() {
+  @ParameterizedTest
+  @ValueSource(booleans = {true, false})
+  void newEntityFromDto(boolean isDraft) {
     try (var mockedClock = mockStatic(ClockUtil.class)) {
       var now = LocalDateTime.now().minusDays(1);
       mockedClock.when(ClockUtil::utcNow).thenReturn(now);
-      var dto = dtoBuilder().slug(null).updatedOn(null).publishedOn(null).updatedBy(null).build();
+      var dto = dtoBuilder().slug(null)
+                            .updatedOn(null)
+                            .publishedOn(null)
+                            .updatedBy(null)
+                            .status(isDraft ? PostStatus.DRAFT : PostStatus.PUBLISHED)
+                            .build();
 
       var entity = new PostTransformer().newEntityFromDto(dto);
 
@@ -42,7 +49,7 @@ class PostTransformerTest {
       assertEquals(now, entity.getPublishedOn());
       assertEquals(now, entity.getUpdatedOn());
       assertEquals(dto.getPublishedBy(), entity.getPublishedBy());
-      assertEquals(dto.getPublishedBy(), entity.getUpdatedBy());
+      assertEquals(dto.getUpdatedBy(), entity.getUpdatedBy());
     }
   }
 
@@ -160,21 +167,16 @@ class PostTransformerTest {
   }
 
   @Test
-  void slugInfoFromSlug() {
-    var slug = aString();
-    var dto = new PostTransformer().slugInfo(slug);
-    assertEquals(slug, dto.getSlug());
-  }
-
-  @Test
   void slugInfoFromPost() {
     var slug = aString();
     var postMock = mock(Post.class);
     when(postMock.getSlug()).thenReturn(slug);
+    when(postMock.getStatus()).thenReturn(PostStatus.PENDING);
 
     var dto = new PostTransformer().slugInfo(postMock);
 
-    assertEquals(dto.getSlug(), slug);
+    assertEquals(slug, dto.getSlug());
+    assertEquals(PostStatus.PENDING, dto.getStatus());
   }
 
   @Test
@@ -229,8 +231,17 @@ class PostTransformerTest {
     var updatedOn = LocalDateTime.now();
     var publishedBy = aString();
     var updatedBy = aString();
-    Post entity = new Post(title, slug, body, excerpt, publishedOn, updatedOn, publishedBy,
-                           updatedBy);
+    var entity = Post.builder()
+                     .title(title)
+                     .slug(slug)
+                     .body(body)
+                     .excerpt(excerpt)
+                     .publishedOn(publishedOn)
+                     .updatedOn(updatedOn)
+                     .publishedBy(publishedBy)
+                     .updatedBy(updatedBy)
+                     .status(PostStatus.PUBLISHED.shortValue())
+                     .build();
 
     var dto = new PostTransformer().dtoFromEntity(entity);
 
@@ -241,5 +252,6 @@ class PostTransformerTest {
     assertEquals(updatedOn, dto.getUpdatedOn());
     assertEquals(publishedBy, dto.getPublishedBy());
     assertEquals(updatedBy, dto.getUpdatedBy());
+    assertEquals(PostStatus.PUBLISHED, dto.getStatus());
   }
 }

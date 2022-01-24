@@ -5,10 +5,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.wcdevs.blog.core.common.util.StringUtils;
 import org.wcdevs.blog.core.persistence.post.PartialPostDto;
 import org.wcdevs.blog.core.persistence.post.Post;
 import org.wcdevs.blog.core.persistence.post.PostDto;
 import org.wcdevs.blog.core.persistence.post.PostRepository;
+import org.wcdevs.blog.core.persistence.post.PostStatus;
 
 /**
  * Default {@link PostService} implementation.
@@ -22,26 +24,39 @@ public class PostServiceImpl implements PostService {
 
   @Override
   @Transactional(readOnly = true)
-  public Page<PostDto> getPosts(Pageable pageable) {
-    return postRepository.getPosts(pageable);
+  public Page<PostDto> getPosts(PostStatus status, Pageable pageable) {
+    return postRepository.getPosts(status.shortValue(), pageable);
   }
 
   @Override
   public PostDto createPost(PostDto postDto) {
-    Post post = postRepository.save(postTransformer.newEntityFromDto(postDto));
+    var post = postTransformer.newEntityFromDto(postDto);
+    post = postDto.getStatus() == PostStatus.DRAFT ? saveAsDraft(post) : saveAsIs(post);
+
     return postTransformer.slugInfo(post);
+  }
+
+  private Post saveAsDraft(Post post) {
+    var savedPost = postRepository.save(post);
+    savedPost.setSlug(savedPost.getUuid().toString());
+
+    return postRepository.save(savedPost);
+  }
+
+  private Post saveAsIs(Post post) {
+    return postRepository.save(post);
   }
 
   @Override
   @Transactional(readOnly = true)
   public PostDto getPost(String postSlug) {
-    Post post = postRepository.findBySlug(postSlug).orElseThrow(PostNotFoundException::new);
+    var post = postRepository.findBySlug(postSlug).orElseThrow(PostNotFoundException::new);
     return postTransformer.dtoFromEntity(post);
   }
 
   @Override
   public PostDto partialUpdate(String postSlug, PartialPostDto newPostData) {
-    Post post = postRepository.findBySlug(postSlug).orElseThrow(PostNotFoundException::new);
+    var post = postRepository.findBySlug(postSlug).orElseThrow(PostNotFoundException::new);
     postTransformer.updateNonNullValues(post, newPostData);
 
     return postTransformer.slugInfo(post);
@@ -49,7 +64,13 @@ public class PostServiceImpl implements PostService {
 
   @Override
   public PostDto fullUpdate(String postSlug, PostDto newPostData) {
-    Post post = postRepository.findBySlug(postSlug).orElseThrow(PostNotFoundException::new);
+    var post = postRepository.findBySlug(postSlug).orElseThrow(PostNotFoundException::new);
+
+    if (StringUtils.isUnfriendlySlug(newPostData.getSlug())
+        && post.getStatus() == PostStatus.DRAFT) {
+      newPostData.setSlug(StringUtils.slugFrom(newPostData.getTitle()));
+    }
+
     postTransformer.update(post, newPostData);
 
     return postTransformer.slugInfo(post);

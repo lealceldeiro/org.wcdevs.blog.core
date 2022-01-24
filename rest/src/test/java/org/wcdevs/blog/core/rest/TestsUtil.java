@@ -27,6 +27,7 @@ import org.springframework.restdocs.payload.ResponseFieldsSnippet;
 import org.springframework.util.ResourceUtils;
 import org.wcdevs.blog.core.persistence.comment.CommentDto;
 import org.wcdevs.blog.core.persistence.post.PostDto;
+import org.wcdevs.blog.core.persistence.post.PostStatus;
 
 public final class TestsUtil {
   public static final ResponseFieldsSnippet ERROR_RESPONSE_FIELDS
@@ -75,7 +76,9 @@ public final class TestsUtil {
   }
 
   public static PostDto samplePostTitleBody() {
-    return nextElementFrom(SAMPLE_TITLE_BODY_DATA);
+    var dto = nextElementFrom(SAMPLE_TITLE_BODY_DATA);
+    dto.setStatus(null);
+    return dto;
   }
 
   private static <T> T nextElementFrom(List<T> collection) {
@@ -83,11 +86,20 @@ public final class TestsUtil {
   }
 
   public static PostDto samplePostSlug() {
-    return nextElementFrom(SAMPLE_SLUG_DATA);
+    var dto = nextElementFrom(SAMPLE_SLUG_DATA);
+    dto.setStatus(null);
+    return dto;
   }
 
   public static List<PostDto> samplePostsLiteData() {
-    return elements(SAMPLE_POST_LITE_DATA);
+    return samplePostsLiteData(null);
+  }
+
+  public static List<PostDto> samplePostsLiteData(PostStatus status) {
+    return elements(SAMPLE_POST_LITE_DATA)
+        .stream()
+        .filter(p -> Objects.isNull(status) || p.getStatus() == status)
+        .collect(Collectors.toList());
   }
 
   private static <T> List<T> elements(List<T> elements) {
@@ -111,7 +123,8 @@ public final class TestsUtil {
                   .publishedBy(proto.getPublishedBy())
                   .updatedBy(proto.getUpdatedBy())
                   .publishedOn(proto.getPublishedOn())
-                  .updatedOn(proto.getUpdatedOn());
+                  .updatedOn(proto.getUpdatedOn())
+                  .status(null);
   }
 
   public static CommentDto.CommentDtoBuilder builderFrom(CommentDto proto) {
@@ -176,5 +189,10 @@ public final class TestsUtil {
 
   public static Pageable pageable() {
     return Pageable.ofSize(10);
+  }
+
+  public static PostStatus aRandomPostStatus() {
+    var values = PostStatus.values();
+    return values[RANDOM.nextInt(values.length)];
   }
 }

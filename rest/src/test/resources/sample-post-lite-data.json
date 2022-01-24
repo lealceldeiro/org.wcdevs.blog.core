@@ -7,6 +7,7 @@
     "publishedOn": "2021-12-05 14:40:05",
     "updatedOn": "2021-12-06 14:57:49",
     "publishedBy": "john",
+    "status": "PUBLISHED",
     "updatedBy": "john"
   },
   {
@@ -17,6 +18,7 @@
     "publishedOn": "2021-12-05 14:40:05",
     "updatedOn": "2021-12-06 14:57:49",
     "publishedBy": "edi",
+    "status": "PUBLISHED",
     "updatedBy": "edi"
   },
   {
@@ -27,6 +29,7 @@
     "publishedOn": "2021-12-05 14:40:05",
     "updatedOn": "2021-12-06 14:57:49",
     "publishedBy": "zara",
+    "status": "DRAFT",
     "updatedBy": "zara"
   }
 ]

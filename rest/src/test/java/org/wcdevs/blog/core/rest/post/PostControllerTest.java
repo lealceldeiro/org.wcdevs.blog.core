@@ -22,6 +22,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.wcdevs.blog.core.rest.DocUtil.ANCHOR;
 import static org.wcdevs.blog.core.rest.DocUtil.ANCHOR_DESC;
@@ -39,6 +40,9 @@ import static org.wcdevs.blog.core.rest.TestsUtil.samplePostSlug;
 import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,6 +56,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.http.MediaType;
@@ -73,6 +78,7 @@ import org.wcdevs.blog.core.common.post.PostService;
 import org.wcdevs.blog.core.persistence.comment.CommentDto;
 import org.wcdevs.blog.core.persistence.post.PartialPostDto;
 import org.wcdevs.blog.core.persistence.post.PostDto;
+import org.wcdevs.blog.core.persistence.post.PostStatus;
 import org.wcdevs.blog.core.rest.DocUtil;
 import org.wcdevs.blog.core.rest.TestsUtil;
 import org.wcdevs.blog.core.rest.auth.AuthAttributeExtractor;
@@ -82,6 +88,7 @@ import org.wcdevs.blog.core.rest.exceptionhandler.ControllerExceptionHandler;
 import org.wcdevs.blog.core.rest.exceptionhandler.ExceptionHandlerFactory;
 import org.wcdevs.blog.core.rest.exceptionhandler.impl.ArgumentNotValidExceptionHandler;
 import org.wcdevs.blog.core.rest.exceptionhandler.impl.DataIntegrityViolationExceptionHandler;
+import org.wcdevs.blog.core.rest.exceptionhandler.impl.InvalidArgumentExceptionHandler;
 import org.wcdevs.blog.core.rest.exceptionhandler.impl.NotFoundExceptionHandler;
 
 @EnableWebMvc
@@ -89,7 +96,7 @@ import org.wcdevs.blog.core.rest.exceptionhandler.impl.NotFoundExceptionHandler;
 @SpringBootTest(classes = {
     PostController.class, ControllerExceptionHandler.class, ExceptionHandlerFactory.class,
     NotFoundExceptionHandler.class, DataIntegrityViolationExceptionHandler.class,
-    ArgumentNotValidExceptionHandler.class
+    ArgumentNotValidExceptionHandler.class, InvalidArgumentExceptionHandler.class
 })
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 class PostControllerTest {
@@ -98,12 +105,14 @@ class PostControllerTest {
       = pathParameters(parameterWithName("postSlug")
                            .description("Post slug generated during creation"));
   private static final RequestFieldsSnippet REQUEST_FIELDS
-      = requestFields(fieldWithPath("title").description("Post title. Mandatory, unique."),
+      = requestFields(fieldWithPath("title").description("Post title. Mandatory."),
                       fieldWithPath("slug").optional().type(DocUtil.STRING_TYPE)
                                            .description("A custom slug. Optional, but unique."),
                       fieldWithPath("body").description("Body of the post. Mandatory."),
                       fieldWithPath("excerpt").optional().type(DocUtil.STRING_TYPE)
                                               .description("A custom excerpt. Optional."),
+                      fieldWithPath(DocUtil.POST_STATUS).optional().type(DocUtil.STRING_TYPE)
+                                                        .description(DocUtil.POST_STATUS_DESC),
                       fieldWithPath("publishedBy").optional().type(DocUtil.STRING_TYPE).ignored(),
                       fieldWithPath("updatedBy").optional().type(DocUtil.STRING_TYPE).ignored(),
                       fieldWithPath("publishedOn").optional().type(DocUtil.STRING_TYPE).ignored(),
@@ -149,8 +158,6 @@ class PostControllerTest {
         .then(ignored -> TestsUtil.samplePostSlug());
     when(postService.fullUpdate(anyString(), any(PostDto.class)))
         .then(ignored -> TestsUtil.samplePostSlug());
-    when(postService.getPosts(any(Pageable.class)))
-        .then(ignored -> TestsUtil.pageOf(TestsUtil.samplePostsLiteData()));
 
     when(authAttributeExtractor.principalUsername(any()))
         .thenReturn(TestsUtil.sampleFullPost().getPublishedBy());
@@ -158,12 +165,16 @@ class PostControllerTest {
 
   @Test
   void getPosts() throws Exception {
+    when(postService.getPosts(any(PostStatus.class), any(Pageable.class)))
+        .then(ignored -> TestsUtil.pageOf(TestsUtil.samplePostsLiteData(PostStatus.PUBLISHED)));
+
     var fields = DocUtil.pageableFieldsWith(
         fieldWithPath("content.[]").description("List of posts information"),
         fieldWithPath("content.[*].title").description("Post title"),
         fieldWithPath("content.[*].slug")
             .description("Post slug. Used to get the post information later"),
         fieldWithPath("content.[*].excerpt").description("An excerpt of the post content"),
+        fieldWithPath("content.[*].status").description("Current status of the post"),
         fieldWithPath("content.[*].publishedBy").description("User who published the post"),
         fieldWithPath("content.[*].updatedBy").description("User who last updated the post"),
         fieldWithPath("content.[*].publishedOn")
@@ -180,8 +191,36 @@ class PostControllerTest {
   }
 
   @Test
+  void getPostsWithStatus() throws Exception {
+    var fields = DocUtil.pageableFieldsWith(
+        fieldWithPath("content.[]").description("List of posts information"),
+        fieldWithPath("content.[*].title").description("Post title"),
+        fieldWithPath("content.[*].slug")
+            .description("Post slug. Used to get the post information later"),
+        fieldWithPath("content.[*].excerpt").description("An excerpt of the post content"),
+        fieldWithPath("content.[*].status").description("Current status of the post"),
+        fieldWithPath("content.[*].publishedBy").description("User who published the post"),
+        fieldWithPath("content.[*].updatedBy").description("User who last updated the post"),
+        fieldWithPath("content.[*].publishedOn")
+            .description("Date time (UTC) when the post was published (" + dateFormat + ")"),
+        fieldWithPath("content.[*].updatedOn")
+            .description("Date time (UTC) when the post was last updated (" + dateFormat + ")"),
+        fieldWithPath("content.[*].commentsCount")
+            .description("Number of comments published in each post")
+                                           );
+    var status = PostStatus.PUBLISHED;
+    when(postService.getPosts(eq(status), any(Pageable.class)))
+        .then(ignored -> TestsUtil.pageOf(TestsUtil.samplePostsLiteData(status)));
+
+    mockMvc.perform(get(BASE_URL + "/status/{postStatus}", status))
+           .andExpect(status().isOk())
+           .andDo(document("get_posts_by_status", fields));
+  }
+
+  @Test
   void createPost() throws Exception {
-    var postDto = TestsUtil.samplePostTitleBody();
+    var postDto = TestsUtil.builderFrom(TestsUtil.samplePostTitleBody()).status(null).build();
+
     mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding(StandardCharsets.UTF_8)
@@ -191,15 +230,25 @@ class PostControllerTest {
   }
 
   @Test
-  void createPostDBError() throws Exception {
-    var postDto = TestsUtil.samplePostTitleBody();
-    var err = String.format("There's already a post with title %s", postDto.getSlug());
-    when(postService.createPost(postDto)).thenThrow(new DataIntegrityViolationException(err));
-    mockMvc.perform(post(BASE_URL)
+  void createDraft() throws Exception {
+    var postDto = TestsUtil.builderFrom(TestsUtil.samplePostTitleBody()).status(null).build();
+    var notice = " Not mandatory while creating a draft.";
+    var response = TestsUtil.builderFrom(samplePostSlug())
+                            .slug(UUID.randomUUID().toString())
+                            .build();
+    when(postService.createPost(postDto)).thenReturn(response);
+
+    mockMvc.perform(post(BASE_URL + "/status/DRAFT")
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .content(MAPPER.writeValueAsString(postDto)))
-           .andExpect(status().isConflict());
+           .andExpect(status().isCreated())
+           .andDo(document("create_post_draft",
+                           requestFields(fieldWithPath("title")
+                                             .description("Post title." + notice),
+                                         fieldWithPath("body")
+                                             .description("Post body." + notice)),
+                           SLUG_INFO_RESPONSE_FIELDS));
   }
 
   @ParameterizedTest
@@ -210,14 +259,16 @@ class PostControllerTest {
       "ERROR: duplicate key value violates unique constraint. "
       + "Some other message will yield a not so well formatted response message",
       "ERROR: duplicate key value violates unique constraint. "
-      + "Duplicate key value violates unique constraint. Values (title)=(%s)"
+      + "Duplicate key value violates unique constraint. Values (slug)=(%s)",
+      "ERROR: null value in column \"title\" violates not null constraint."
   })
-  void createPostDBErrorWithRootCause(String rootCauseMsg) throws Exception {
+  void createPostWithDataError(String rootCauseMsg) throws Exception {
     var postDto = TestsUtil.samplePostTitleBody();
 
     var rootCauseMessage = !"-".equals(rootCauseMsg)
                            ? (rootCauseMsg.contains("%s")
-                              ? String.format(rootCauseMsg, postDto.getTitle()) : rootCauseMsg)
+                              ? String.format(rootCauseMsg, postDto.getTitle())
+                              : rootCauseMsg)
                            : null;
     var rootCause = mock(Throwable.class);
     when(rootCause.getMessage()).thenReturn(rootCauseMessage);
@@ -249,6 +300,26 @@ class PostControllerTest {
            .andDo(document("create_post_bad_format"));
   }
 
+  private static Stream<Arguments> createPostWithInvalidArgumentArgs() {
+    var messageTitle = "Message title";
+    var fullMessage = messageTitle + ";details";
+
+    return Stream.of(arguments(new InvalidDataAccessApiUsageException(fullMessage), messageTitle));
+  }
+
+  @ParameterizedTest
+  @MethodSource("createPostWithInvalidArgumentArgs")
+  void createPostWithInvalidArgument(Throwable throwable, String expectedMessage) throws Exception {
+    when(postService.createPost(any())).thenThrow(throwable);
+
+    mockMvc.perform(post(BASE_URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .content(MAPPER.writeValueAsString(TestsUtil.samplePostTitleBody())))
+           .andExpect(status().isBadRequest())
+           .andExpect(jsonPath("message").value(expectedMessage));
+  }
+
   @ParameterizedTest
   @ValueSource(strings = {
       "A very long value that cannot be a title. It should have been a value with length less than"
@@ -275,7 +346,6 @@ class PostControllerTest {
 
     mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
-                        //.characterEncoding(StandardCharsets.UTF_8)
                         .content(MAPPER.writeValueAsString(postDto)))
            .andExpect(status().isBadRequest())
            .andDo(document("create_post_wrong_body"));
@@ -285,8 +355,8 @@ class PostControllerTest {
   @ValueSource(strings = {
       "", "a",
       "a-very-long-slug-with-more-than-allowed-characters-to-show-the-api-error-handling-feature-"
-      + "which-should-definively-not-be-emulated-at-all-otherwise-an-error-will-be-reported-to-the-"
-      + "calling-client-with-an-approriate-message"
+      + "which-should-definitely-not-be-emulated-at-all-otherwise-an-error-will-be-reported-to-the-"
+      + "calling-client-with-an-appropriate-message"
   })
   void createPostWithIncorrectSlug(String slug) throws Exception {
     var postDto = TestsUtil.builderFrom(TestsUtil.samplePostTitleBody()).slug(slug).build();
@@ -307,10 +377,11 @@ class PostControllerTest {
         fieldWithPath("slug").description("Post slug. It can be used to retrieve the post later"),
         fieldWithPath("body").description("Post body"),
         fieldWithPath("excerpt").description("An excerpt of the post content"),
+        fieldWithPath("status").description("Current post status"),
         fieldWithPath("publishedOn").description("Date time where the post was published"),
         fieldWithPath("updatedOn").description("Date time where the post was last updated"),
         fieldWithPath("publishedBy").description("Author of the post"),
-        fieldWithPath("updatedBy").description("Last user who edited the post. ")
+        fieldWithPath("updatedBy").description("Last user who edited the post")
                                        );
 
     mockMvc.perform(get(BASE_URL + "/{postSlug}", postDto.getSlug()))
@@ -346,6 +417,7 @@ class PostControllerTest {
                     // erase from mock values that are not expected from client
                     .updatedOn(null).updatedBy(null)
                     .publishedOn(null).publishedBy(null)
+                    .status(null)
                     .build();
   }
 

@@ -1,13 +1,14 @@
 package org.wcdevs.blog.core.persistence.post;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
-import org.hibernate.Hibernate;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
+import org.hibernate.Hibernate;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.wcdevs.blog.core.persistence.TestsUtil;
 
@@ -86,6 +87,7 @@ class PostTest {
     var updatedOn = LocalDateTime.now();
     var publishedBy = TestsUtil.aString();
     var updatedBy = TestsUtil.aString();
+    var status = TestsUtil.aRandomPostStatus();
 
     var post = new Post();
     post.setUuid(uuid);
@@ -97,6 +99,7 @@ class PostTest {
     post.setUpdatedOn(updatedOn);
     post.setPublishedBy(publishedBy);
     post.setUpdatedBy(updatedBy);
+    post.setStatus(status);
 
     assertEquals(uuid, post.getUuid());
     assertEquals(title, post.getTitle());
@@ -107,6 +110,7 @@ class PostTest {
     assertEquals(updatedOn, post.getUpdatedOn());
     assertEquals(publishedBy, post.getPublishedBy());
     assertEquals(updatedBy, post.getUpdatedBy());
+    assertEquals(status, post.getStatus());
   }
 
   @Test
@@ -120,7 +124,17 @@ class PostTest {
     var publishedBy = TestsUtil.aString();
     var updatedBy = TestsUtil.aString();
 
-    var post = new Post(title, slug, body, excerpt, publishedOn, updatedOn, publishedBy, updatedBy);
+    var post = Post.builder()
+                   .title(title)
+                   .slug(slug)
+                   .body(body)
+                   .excerpt(excerpt)
+                   .publishedOn(publishedOn)
+                   .updatedOn(updatedOn)
+                   .publishedBy(publishedBy)
+                   .updatedBy(updatedBy)
+                   .status(PostStatus.PUBLISHED.shortValue())
+                   .build();
 
     assertEquals(title, post.getTitle());
     assertEquals(slug, post.getSlug());
@@ -128,6 +142,7 @@ class PostTest {
     assertEquals(excerpt, post.getExcerpt());
     assertEquals(publishedOn, post.getPublishedOn());
     assertEquals(updatedOn, post.getUpdatedOn());
+    assertEquals(PostStatus.PUBLISHED, post.getStatus());
   }
 
   @Test

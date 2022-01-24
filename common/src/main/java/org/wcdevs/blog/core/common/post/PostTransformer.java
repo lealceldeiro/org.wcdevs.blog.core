@@ -1,5 +1,7 @@
 package org.wcdevs.blog.core.common.post;
 
+import static org.wcdevs.blog.core.common.util.StringUtils.emptyIfNull;
+
 import java.util.Objects;
 import org.springframework.stereotype.Component;
 import org.wcdevs.blog.core.common.Transformer;
@@ -7,6 +9,7 @@ import org.wcdevs.blog.core.common.util.StringUtils;
 import org.wcdevs.blog.core.persistence.post.PartialPostDto;
 import org.wcdevs.blog.core.persistence.post.Post;
 import org.wcdevs.blog.core.persistence.post.PostDto;
+import org.wcdevs.blog.core.persistence.post.PostStatus;
 import org.wcdevs.blog.core.persistence.util.ClockUtil;
 
 /**
@@ -19,16 +22,31 @@ final class PostTransformer implements Transformer<Post, PostDto, PartialPostDto
   @Override
   public Post newEntityFromDto(PostDto dto) {
     var now = ClockUtil.utcNow();
+    var isDraft = dto.getStatus() == PostStatus.DRAFT;
 
-    var slug = Objects.nonNull(dto.getSlug()) // allow user the option to specify a custom slug
-               ? dto.getSlug()
-               : StringUtils.slugFrom(dto.getTitle());
-    var excerpt = excerptFrom(dto.getExcerpt(), dto.getBody());
-    var updatedBy = Objects.nonNull(dto.getUpdatedBy()) ? dto.getUpdatedBy() : dto.getPublishedBy();
+    var excerpt = isDraft ? emptyIfNull(dto.getExcerpt())
+                          : excerptFrom(dto.getExcerpt(), dto.getBody());
 
-    // publishedOn and updatedOn will always be determined in the core app
-    return new Post(dto.getTitle(), slug, dto.getBody(), excerpt, now, now, dto.getPublishedBy(),
-                    updatedBy);
+    return Post.builder()
+               .title(isDraft ? emptyIfNull(dto.getTitle()) : dto.getTitle())
+               .slug(slugFrom(dto))
+               .body(isDraft ? emptyIfNull(dto.getBody()) : dto.getBody())
+               .excerpt(excerpt)
+               .publishedBy(dto.getPublishedBy())
+               .publishedOn(now)
+               .updatedOn(now)
+               .updatedBy(dto.getUpdatedBy())
+               .status(dto.getStatus().shortValue())
+               .build();
+  }
+
+  private static String slugFrom(PostDto dto) {
+    var rawSlug = dto.getSlug();
+    if (dto.getStatus() == PostStatus.DRAFT) {
+      return emptyIfNull(rawSlug);
+    }
+    // users can specify a custom slug
+    return rawSlug != null ? rawSlug : StringUtils.slugFrom(dto.getTitle());
   }
 
   private static String excerptFrom(String excerptCandidate, String bodyToCreateExcerpt) {
@@ -47,12 +65,11 @@ final class PostTransformer implements Transformer<Post, PostDto, PartialPostDto
     return trimmed;
   }
 
-  PostDto slugInfo(String slug) {
-    return PostDto.builder().slug(slug).build();
-  }
-
   PostDto slugInfo(Post post) {
-    return slugInfo(post.getSlug());
+    return PostDto.builder()
+                  .slug(post.getSlug())
+                  .status(post.getStatus())
+                  .build();
   }
 
   @Override
@@ -72,16 +89,19 @@ final class PostTransformer implements Transformer<Post, PostDto, PartialPostDto
     if (Objects.nonNull(newPostDto.getUpdatedBy())) {
       post.setUpdatedBy(newPostDto.getUpdatedBy());
     }
+    // don't change the status in a partial update: drafts can have missing data
+
     post.setUpdatedOn(ClockUtil.utcNow());
   }
 
   @Override
   public void update(Post post, PostDto newPostDto) {
     post.setTitle(newPostDto.getTitle());
+    post.setSlug(newPostDto.getSlug());
     post.setBody(newPostDto.getBody());
     post.setExcerpt(newPostDto.getExcerpt());
-    post.setSlug(newPostDto.getSlug());
     post.setUpdatedBy(newPostDto.getUpdatedBy());
+    post.setStatus(newPostDto.getStatus());
 
     post.setUpdatedOn(ClockUtil.utcNow());
   }
@@ -97,6 +117,7 @@ final class PostTransformer implements Transformer<Post, PostDto, PartialPostDto
                   .updatedOn(postEntity.getUpdatedOn())
                   .publishedBy(postEntity.getPublishedBy())
                   .updatedBy(postEntity.getUpdatedBy())
+                  .status(postEntity.getStatus())
                   .build();
   }
 }

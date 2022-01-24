@@ -1,0 +1,20 @@
+[[resource-post-list-by-status]]
+==== Listing posts with a given status
+
+A `GET` request retrieves a list of posts information by filtering by posts with a given status.
+
+include::__H_REQUEST.adoc[]
+
+include::__H_EXAMPLE.adoc[]
+
+include::{snippets}/get_posts_by_status/http-request.adoc[]
+
+include::__H_RESPONSE.adoc[]
+
+include::__H_RESPONSE_FIELDS.adoc[]
+
+include::{snippets}/get_posts_by_status/response-fields.adoc[]
+
+include::__H_EXAMPLE_BARE.adoc[]
+
+include::{snippets}/get_posts_by_status/http-response.adoc[]

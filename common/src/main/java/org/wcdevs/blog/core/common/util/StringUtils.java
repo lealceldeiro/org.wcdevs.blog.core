@@ -2,6 +2,8 @@ package org.wcdevs.blog.core.common.util;
 
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Provides utility methods for common string operations.
@@ -40,5 +42,38 @@ public class StringUtils {
     return candidateSlug.length() <= SLUG_MAX_LENGTH
            ? candidateSlug
            : candidateSlug.substring(candidateSlug.length() - SLUG_MAX_LENGTH);
+  }
+
+  public static String emptyIfNull(String value) {
+    return Optional.ofNullable(value).orElse("");
+  }
+
+
+  /**
+   * Returns whether a given slug is user-friendly or not.
+   *
+   * @param slug Slug to be checked.
+   *
+   * @return {@code false} if the slug is user-friendly, {@code false} otherwise.
+   */
+  public static boolean isUnfriendlySlug(String slug) {
+    return slug == null || StringUtils.isUuid(slug);
+  }
+
+  /**
+   * Returns whether a string value is an UUID or not.
+   *
+   * @param value Value to be checked.
+   *
+   * @return {@code true} if the value is a UUID as per the {@link UUID#toString()} spec or
+   *         {@code false} otherwise.
+   */
+  public static boolean isUuid(String value) {
+    try {
+      UUID.fromString(value);
+    } catch (IllegalArgumentException ignored) {
+      return false;
+    }
+    return true;
   }
 }

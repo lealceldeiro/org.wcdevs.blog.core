@@ -3,9 +3,11 @@ package org.wcdevs.blog.core.common.post;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyShort;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -14,16 +16,22 @@ import static org.wcdevs.blog.core.common.TestsUtil.aString;
 import static org.wcdevs.blog.core.common.TestsUtil.pageable;
 
 import java.util.Optional;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Pageable;
 import org.wcdevs.blog.core.common.TestsUtil;
+import org.wcdevs.blog.core.common.util.StringUtils;
 import org.wcdevs.blog.core.persistence.post.PartialPostDto;
 import org.wcdevs.blog.core.persistence.post.Post;
 import org.wcdevs.blog.core.persistence.post.PostDto;
 import org.wcdevs.blog.core.persistence.post.PostRepository;
+import org.wcdevs.blog.core.persistence.post.PostStatus;
 
 @SpringBootTest(classes = {PostService.class, PostServiceImpl.class})
 class PostServiceImplTest {
@@ -40,16 +48,16 @@ class PostServiceImplTest {
   void getPosts() {
     var pageable = pageable();
     var expected = TestsUtil.pageOf(TestsUtil.buildDto(), TestsUtil.buildDto());
-    when(postRepository.getPosts(any())).thenReturn(expected);
+    when(postRepository.getPosts(anyShort(), any(Pageable.class))).thenReturn(expected);
 
-    var actual = postService.getPosts(pageable);
+    var actual = postService.getPosts(PostStatus.DRAFT, pageable);
 
     assertEquals(expected, actual);
-    verify(postRepository, times(1)).getPosts(pageable);
+    verify(postRepository, times(1)).getPosts(PostStatus.DRAFT.shortValue(), pageable);
   }
 
   @Test
-  void createPost() {
+  void createPostNotDraft() {
     var argMock = mock(PostDto.class);
     var postMock = mock(Post.class);
     var slugInfoMock = mock(PostDto.class);
@@ -63,6 +71,31 @@ class PostServiceImplTest {
     assertEquals(slugInfoMock, actual);
     verify(postRepository, times(1)).save(postMock);
     verify(postTransformer, times(1)).newEntityFromDto(argMock);
+    verify(postTransformer, times(1)).slugInfo(postMock);
+  }
+
+  @Test
+  void createDraft() {
+    var postDtoMock = mock(PostDto.class);
+    when(postDtoMock.getStatus()).thenReturn(PostStatus.DRAFT);
+
+    UUID uuid = UUID.randomUUID();
+
+    var postMock = mock(Post.class);
+    when(postMock.getUuid()).thenReturn(uuid);
+
+    var slugInfoMock = mock(PostDto.class);
+
+    when(postTransformer.newEntityFromDto(postDtoMock)).thenReturn(postMock);
+    when(postTransformer.slugInfo(postMock)).thenReturn(slugInfoMock);
+    when(postRepository.save(postMock)).thenReturn(postMock);
+
+    var actual = postService.createPost(postDtoMock);
+
+    assertEquals(slugInfoMock, actual);
+    verify(postRepository, times(2)).save(postMock);
+    verify(postMock, times(1)).setSlug(uuid.toString());
+    verify(postTransformer, times(1)).newEntityFromDto(postDtoMock);
     verify(postTransformer, times(1)).slugInfo(postMock);
   }
 
@@ -118,24 +151,37 @@ class PostServiceImplTest {
     verify(postTransformer, times(1)).slugInfo(postMock);
   }
 
-  @Test
-  void fullyUpdatePost() {
-    var argMock = mock(PostDto.class);
+  @ParameterizedTest
+  @ValueSource(booleans = {true, false})
+  void fullyUpdatePost(boolean updatingSlug) {
     var slug = aString();
-    var postMock = mock(Post.class);
+
     var slugInfoMock = mock(PostDto.class);
+
+    var postDtoMock = mock(PostDto.class);
+    when(postDtoMock.getSlug()).thenReturn(slug);
+
+    var postMock = mock(Post.class);
+    when(postMock.getStatus()).thenReturn(updatingSlug ? PostStatus.DRAFT : PostStatus.PUBLISHED);
 
     when(postRepository.findBySlug(slug)).thenReturn(Optional.of(postMock));
     when(postTransformer.slugInfo(postMock)).thenReturn(slugInfoMock);
 
-    var actual = postService.fullUpdate(slug, argMock);
+    try (var mockedStringUtils = mockStatic(StringUtils.class)) {
+      mockedStringUtils.when(() -> StringUtils.isUnfriendlySlug(slug)).thenReturn(updatingSlug);
 
-    assertEquals(slugInfoMock, actual);
+      var actual = postService.fullUpdate(slug, postDtoMock);
 
-    verify(postRepository, times(1)).findBySlug(slug);
+      assertEquals(slugInfoMock, actual);
 
-    verify(postTransformer, times(1)).update(postMock, argMock);
-    verify(postTransformer, times(1)).slugInfo(postMock);
+      verify(postRepository, times(1)).findBySlug(slug);
+
+      verify(postTransformer, times(1)).update(postMock, postDtoMock);
+      verify(postTransformer, times(1)).slugInfo(postMock);
+      if (updatingSlug) {
+        verify(postDtoMock, times(1)).setSlug(any());
+      }
+    }
   }
 
   @Test
