@@ -196,8 +196,7 @@ class PostControllerTest {
 
   @Test
   void createPost() throws Exception {
-    var postDto = TestsUtil.samplePostTitleBody();
-    postDto.setStatus(null);
+    var postDto = TestsUtil.builderFrom(TestsUtil.samplePostTitleBody()).status(null).build();
 
     mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -205,6 +204,17 @@ class PostControllerTest {
                         .content(MAPPER.writeValueAsString(postDto)))
            .andExpect(status().isCreated())
            .andDo(document("create_post", REQUEST_FIELDS, SLUG_INFO_RESPONSE_FIELDS));
+  }
+
+  @Test
+  void createDraft() throws Exception {
+    var postDto = TestsUtil.builderFrom(TestsUtil.samplePostTitleBody()).status(null).build();
+
+    mockMvc.perform(post(BASE_URL + "/status/DRAFT")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .content(MAPPER.writeValueAsString(postDto)))
+           .andExpect(status().isCreated());
   }
 
   @ParameterizedTest
