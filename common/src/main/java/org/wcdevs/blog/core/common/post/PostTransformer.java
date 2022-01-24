@@ -29,7 +29,7 @@ final class PostTransformer implements Transformer<Post, PostDto, PartialPostDto
 
     return Post.builder()
                .title(isDraft ? emptyIfNull(dto.getTitle()) : dto.getTitle())
-               .slug(slug(dto))
+               .slug(slugFrom(dto))
                .body(isDraft ? emptyIfNull(dto.getBody()) : dto.getBody())
                .excerpt(excerpt)
                .publishedBy(dto.getPublishedBy())
@@ -40,7 +40,7 @@ final class PostTransformer implements Transformer<Post, PostDto, PartialPostDto
                .build();
   }
 
-  private static String slug(PostDto dto) {
+  private static String slugFrom(PostDto dto) {
     var rawSlug = dto.getSlug();
     if (dto.getStatus() == PostStatus.DRAFT) {
       return emptyIfNull(rawSlug);
