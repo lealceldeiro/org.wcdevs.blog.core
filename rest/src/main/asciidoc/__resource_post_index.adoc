@@ -18,6 +18,8 @@ include::__resource_post_partial_update.adoc[]
 
 include::__resource_post_list.adoc[]
 
+include::__resource_post_list_by_status.adoc[]
+
 include::__resource_post_get.adoc[]
 
 include::__resource_post_get_not_found.adoc[]
