@@ -92,10 +92,14 @@ public final class TestsUtil {
   }
 
   public static List<PostDto> samplePostsLiteData() {
-    var elements = elements(SAMPLE_POST_LITE_DATA);
-    elements.forEach(e -> e.setStatus(null));
+    return samplePostsLiteData(null);
+  }
 
-    return elements;
+  public static List<PostDto> samplePostsLiteData(PostStatus status) {
+    return elements(SAMPLE_POST_LITE_DATA)
+        .stream()
+        .filter(p -> Objects.isNull(status) || p.getStatus() == status)
+        .collect(Collectors.toList());
   }
 
   private static <T> List<T> elements(List<T> elements) {

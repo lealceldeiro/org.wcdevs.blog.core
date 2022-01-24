@@ -40,6 +40,9 @@ import static org.wcdevs.blog.core.rest.TestsUtil.samplePostSlug;
 import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -155,8 +158,6 @@ class PostControllerTest {
         .then(ignored -> TestsUtil.samplePostSlug());
     when(postService.fullUpdate(anyString(), any(PostDto.class)))
         .then(ignored -> TestsUtil.samplePostSlug());
-    when(postService.getPosts(any(PostStatus.class), any(Pageable.class)))
-        .then(ignored -> TestsUtil.pageOf(TestsUtil.samplePostsLiteData()));
 
     when(authAttributeExtractor.principalUsername(any()))
         .thenReturn(TestsUtil.sampleFullPost().getPublishedBy());
@@ -164,12 +165,16 @@ class PostControllerTest {
 
   @Test
   void getPosts() throws Exception {
+    when(postService.getPosts(any(PostStatus.class), any(Pageable.class)))
+        .then(ignored -> TestsUtil.pageOf(TestsUtil.samplePostsLiteData(PostStatus.PUBLISHED)));
+
     var fields = DocUtil.pageableFieldsWith(
         fieldWithPath("content.[]").description("List of posts information"),
         fieldWithPath("content.[*].title").description("Post title"),
         fieldWithPath("content.[*].slug")
             .description("Post slug. Used to get the post information later"),
         fieldWithPath("content.[*].excerpt").description("An excerpt of the post content"),
+        fieldWithPath("content.[*].status").description("Current status of the post"),
         fieldWithPath("content.[*].publishedBy").description("User who published the post"),
         fieldWithPath("content.[*].updatedBy").description("User who last updated the post"),
         fieldWithPath("content.[*].publishedOn")
@@ -187,11 +192,29 @@ class PostControllerTest {
 
   @Test
   void getPostsWithStatus() throws Exception {
-    var status = TestsUtil.aRandomPostStatus();
+    var fields = DocUtil.pageableFieldsWith(
+        fieldWithPath("content.[]").description("List of posts information"),
+        fieldWithPath("content.[*].title").description("Post title"),
+        fieldWithPath("content.[*].slug")
+            .description("Post slug. Used to get the post information later"),
+        fieldWithPath("content.[*].excerpt").description("An excerpt of the post content"),
+        fieldWithPath("content.[*].status").description("Current status of the post"),
+        fieldWithPath("content.[*].publishedBy").description("User who published the post"),
+        fieldWithPath("content.[*].updatedBy").description("User who last updated the post"),
+        fieldWithPath("content.[*].publishedOn")
+            .description("Date time (UTC) when the post was published (" + dateFormat + ")"),
+        fieldWithPath("content.[*].updatedOn")
+            .description("Date time (UTC) when the post was last updated (" + dateFormat + ")"),
+        fieldWithPath("content.[*].commentsCount")
+            .description("Number of comments published in each post")
+                                           );
+    var status = PostStatus.PUBLISHED;
     when(postService.getPosts(eq(status), any(Pageable.class)))
-        .then(ignored -> TestsUtil.pageOf(TestsUtil.samplePostsLiteData()));
+        .then(ignored -> TestsUtil.pageOf(TestsUtil.samplePostsLiteData(status)));
 
-    mockMvc.perform(get(BASE_URL + "/status/{postStatus}", status)).andExpect(status().isOk());
+    mockMvc.perform(get(BASE_URL + "/status/{postStatus}", status))
+           .andExpect(status().isOk())
+           .andDo(document("get_posts_by_status", fields));
   }
 
   @Test
@@ -209,12 +232,23 @@ class PostControllerTest {
   @Test
   void createDraft() throws Exception {
     var postDto = TestsUtil.builderFrom(TestsUtil.samplePostTitleBody()).status(null).build();
+    var notice = " Not mandatory while creating a draft.";
+    var response = TestsUtil.builderFrom(samplePostSlug())
+                            .slug(UUID.randomUUID().toString())
+                            .build();
+    when(postService.createPost(postDto)).thenReturn(response);
 
     mockMvc.perform(post(BASE_URL + "/status/DRAFT")
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .content(MAPPER.writeValueAsString(postDto)))
-           .andExpect(status().isCreated());
+           .andExpect(status().isCreated())
+           .andDo(document("create_post_draft",
+                           requestFields(fieldWithPath("title")
+                                             .description("Post title." + notice),
+                                         fieldWithPath("body")
+                                             .description("Post body." + notice)),
+                           SLUG_INFO_RESPONSE_FIELDS));
   }
 
   @ParameterizedTest
