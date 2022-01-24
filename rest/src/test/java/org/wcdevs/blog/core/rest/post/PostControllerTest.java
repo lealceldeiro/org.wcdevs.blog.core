@@ -22,6 +22,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.wcdevs.blog.core.rest.DocUtil.ANCHOR;
 import static org.wcdevs.blog.core.rest.DocUtil.ANCHOR_DESC;
@@ -52,6 +53,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.http.MediaType;
@@ -83,6 +85,7 @@ import org.wcdevs.blog.core.rest.exceptionhandler.ControllerExceptionHandler;
 import org.wcdevs.blog.core.rest.exceptionhandler.ExceptionHandlerFactory;
 import org.wcdevs.blog.core.rest.exceptionhandler.impl.ArgumentNotValidExceptionHandler;
 import org.wcdevs.blog.core.rest.exceptionhandler.impl.DataIntegrityViolationExceptionHandler;
+import org.wcdevs.blog.core.rest.exceptionhandler.impl.InvalidArgumentExceptionHandler;
 import org.wcdevs.blog.core.rest.exceptionhandler.impl.NotFoundExceptionHandler;
 
 @EnableWebMvc
@@ -90,7 +93,7 @@ import org.wcdevs.blog.core.rest.exceptionhandler.impl.NotFoundExceptionHandler;
 @SpringBootTest(classes = {
     PostController.class, ControllerExceptionHandler.class, ExceptionHandlerFactory.class,
     NotFoundExceptionHandler.class, DataIntegrityViolationExceptionHandler.class,
-    ArgumentNotValidExceptionHandler.class
+    ArgumentNotValidExceptionHandler.class, InvalidArgumentExceptionHandler.class
 })
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 class PostControllerTest {
@@ -242,6 +245,26 @@ class PostControllerTest {
                                  + MAPPER.writeValueAsString(postDto)))
            .andExpect(status().isBadRequest())
            .andDo(document("create_post_bad_format"));
+  }
+
+  private static Stream<Arguments> createPostWithInvalidArgumentArgs() {
+    var messageTitle = "Message title";
+    var fullMessage = messageTitle + ";details";
+
+    return Stream.of(arguments(new InvalidDataAccessApiUsageException(fullMessage), messageTitle));
+  }
+
+  @ParameterizedTest
+  @MethodSource("createPostWithInvalidArgumentArgs")
+  void createPostWithInvalidArgument(Throwable throwable, String expectedMessage) throws Exception {
+    when(postService.createPost(any())).thenThrow(throwable);
+
+    mockMvc.perform(post(BASE_URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .content(MAPPER.writeValueAsString(TestsUtil.samplePostTitleBody())))
+           .andExpect(status().isBadRequest())
+           .andExpect(jsonPath("message").value(expectedMessage));
   }
 
   @ParameterizedTest
