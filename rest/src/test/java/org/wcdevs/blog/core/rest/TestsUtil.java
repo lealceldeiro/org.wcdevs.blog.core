@@ -27,6 +27,7 @@ import org.springframework.restdocs.payload.ResponseFieldsSnippet;
 import org.springframework.util.ResourceUtils;
 import org.wcdevs.blog.core.persistence.comment.CommentDto;
 import org.wcdevs.blog.core.persistence.post.PostDto;
+import org.wcdevs.blog.core.persistence.post.PostStatus;
 
 public final class TestsUtil {
   public static final ResponseFieldsSnippet ERROR_RESPONSE_FIELDS
@@ -184,5 +185,10 @@ public final class TestsUtil {
 
   public static Pageable pageable() {
     return Pageable.ofSize(10);
+  }
+
+  public static PostStatus aRandomPostStatus() {
+    var values = PostStatus.values();
+    return values[RANDOM.nextInt(values.length)];
   }
 }

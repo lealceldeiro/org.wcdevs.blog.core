@@ -186,6 +186,15 @@ class PostControllerTest {
   }
 
   @Test
+  void getPostsWithStatus() throws Exception {
+    var status = TestsUtil.aRandomPostStatus();
+    when(postService.getPosts(eq(status), any(Pageable.class)))
+        .then(ignored -> TestsUtil.pageOf(TestsUtil.samplePostsLiteData()));
+
+    mockMvc.perform(get(BASE_URL + "/status/{postStatus}", status)).andExpect(status().isOk());
+  }
+
+  @Test
   void createPost() throws Exception {
     var postDto = TestsUtil.samplePostTitleBody();
     postDto.setStatus(null);
