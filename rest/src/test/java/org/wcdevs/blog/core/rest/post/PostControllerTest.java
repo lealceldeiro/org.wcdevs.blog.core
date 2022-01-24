@@ -215,14 +215,16 @@ class PostControllerTest {
       "ERROR: duplicate key value violates unique constraint. "
       + "Some other message will yield a not so well formatted response message",
       "ERROR: duplicate key value violates unique constraint. "
-      + "Duplicate key value violates unique constraint. Values (slug)=(%s)"
+      + "Duplicate key value violates unique constraint. Values (slug)=(%s)",
+      "ERROR: null value in column \"title\" violates not null constraint."
   })
   void createPostDBErrorWithRootCause(String rootCauseMsg) throws Exception {
     var postDto = TestsUtil.samplePostTitleBody();
 
     var rootCauseMessage = !"-".equals(rootCauseMsg)
                            ? (rootCauseMsg.contains("%s")
-                              ? String.format(rootCauseMsg, postDto.getTitle()) : rootCauseMsg)
+                              ? String.format(rootCauseMsg, postDto.getTitle())
+                              : rootCauseMsg)
                            : null;
     var rootCause = mock(Throwable.class);
     when(rootCause.getMessage()).thenReturn(rootCauseMessage);
