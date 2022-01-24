@@ -4,13 +4,6 @@ import java.util.Arrays;
 
 /**
  * Defines the status for a given post.
- *
- * @apiNote Maintainers of this class MUST NOT modify the order of the existing enum values. The
- *          current JPA mappings using these values rely on the ordinal values automatically
- *          assigned to each enum. While adding new values, they MUST be placed AFTER the last enum
- *          value at the moment.
- * @see <a href="https://docs.oracle.com/javase/tutorial/java/javaOO/enum.html">Enum Types</a>
- * @see Enum#ordinal()
  */
 public enum PostStatus {
   /**
