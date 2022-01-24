@@ -29,8 +29,7 @@ public final class TestsUtil {
   }
 
   public static PartialPostDto buildPartialDto() {
-    return partialDtoBuilder(aString(), aString(), aString(), aString(), LocalDateTime.now(),
-                             LocalDateTime.now(), aString()).build();
+    return partialDtoBuilder(aString(), aString(), aString(), aString(), aString()).build();
   }
 
   public static PostDto buildDto(String title, String slug) {
@@ -67,8 +66,6 @@ public final class TestsUtil {
 
   public static PartialPostDto.PartialPostDtoBuilder partialDtoBuilder(String title, String slug,
                                                                        String body, String excerpt,
-                                                                       LocalDateTime publishedOn,
-                                                                       LocalDateTime updatedOn,
                                                                        String updatedBy) {
     return PartialPostDto.builder()
                          .title(title)

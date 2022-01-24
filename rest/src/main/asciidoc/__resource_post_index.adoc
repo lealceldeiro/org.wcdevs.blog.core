@@ -6,6 +6,8 @@ a "Post".
 
 include::__resource_post_create.adoc[]
 
+include::__resource_post_create_draft.adoc[]
+
 include::__resource_post_create_err_db.adoc[]
 
 include::__resource_post_create_constraints.adoc[]

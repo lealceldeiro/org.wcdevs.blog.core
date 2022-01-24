@@ -9,6 +9,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,6 +25,8 @@ import org.hibernate.Hibernate;
 @Table(name = "post")
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @ToString(onlyExplicitlyIncluded = true)
 public class Post {
@@ -31,7 +36,7 @@ public class Post {
   @ToString.Include
   private UUID uuid;
 
-  @Column(name = "title", unique = true, nullable = false, length = 250)
+  @Column(name = "title", nullable = false, length = 250)
   @ToString.Include
   private String title;
 
@@ -58,27 +63,18 @@ public class Post {
   @Column(name = "updated_by", nullable = false, length = 100)
   private String updatedBy;
 
-  /**
-   * Creates a new {@link Post}.
-   *
-   * @param title       Post title (must be unique)
-   * @param slug        Post slug (must be unique)
-   * @param body        Post body
-   * @param publishedOn Date time when the post was published.
-   * @param updatedOn   Date time when the post was last updated.
-   * @param publishedBy Author of the post.
-   * @param updatedBy   User who last updated it.
-   */
-  public Post(String title, String slug, String body, String excerpt, LocalDateTime publishedOn,
-              LocalDateTime updatedOn, String publishedBy, String updatedBy) {
-    this.title = title;
-    this.slug = slug;
-    this.body = body;
-    this.excerpt = excerpt;
-    this.publishedOn = publishedOn;
-    this.updatedOn = updatedOn;
-    this.publishedBy = publishedBy;
-    this.updatedBy = updatedBy;
+  // see https://www.postgresql.org/docs/current/datatype-numeric.html
+  @Column(name = "status", nullable = false, columnDefinition = "smallint")
+  @Setter(AccessLevel.NONE)
+  @Getter(AccessLevel.NONE)
+  private short status;
+
+  public void setStatus(PostStatus status) {
+    this.status = status.shortValue();
+  }
+
+  public PostStatus getStatus() {
+    return PostStatus.fromShortValue(status);
   }
 
   @Override

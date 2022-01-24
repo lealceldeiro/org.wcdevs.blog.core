@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.wcdevs.blog.core.persistence.post.PartialPostDto;
 import org.wcdevs.blog.core.persistence.post.Post;
 import org.wcdevs.blog.core.persistence.post.PostDto;
+import org.wcdevs.blog.core.persistence.post.PostStatus;
 
 /**
  * Provides services to handle the business logic concerning the {@link Post}s data.
@@ -22,5 +23,5 @@ public interface PostService {
 
   void deletePost(String postSlug, String user);
 
-  Page<PostDto> getPosts(Pageable pageable);
+  Page<PostDto> getPosts(PostStatus status, Pageable pageable);
 }

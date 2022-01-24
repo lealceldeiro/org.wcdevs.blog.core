@@ -1,7 +1,7 @@
 [[resource-post-list]]
 ==== Listing posts
 
-A `GET` request retrieves a list of the post titles and slug values.
+A `GET` request retrieves a list of posts information.
 
 include::__H_REQUEST.adoc[]
 
