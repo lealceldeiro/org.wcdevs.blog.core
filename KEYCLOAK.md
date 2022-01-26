@@ -45,20 +45,21 @@ eyJhbGciOiJIUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIxMmMyMTQ3Yi1iM2NiLTQ3YWUtOTY0
 
 ##### If any of this mocked data needs to be updated do the following, from the root project directory:
 
-- Start a docker container with a keycloak server, by importing the current data
+- Start a docker container with a keycloak server, by importing the current data.
 ```shell
 docker run -d -p 8888:8080 -e KEYCLOAK_USER=keycloak -e KEYCLOAK_PASSWORD=keycloak -e KEYCLOAK_IMPORT=/tmp/wcdevs-realm.json -v $(pwd)/appmocks:/tmp --name kc jboss/keycloak:15.0.2
 ```
-- Access the server admin console by navigating to `http://localhost:8888`
-- Login using as a username and password: `keycloak`
-- Make the required changes (do not change the real name from `wcdevs`)
+- Access the server admin console by navigating to `http://localhost:8888`.
+- Login using as a username and password: `keycloak`.
+- Make the required changes (do not change the real name from `wcdevs`).
 - Export the data again by issuing the following in console:
 ```shell
 docker exec -it kc /opt/jboss/keycloak/bin/standalone.sh -Djboss.socket.binding.port-offset=100 -Dkeycloak.migration.action=export -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.realmName=wcdevs -Dkeycloak.migration.usersExportStrategy=REALM_FILE -Dkeycloak.migration.file=/tmp/wcdevs-updated-realm.json
 ```
 - Compare the new data inside `appmocks/wcdevs-updated-realm.json` and `appmocks/wcdevs-realm.json`.
-  Move the updated data from the updated file to the old file.
+ Move the updated data from the updated file to the old file. (Optionally, the file
+`appmocks/runtime-wcdevs-realm.json` should also be updated).
 - Once finished, you can stop the keycloak server using `docker stop kc` (`kc` should be visible if
-`docker ps -a` is issued)
+`docker ps -a` is issued).
 - Then it can be removed by using `docker rm kc` (and it should not be visible when `docker ps -a`
-is issued) 
+is issued).
