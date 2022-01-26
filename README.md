@@ -27,19 +27,15 @@ Before start contributing to this project be sure you're familiar with our
 - [Docker](https://www.docker.com/) (and [Docker Compose](https://docs.docker.com/compose/))
 - An IDE (such as [Intellij IDEA](https://www.jetbrains.com/idea/) or Eclipse)
 
-### Build the application image locally
-(scripts explained from a Unix environment perspective)
+### Debugging the application
 
-Run:
-
-- `./mvnw clean package`
-- `docker build -t org.wcdevs.blog:core .` (*notice the dot (**.**) at the end*)
-
-For more info about docker run `docker --help`.
+- Run `docker-compose up -d wcdevs_db keycloak` to start the database and the keycloak server
+- Run the Spring Boot application using your favorite IDE (use the `local` profile)
 
 ### Running the whole stack with docker compose
 
-Run `docker-compose up -d`.
+- Run `./mvnw clean package`
+- Run `docker-compose up -d`
 
 It can be stopped then using `docker-compose down`.
 
