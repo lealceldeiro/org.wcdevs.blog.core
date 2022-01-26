@@ -57,12 +57,11 @@ services:
       - wcdevs_db
       - keycloak
     environment:
-      CORE_APP_DB_URL: jdbc:postgresql://wcdevs_db:5432/wcdevsdb
-      CORE_APP_DB_PASSWORD: wcdevspwd
-      CORE_APP_DB_USER: wcdevsu
-      CORE_APP_DB_DRIVER: org.postgresql.Driver
-      CORE_APP_LISTEN_PORT: 8080
-      CORE_APP_MANAGEMENT_PORT: 8082
+      SPRING_PROFILES_ACTIVE: local
+      SPRING_DATASOURCE_URL: jdbc:postgresql://wcdevs_db:5432/wcdevsdb
+      SPRING_DATASOURCE_DRIVERCLASSNAME: org.postgresql.Driver
+      SPRING_DATASOURCE_USERNAME: wcdevsu
+      SPRING_DATASOURCE_PASSWORD: wcdevspwd
 
 volumes:
   wcdevs_db_data:
