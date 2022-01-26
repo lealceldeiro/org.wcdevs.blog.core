@@ -30,12 +30,7 @@ spring:
     default-property-inclusion: non_null
     locale: en
 
-server:
-  port: ${CORE_APP_LISTEN_PORT}
-
 management:
-  server:
-    port: ${CORE_APP_MANAGEMENT_PORT}
   endpoints:
     web:
       base-path: "/manage"
