@@ -69,13 +69,15 @@ services:
           memory: "1024M"
     depends_on:
       - wcdevs_db
-      - keycloak
+      - keycloak.rt
     environment:
-      SPRING_PROFILES_ACTIVE: local
+      SPRING_PROFILES_INCLUDE: local
       SPRING_DATASOURCE_URL: jdbc:postgresql://wcdevs_db:5432/wcdevsdb
       SPRING_DATASOURCE_DRIVERCLASSNAME: org.postgresql.Driver
       SPRING_DATASOURCE_USERNAME: wcdevsu
       SPRING_DATASOURCE_PASSWORD: wcdevspwd
+      SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_COGNITO_ISSUERURI: http://keycloak.rt:8080/auth/realms/wcdevs
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUERURI: http://keycloak.rt:8080/auth/realms/wcdevs
 
 volumes:
   wcdevs_db_data:
