@@ -1,10 +1,5 @@
 spring:
   # https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.external-config
-  datasource:
-    driver-class-name: ${CORE_APP_DB_DRIVER}
-    url: ${CORE_APP_DB_URL}
-    password: ${CORE_APP_DB_PASSWORD}
-    username: ${CORE_APP_DB_USER}
   jpa:
     generate-ddl: false
     open-in-view: false
