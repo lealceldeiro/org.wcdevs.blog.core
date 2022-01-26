@@ -36,6 +36,20 @@ services:
     volumes:
       - ./appmocks/wcdevs-realm.json:/tmp/wcdevs-realm.json
 
+  # another keycloak instance to use while running the whole stack -- the "keycloak" service cannot
+  # be re-used because the mock metadata contains some urls which depends on the docker-compose
+  # service name, and it would conflict with the "keycloak" service used for debugging purposes
+  keycloak.rt:
+    image: jboss/keycloak:15.0.2
+    environment:
+      - PORT_KEYCLOAK=8080
+      - KEYCLOAK_USER=keycloak
+      - KEYCLOAK_PASSWORD=keycloak
+      - DB_VENDOR=h2
+      - JAVA_OPTS= -Dkeycloak.migration.action=import -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.file=/tmp/wcdevs-realm.json
+    volumes:
+      - ./appmocks/runtime-wcdevs-realm.json:/tmp/wcdevs-realm.json
+
   wcdevs_app:
     image: org.wcdevs.blog:core
     build:
