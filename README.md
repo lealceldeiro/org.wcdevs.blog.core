@@ -35,7 +35,7 @@ Before start contributing to this project be sure you're familiar with our
 ### Running the whole stack with docker compose
 
 - Run `./mvnw clean package`
-- Run `docker-compose up -d`
+- Run `docker-compose up -d wcdevs_db keycloak.rt wcdevs_app`
 
 It can be stopped then using `docker-compose down`.
 
