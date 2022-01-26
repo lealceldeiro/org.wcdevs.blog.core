@@ -43,7 +43,7 @@ services:
       - "82:8082"
     deploy:
       restart_policy:
-        max_attempts: 10
+        max_attempts: 5
         condition: on-failure
       replicas: 1
       resources:
