@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Profile;
  * Configuration to be applied only in an AWS environment.
  */
 @Configuration
-@Profile("!local")
+@Profile("aws")
 public class AwsConfig {
   /**
    * Provides and AWS identity provider.
