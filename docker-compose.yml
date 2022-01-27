@@ -78,6 +78,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: wcdevspwd
       SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_COGNITO_ISSUERURI: http://keycloak.rt:8080/auth/realms/wcdevs
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUERURI: http://keycloak.rt:8080/auth/realms/wcdevs
+      AWS_REGION: eu-central-1
 
 volumes:
   wcdevs_db_data:
