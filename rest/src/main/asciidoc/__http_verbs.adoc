@@ -1,6 +1,9 @@
 [[overview-http-verbs]]
 === HTTP-verbs
 
+The API tries to adhere as closely as possible to standard HTTP and REST conventions in its use of
+HTTP verbs. See https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods[HTTP Methods,role=external,window=_blank].
+
 |===
 | Verb | Usage
 

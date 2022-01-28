@@ -1,0 +1,14 @@
+[[resources-role-statuses]]
+==== Post statuses
+
+A post can be in one of the following statuses:
+
+ - DRAFT: The post is in edition, has some content, but it's not ready for the public yet.
+ - PENDING: The post is ready to be published, but it needs to be reviewed before being actually
+publicly available. Most probably an editor needs to approve its content.
+ - SCHEDULED: The post is out of edition, it's ready for the public, but it should not be available
+until a future date.
+ - PROTECTED: The post is ready to be viewed, but only by those with a given password.
+ - PUBLISHED: The post is publicly available for everyone.
+ - TRASHED: The post has been marked to be deleted, and it should not be publicly visible.
+
