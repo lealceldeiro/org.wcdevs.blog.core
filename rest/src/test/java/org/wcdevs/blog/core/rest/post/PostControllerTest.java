@@ -170,7 +170,7 @@ class PostControllerTest {
         .then(ignored -> TestsUtil.pageOf(TestsUtil.samplePostsLiteData(PostStatus.PUBLISHED)));
 
     var fields = DocUtil.pageableFieldsWith(
-        fieldWithPath("content.[]").description("List of posts information"),
+        fieldWithPath("content.[]").description("List of posts"),
         fieldWithPath("content.[*].title").description("Post title"),
         fieldWithPath("content.[*].slug")
             .description("Post slug. Used to get the post information later"),
@@ -196,7 +196,7 @@ class PostControllerTest {
   @Test
   void getPostsWithStatus() throws Exception {
     var fields = DocUtil.pageableFieldsWith(
-        fieldWithPath("content.[]").description("List of posts information"),
+        fieldWithPath("content.[]").description("List of posts"),
         fieldWithPath("content.[*].title").description("Post title"),
         fieldWithPath("content.[*].slug")
             .description("Post slug. Used to get the post information later"),
