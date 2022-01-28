@@ -16,6 +16,9 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
@@ -40,9 +43,7 @@ import static org.wcdevs.blog.core.rest.TestsUtil.samplePostSlug;
 import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -62,7 +63,7 @@ import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
-import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.constraints.ConstraintDescriptions;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.RequestFieldsSnippet;
 import org.springframework.restdocs.payload.ResponseFieldsSnippet;
@@ -187,7 +188,9 @@ class PostControllerTest {
 
     mockMvc.perform(get(BASE_URL))
            .andExpect(status().isOk())
-           .andDo(document("get_posts", fields));
+           .andDo(document("get_posts",
+                           preprocessResponse(prettyPrint()),
+                           fields));
   }
 
   @Test
@@ -214,11 +217,20 @@ class PostControllerTest {
 
     mockMvc.perform(get(BASE_URL + "/status/{postStatus}", status))
            .andExpect(status().isOk())
-           .andDo(document("get_posts_by_status", fields));
+           .andDo(document("get_posts_by_status",
+                           preprocessResponse(prettyPrint()),
+                           fields));
   }
 
   @Test
   void createPost() throws Exception {
+    var constraints = new ConstraintDescriptions(PostDto.class);
+    var titleConstraints = constraints.descriptionsForProperty("title");
+    var slugConstraints = constraints.descriptionsForProperty("slug");
+    var bodyConstraints = constraints.descriptionsForProperty("body");
+    var excerptConstraints = constraints.descriptionsForProperty("excerpt");
+    var statusConstraints = constraints.descriptionsForProperty("status");
+
     var postDto = TestsUtil.builderFrom(TestsUtil.samplePostTitleBody()).status(null).build();
 
     mockMvc.perform(post(BASE_URL)
@@ -226,7 +238,9 @@ class PostControllerTest {
                         .characterEncoding(StandardCharsets.UTF_8)
                         .content(MAPPER.writeValueAsString(postDto)))
            .andExpect(status().isCreated())
-           .andDo(document("create_post", REQUEST_FIELDS, SLUG_INFO_RESPONSE_FIELDS));
+           .andDo(document("create_post", preprocessRequest(prettyPrint()),
+                           preprocessResponse(prettyPrint()),
+                           REQUEST_FIELDS, SLUG_INFO_RESPONSE_FIELDS));
   }
 
   @Test
@@ -244,6 +258,8 @@ class PostControllerTest {
                         .content(MAPPER.writeValueAsString(postDto)))
            .andExpect(status().isCreated())
            .andDo(document("create_post_draft",
+                           preprocessRequest(prettyPrint()),
+                           preprocessResponse(prettyPrint()),
                            requestFields(fieldWithPath("title")
                                              .description("Post title." + notice),
                                          fieldWithPath("body")
@@ -284,7 +300,10 @@ class PostControllerTest {
                         .characterEncoding(StandardCharsets.UTF_8)
                         .content(MAPPER.writeValueAsString(postDto)))
            .andExpect(status().isConflict())
-           .andDo(document("create_post_db_error", REQUEST_FIELDS, ERROR_RESPONSE_FIELDS));
+           .andDo(document("create_post_db_error",
+                           preprocessRequest(prettyPrint()),
+                           preprocessResponse(prettyPrint()),
+                           REQUEST_FIELDS, ERROR_RESPONSE_FIELDS));
   }
 
   @Test
@@ -297,7 +316,7 @@ class PostControllerTest {
                         .content("this_is_a_wrong_token_in_this_JSON_and_will_casue_an_error"
                                  + MAPPER.writeValueAsString(postDto)))
            .andExpect(status().isBadRequest())
-           .andDo(document("create_post_bad_format"));
+           .andDo(document("create_post_bad_format", preprocessRequest(prettyPrint())));
   }
 
   private static Stream<Arguments> createPostWithInvalidArgumentArgs() {
@@ -336,7 +355,9 @@ class PostControllerTest {
                         .characterEncoding(StandardCharsets.UTF_8)
                         .content(MAPPER.writeValueAsString(postDto)))
            .andExpect(status().isBadRequest())
-           .andDo(document("create_post_wrong_title"));
+           .andDo(document("create_post_wrong_title",
+                           preprocessRequest(prettyPrint()),
+                           preprocessResponse(prettyPrint())));
   }
 
   @ParameterizedTest
@@ -348,7 +369,9 @@ class PostControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(MAPPER.writeValueAsString(postDto)))
            .andExpect(status().isBadRequest())
-           .andDo(document("create_post_wrong_body"));
+           .andDo(document("create_post_wrong_body",
+                           preprocessRequest(prettyPrint()),
+                           preprocessResponse(prettyPrint())));
   }
 
   @ParameterizedTest
@@ -366,7 +389,9 @@ class PostControllerTest {
                         .characterEncoding(StandardCharsets.UTF_8)
                         .content(MAPPER.writeValueAsString(postDto)))
            .andExpect(status().isBadRequest())
-           .andDo(document("create_post_wrong_slug"));
+           .andDo(document("create_post_wrong_slug",
+                           preprocessRequest(prettyPrint()),
+                           preprocessResponse(prettyPrint())));
   }
 
   @Test
@@ -386,7 +411,9 @@ class PostControllerTest {
 
     mockMvc.perform(get(BASE_URL + "/{postSlug}", postDto.getSlug()))
            .andExpect(status().isOk())
-           .andDo(document("get_post", SLUG_PATH_PARAMETER, responseFields));
+           .andDo(document("get_post",
+                           preprocessResponse(prettyPrint()),
+                           SLUG_PATH_PARAMETER, responseFields));
   }
 
   @Test
@@ -395,7 +422,10 @@ class PostControllerTest {
     when(postService.getPost(slug)).thenThrow(new PostNotFoundException());
     mockMvc.perform(get(BASE_URL + "/{postSlug}", slug))
            .andExpect(status().isNotFound())
-           .andDo(document("get_post_not_found", SLUG_PATH_PARAMETER, ERROR_RESPONSE_FIELDS));
+           .andDo(document("get_post_not_found",
+                           preprocessResponse(prettyPrint()),
+                           SLUG_PATH_PARAMETER,
+                           ERROR_RESPONSE_FIELDS));
   }
 
   @Test
@@ -407,8 +437,10 @@ class PostControllerTest {
                         .content(MAPPER.writeValueAsString(postDto)))
            .andExpect(status().isOk())
            .andDo(document("partial_update_post",
+                           preprocessRequest(prettyPrint()),
+                           preprocessResponse(prettyPrint()),
                            SLUG_PATH_PARAMETER,
-                           REQUEST_FIELDS,
+                           REQUEST_FIELDS, // post status does not apply here
                            SLUG_INFO_RESPONSE_FIELDS));
   }
 
@@ -431,6 +463,8 @@ class PostControllerTest {
                         .content(MAPPER.writeValueAsString(postDto)))
            .andExpect(status().isOk())
            .andDo(document("full_update_post",
+                           preprocessRequest(prettyPrint()),
+                           preprocessResponse(prettyPrint()),
                            SLUG_PATH_PARAMETER,
                            REQUEST_FIELDS,
                            SLUG_INFO_RESPONSE_FIELDS));
@@ -500,13 +534,17 @@ class PostControllerTest {
     when(commentService.createComment(post.getSlug(), dto))
         .thenReturn(CommentDto.builder().anchor(anchor).build());
 
-    mockMvc.perform(RestDocumentationRequestBuilders.post(BASE_URL + "/{postSlug}/comment",
-                                                          post.getSlug())
-                                                    .contentType(MediaType.APPLICATION_JSON)
-                                                    .characterEncoding(StandardCharsets.UTF_8)
-                                                    .content(MAPPER.writeValueAsString(dto)))
+    mockMvc.perform(post(BASE_URL + "/{postSlug}/comment",
+                         post.getSlug())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .content(MAPPER.writeValueAsString(dto)))
            .andExpect(status().isCreated())
-           .andDo(document(docId, POST_SLUG_PATH_PARAMETER, requestFields(requestFieldDescriptors),
+           .andDo(document(docId,
+                           preprocessRequest(prettyPrint()),
+                           preprocessResponse(prettyPrint()),
+                           POST_SLUG_PATH_PARAMETER,
+                           requestFields(requestFieldDescriptors),
                            ANCHOR_RES_FIELD));
   }
 
@@ -521,7 +559,10 @@ class PostControllerTest {
 
     mockMvc.perform(get(BASE_URL + "/{postSlug}/comment/root", postSlug))
            .andExpect(status().isOk())
-           .andDo(document("get_root_comments", POST_SLUG_PATH_PARAMETER, responseFields));
+           .andDo(document("get_root_comments",
+                           preprocessResponse(prettyPrint()),
+                           POST_SLUG_PATH_PARAMETER,
+                           responseFields));
   }
 
   @Test
@@ -534,6 +575,9 @@ class PostControllerTest {
 
     mockMvc.perform(get(BASE_URL + "/{postSlug}/comment/all", postSlug))
            .andExpect(status().isOk())
-           .andDo(document("get_all_comments", POST_SLUG_PATH_PARAMETER, responseFields));
+           .andDo(document("get_all_comments",
+                           preprocessResponse(prettyPrint()),
+                           POST_SLUG_PATH_PARAMETER,
+                           responseFields));
   }
 }

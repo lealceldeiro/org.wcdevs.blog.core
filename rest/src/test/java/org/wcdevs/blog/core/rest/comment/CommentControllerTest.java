@@ -11,6 +11,9 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
@@ -104,7 +107,10 @@ class CommentControllerTest {
 
     mockMvc.perform(get(BASE_URL + "{commentAnchor}", anchor))
            .andExpect(status().isOk())
-           .andDo(document("get_comment", ANCHOR_PATH_PARAMETER, COMMENT_RESPONSE_FIELDS));
+           .andDo(document("get_comment",
+                           preprocessResponse(prettyPrint()),
+                           ANCHOR_PATH_PARAMETER,
+                           COMMENT_RESPONSE_FIELDS));
   }
 
   @Test
@@ -118,7 +124,10 @@ class CommentControllerTest {
 
     mockMvc.perform(get(BASE_URL + "children/{parentAnchor}", parentCommentAnchor))
            .andExpect(status().isOk())
-           .andDo(document("get_child_comments", PARENT_COMMENT_ANCHOR_PATH_PARAM, responseFields));
+           .andDo(document("get_child_comments",
+                           preprocessResponse(prettyPrint()),
+                           PARENT_COMMENT_ANCHOR_PATH_PARAM,
+                           responseFields));
   }
 
   @Test
@@ -132,7 +141,10 @@ class CommentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(MAPPER.writeValueAsString(sample)))
            .andExpect(status().isMethodNotAllowed())
-           .andDo(document("get_child_comments_method_not_allowed", PARENT_COMMENT_ANCHOR_PATH_PARAM,
+           .andDo(document("get_child_comments_method_not_allowed",
+                           preprocessRequest(prettyPrint()),
+                           preprocessResponse(prettyPrint()),
+                           PARENT_COMMENT_ANCHOR_PATH_PARAM,
                            ERROR_RESPONSE_FIELDS));
   }
 
@@ -151,7 +163,10 @@ class CommentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(MAPPER.writeValueAsString(dto)))
            .andExpect(status().isOk())
-           .andDo(document("update_comment", ANCHOR_PATH_PARAMETER,
+           .andDo(document("update_comment",
+                           preprocessRequest(prettyPrint()),
+                           preprocessResponse(prettyPrint()),
+                           ANCHOR_PATH_PARAMETER,
                            requestFields(fieldWithPath(BODY).description(BODY_DESC)),
                            responseFields(fieldWithPath(ANCHOR).description(ANCHOR_DESC))));
   }
