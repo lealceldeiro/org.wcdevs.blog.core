@@ -24,6 +24,8 @@ services:
       POSTGRES_DB: wcdevsdb
 
   keycloak:
+    # if macOS, use sleighzy/keycloak:15.0.2-arm64 instead of jboss/keycloak:15.0.2
+    # image: sleighzy/keycloak:15.0.2-arm64
     image: jboss/keycloak:15.0.2
     ports:
       - "8888:8080"
@@ -40,6 +42,8 @@ services:
   # be re-used because the mock metadata contains some urls which depends on the docker-compose
   # service name, and it would conflict with the "keycloak" service used for debugging purposes
   keycloak.rt:
+    # if macOS, use sleighzy/keycloak:15.0.2-arm64 instead of jboss/keycloak:15.0.2
+    # image: sleighzy/keycloak:15.0.2-arm64
     image: jboss/keycloak:15.0.2
     environment:
       - PORT_KEYCLOAK=8080
