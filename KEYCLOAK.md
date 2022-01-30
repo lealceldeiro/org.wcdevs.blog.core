@@ -56,6 +56,7 @@ docker run -d -p 8888:8080 -e KEYCLOAK_USER=keycloak -e KEYCLOAK_PASSWORD=keyclo
 ```shell
 docker exec -it kc /opt/jboss/keycloak/bin/standalone.sh -Djboss.socket.binding.port-offset=100 -Dkeycloak.migration.action=export -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.realmName=wcdevs -Dkeycloak.migration.usersExportStrategy=REALM_FILE -Dkeycloak.migration.file=/tmp/wcdevs-updated-realm.json
 ```
+- Kill the process once the export is finished
 - Compare the new data inside `appmocks/wcdevs-updated-realm.json` and `appmocks/wcdevs-realm.json`.
  Move the updated data from the updated file to the old file. (Optionally, the file
 `appmocks/runtime-wcdevs-realm.json` should also be updated).
