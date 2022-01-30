@@ -35,20 +35,35 @@ replacing all usages of the command `mvn` by `./mvnw`)
 
 ### Debugging the application
 
-- Run `docker-compose up -d wcdevs_db keycloak` to start the database and the keycloak server
+- Run `docker-compose up -d wcdevs_db keycloak.service` to start the database and the keycloak server
 
-  (**Note**: macOS users must do instead `docker-compose -f docker-compose.yml -f docker-compose-override-mac.yml up -d wcdevs_db keycloak`)
+  **Note**: macOS users must do instead `docker-compose -f docker-compose.yml -f docker-compose-override-mac.yml up -d wcdevs_db keycloak.service`
 - Run the Spring Boot application using your favorite IDE (use the `local` profile)
 
 ### Running the API with docker compose
 
-- Run `docker-compose up -d wcdevs_db keycloak.rt wcdevs_app`
+- Run
+```shell
+docker-compose -f docker-compose.yml -f docker-compose-override-keycloak-as-host.yml up -d wcdevs_db keycloak.service wcdevs_app
+```
 
-  (**Note**: macOS users must do instead `docker-compose -f docker-compose.yml -f docker-compose-override-mac.yml up -d wcdevs_db keycloak.rt wcdevs_app`)
+  **Note**: macOS users must do instead
+  ```shell
+docker-compose -f docker-compose.yml -f docker-compose-override-keycloak-as-host.yml -f docker-compose-override-mac.yml up -d wcdevs_db keycloak.service wcdevs_app
+```
 
 It can be stopped then using `docker-compose down`.
 
 For more info about docker compose run `docker-compose --help`.
+
+**Important:** If you want to do log-in using the started keycloak server you need to update your
+*hosts* file of the operating system by adding the following entry. This is needed for the browser
+to be able to resolve this URL to the localhost started server by docker-compose.
+```text
+127.0.0.1       keycloak.service
+```
+For more info about how to update the *hosts* file, please, check this
+[StackOverflow post](https://stackoverflow.com/a/19425153/5640649)
 
 #### Health check
 

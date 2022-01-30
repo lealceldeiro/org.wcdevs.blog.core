@@ -23,7 +23,7 @@ services:
       POSTGRES_USER: wcdevsu
       POSTGRES_DB: wcdevsdb
 
-  keycloak:
+  keycloak.service:
     image: jboss/keycloak:15.0.2
     ports:
       - "8888:8888"
@@ -34,21 +34,6 @@ services:
       - JAVA_OPTS= -Djboss.http.port=8888 -Dkeycloak.migration.action=import -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.file=/tmp/wcdevs-realm.json
     volumes:
       - ./appmocks/wcdevs-realm.json:/tmp/wcdevs-realm.json
-
-  # another keycloak instance to use while running the whole stack -- the "keycloak" service cannot
-  # be re-used because the mock metadata contains some urls which depends on the docker-compose
-  # service name, and it would conflict with the "keycloak" service used for debugging purposes
-  keycloak.rt:
-    image: jboss/keycloak:15.0.2
-    ports:
-      - "8888:8888"
-    environment:
-      - KEYCLOAK_USER=keycloak
-      - KEYCLOAK_PASSWORD=keycloak
-      - DB_VENDOR=h2
-      - JAVA_OPTS= -Djboss.http.port=8888 -Dkeycloak.migration.action=import -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.file=/tmp/wcdevs-realm.json
-    volumes:
-      - ./appmocks/runtime-wcdevs-realm.json:/tmp/wcdevs-realm.json
 
   wcdevs_app:
     image: org.wcdevs.blog:core
@@ -69,16 +54,16 @@ services:
           memory: "1024M"
     depends_on:
       - wcdevs_db
-      - keycloak.rt
+      - keycloak.service
     environment:
       SPRING_PROFILES_INCLUDE: local
       SPRING_DATASOURCE_URL: jdbc:postgresql://wcdevs_db:5432/wcdevsdb
       SPRING_DATASOURCE_DRIVERCLASSNAME: org.postgresql.Driver
       SPRING_DATASOURCE_USERNAME: wcdevsu
       SPRING_DATASOURCE_PASSWORD: wcdevspwd
-      # 8888: internal port exposed from WildFly server from service "keycloak.rt"
-      SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_COGNITO_ISSUERURI: http://keycloak.rt:8888/auth/realms/wcdevs
-      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUERURI: http://keycloak.rt:8888/auth/realms/wcdevs
+      # 8888: internal port exposed from WildFly server from service "keycloak.service"
+      SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_COGNITO_ISSUERURI: http://keycloak.service:8888/auth/realms/wcdevs
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUERURI: http://keycloak.service:8888/auth/realms/wcdevs
       AWS_REGION: eu-central-1
 
 volumes:

@@ -699,7 +699,7 @@
     "clientId" : "wcdevs-core-client",
     "name" : "wcDevs core application",
     "description" : "client to be used by te core app",
-    "rootUrl" : "http://keycloak.rt:8888",
+    "rootUrl" : "http://keycloak.service:8888",
     "surrogateAuthRequired" : false,
     "enabled" : true,
     "alwaysDisplayInConsole" : true,
@@ -1971,7 +1971,7 @@
     "oauth2DeviceCodeLifespan" : "600",
     "clientSessionMaxLifespan" : "0",
     "parRequestUriLifespan" : "60",
-    "frontendUrl" : "http://keycloak.rt:8888/auth"
+    "frontendUrl" : "http://keycloak.service:8888/auth"
   },
   "keycloakVersion" : "15.0.2",
   "userManagedAccessAllowed" : false,

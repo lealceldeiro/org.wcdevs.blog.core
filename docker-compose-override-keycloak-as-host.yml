@@ -4,4 +4,5 @@ version: "3.9"
 services:
 
   keycloak.service:
-    image: sleighzy/keycloak:15.0.2-arm64
+    volumes:
+      - ./appmocks/runtime-wcdevs-realm.json:/tmp/wcdevs-realm.json

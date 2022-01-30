@@ -6,7 +6,7 @@
         <option name="services">
           <list>
             <option value="wcdevs_db" />
-            <option value="keycloak" />
+            <option value="keycloak.service" />
           </list>
         </option>
         <option name="sourceFilePath" value="docker-compose.yml" />
