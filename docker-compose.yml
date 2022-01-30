@@ -45,6 +45,8 @@ services:
     # if macOS, use sleighzy/keycloak:15.0.2-arm64 instead of jboss/keycloak:15.0.2
     # image: sleighzy/keycloak:15.0.2-arm64
     image: jboss/keycloak:15.0.2
+    ports:
+      - "8080:8080"
     environment:
       - PORT_KEYCLOAK=8080
       - KEYCLOAK_USER=keycloak
