@@ -36,11 +36,15 @@ replacing all usages of the command `mvn` by `./mvnw`)
 ### Debugging the application
 
 - Run `docker-compose up -d wcdevs_db keycloak` to start the database and the keycloak server
+
+  (**Note**: macOS users must do instead `docker-compose -f docker-compose.yml -f docker-compose-override-mac.yml up -d wcdevs_db keycloak`)
 - Run the Spring Boot application using your favorite IDE (use the `local` profile)
 
 ### Running the API with docker compose
 
 - Run `docker-compose up -d wcdevs_db keycloak.rt wcdevs_app`
+
+  (**Note**: macOS users must do instead `docker-compose -f docker-compose.yml -f docker-compose-override-mac.yml up -d wcdevs_db keycloak.rt wcdevs_app`)
 
 It can be stopped then using `docker-compose down`.
 
