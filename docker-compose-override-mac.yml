@@ -1,0 +1,10 @@
+# see https://docs.docker.com/compose/extends/#adding-and-overriding-configuration
+version: "3.9"
+
+services:
+
+  keycloak:
+    image: sleighzy/keycloak:15.0.2-arm64
+
+  keycloak.rt:
+    image: sleighzy/keycloak:15.0.2-arm64
