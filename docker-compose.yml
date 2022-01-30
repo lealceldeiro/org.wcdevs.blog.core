@@ -28,13 +28,12 @@ services:
     # image: sleighzy/keycloak:15.0.2-arm64
     image: jboss/keycloak:15.0.2
     ports:
-      - "8888:8080"
+      - "8888:8888"
     environment:
-      - PORT_KEYCLOAK=8080
       - KEYCLOAK_USER=keycloak
       - KEYCLOAK_PASSWORD=keycloak
       - DB_VENDOR=h2
-      - JAVA_OPTS= -Dkeycloak.migration.action=import -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.file=/tmp/wcdevs-realm.json
+      - JAVA_OPTS= -Djboss.http.port=8888 -Dkeycloak.migration.action=import -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.file=/tmp/wcdevs-realm.json
     volumes:
       - ./appmocks/wcdevs-realm.json:/tmp/wcdevs-realm.json
 
@@ -46,13 +45,12 @@ services:
     # image: sleighzy/keycloak:15.0.2-arm64
     image: jboss/keycloak:15.0.2
     ports:
-      - "8080:8080"
+      - "8888:8888"
     environment:
-      - PORT_KEYCLOAK=8080
       - KEYCLOAK_USER=keycloak
       - KEYCLOAK_PASSWORD=keycloak
       - DB_VENDOR=h2
-      - JAVA_OPTS= -Dkeycloak.migration.action=import -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.file=/tmp/wcdevs-realm.json
+      - JAVA_OPTS= -Djboss.http.port=8888 -Dkeycloak.migration.action=import -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.file=/tmp/wcdevs-realm.json
     volumes:
       - ./appmocks/runtime-wcdevs-realm.json:/tmp/wcdevs-realm.json
 
@@ -82,8 +80,9 @@ services:
       SPRING_DATASOURCE_DRIVERCLASSNAME: org.postgresql.Driver
       SPRING_DATASOURCE_USERNAME: wcdevsu
       SPRING_DATASOURCE_PASSWORD: wcdevspwd
-      SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_COGNITO_ISSUERURI: http://keycloak.rt:8080/auth/realms/wcdevs
-      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUERURI: http://keycloak.rt:8080/auth/realms/wcdevs
+      # 8888: internal port exposed from WildFly server from service "keycloak.rt"
+      SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_COGNITO_ISSUERURI: http://keycloak.rt:8888/auth/realms/wcdevs
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUERURI: http://keycloak.rt:8888/auth/realms/wcdevs
       AWS_REGION: eu-central-1
 
 volumes:
