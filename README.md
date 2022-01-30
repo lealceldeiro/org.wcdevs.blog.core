@@ -17,26 +17,30 @@ Before start contributing to this project be sure you're familiar with our
   * `org.wcdevs.blog:persistence`: contains all resources holding the logic to communicate with the persistence layer.
   * `org.wcdevs.blog:rest`: contains the exposed webservices.
 
-## Local development
+## Local setup
 
 ### Requirements
 
+#### Development
 - [Git](https://git-scm.com/)
 - [Java](https://jdk.java.net/) 11 (we use [SDKMAN](https://sdkman.io/) for Java versions management)
-- [Maven](https://maven.apache.org/index.html)
+- [Maven](https://maven.apache.org/index.html) (alternatively you can use the Maven wrapper by
+replacing all usages of the command `mvn` by `./mvnw`)
 - [Docker](https://www.docker.com/) (and [Docker Compose](https://docs.docker.com/compose/))
 - An IDE (such as [Intellij IDEA](https://www.jetbrains.com/idea/) or Eclipse)
+
+#### Only running the API
+- [Git](https://git-scm.com/)
+- [Docker](https://www.docker.com/) (and [Docker Compose](https://docs.docker.com/compose/))
 
 ### Debugging the application
 
 - Run `docker-compose up -d wcdevs_db keycloak` to start the database and the keycloak server
 - Run the Spring Boot application using your favorite IDE (use the `local` profile)
 
-### Running the whole stack with docker compose
+### Running the API with docker compose
 
-- Run `./mvnw clean package`
-- Run `docker-compose up -d wcdevs_db keycloak.rt wcdevs_app` (if the application is rebuilt, use
-`docker-compose up -d --build wcdevs_db keycloak.rt wcdevs_app` instead to pick up the new jar and build a new image)
+- Run `docker-compose up -d wcdevs_db keycloak.rt wcdevs_app`
 
 It can be stopped then using `docker-compose down`.
 
