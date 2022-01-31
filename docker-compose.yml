@@ -64,7 +64,6 @@ services:
       # 8888: internal port exposed from WildFly server from service "keycloak.service"
       SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_COGNITO_ISSUERURI: http://keycloak.service:8888/auth/realms/wcdevs
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUERURI: http://keycloak.service:8888/auth/realms/wcdevs
-      AWS_REGION: eu-central-1
 
 volumes:
   wcdevs_db_data:
