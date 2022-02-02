@@ -21,11 +21,6 @@ spring:
           # see http://localhost:8888/auth/realms/wcdevs/.well-known/openid-configuration
           issuerUri: http://localhost:8888/auth/realms/wcdevs
 
-cloud:
-  aws:
-    region:
-      static: eu-central-1
-
 server:
   port: 8080
 
