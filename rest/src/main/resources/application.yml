@@ -39,19 +39,6 @@ management:
       cloudwatch:
         enabled: false
 
-
-cloud:
-  aws:
-    region:
-      static: eu-central-1
-    sns:
-      enabled: false
-    instance:
-      data:
-        enabled: false
-    stack:
-      auto: false
-
 core-app:
   allowedOrigins: ${ALLOWED_ORIGINS}
 

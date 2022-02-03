@@ -15,18 +15,6 @@ spring:
         jwt:
           issuer-uri: ${COGNITO_PROVIDER_URL}
 
-cloud:
-  aws:
-    region:
-      static: ${AWS_REGION}
-    sns:
-      enabled: false
-    instance:
-      data:
-        enabled: false
-    stack:
-      auto: false
-
 core-app:
   # https://github.com/spring-projects/spring-boot/wiki/Relaxed-Binding-2.0#list-types-1
   allowedOrigins: ${ALLOWED_ORIGINS}
