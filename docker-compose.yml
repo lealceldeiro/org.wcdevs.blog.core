@@ -56,7 +56,7 @@ services:
       - wcdevs_db
       - keycloak.service
     environment:
-      SPRING_PROFILES_INCLUDE: local
+      SPRING_PROFILES_ACTIVE: local
       SPRING_DATASOURCE_URL: jdbc:postgresql://wcdevs_db:5432/wcdevsdb
       SPRING_DATASOURCE_DRIVERCLASSNAME: org.postgresql.Driver
       SPRING_DATASOURCE_USERNAME: wcdevsu
