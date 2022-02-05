@@ -122,9 +122,9 @@ class PostControllerComponentTest {
 
   @AfterEach
   void tearDown() {
-    // not using @Transaction, so clean state after the test completed
-    // useful: https://www.javacodegeeks.com/2011/12/spring-pitfalls-transactional-tests.html
-    // see https://stackoverflow.com/a/37414387/5640649 for a different approach
+    // Clean state after the test completed, but no @Transaction:
+    // https://www.javacodegeeks.com/2011/12/spring-pitfalls-transactional-tests.html
+    // see also https://stackoverflow.com/a/37414387/5640649 for a different approach
     postRepository.deleteAll(); // will delete also all comments
   }
 
@@ -637,6 +637,7 @@ class PostControllerComponentTest {
 
     // the user is not editor
     when(securityContextAuthChecker.hasAnyRole(Role.EDITOR)).thenReturn(false);
+    when(authAttributeExtractor.principalUsername(any())).thenReturn(postAuthor);
 
     // when
     var resultActions = mockMvc.perform(delete(POST_URL + "/{postSlug}", slug));
@@ -659,6 +660,7 @@ class PostControllerComponentTest {
 
     // the user is an editor
     when(securityContextAuthChecker.hasAnyRole(Role.EDITOR)).thenReturn(true);
+    when(authAttributeExtractor.principalUsername(any())).thenReturn(null);
 
     // when
     var resultActions = mockMvc.perform(delete(POST_URL + "/{postSlug}", slug));
@@ -722,7 +724,6 @@ class PostControllerComponentTest {
                   + "  \"body\": \"" + COMMENT_BODY2 + "\",\n"
                   + "  \"parentCommentAnchor\": \"" + anchor + "\"\n"
                   + "}";
-
     // when
     var resultActions = mockMvc.perform(post(POST_URL + "/{postSlug}/comment", slug)
                                             .contentType(MediaType.APPLICATION_JSON)
@@ -754,7 +755,6 @@ class PostControllerComponentTest {
                                 )
                        );
   }
-
 
   private void givenCommentWith(Post parentPost, String anchor, String body) {
     var comment = new Comment();

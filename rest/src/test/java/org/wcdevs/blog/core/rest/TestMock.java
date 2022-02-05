@@ -30,6 +30,9 @@ public final class TestMock {
   public static String anchor1() {
     return slug(COMMENT_BODY1);
   }
+  public static String anchor2() {
+    return slug(COMMENT_BODY2);
+  }
 
   public static String slug1() {
     return slug(POST_TITLE1);
