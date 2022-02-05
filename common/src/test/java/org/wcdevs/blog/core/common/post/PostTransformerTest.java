@@ -117,6 +117,7 @@ class PostTransformerTest {
     assertEquals(entity.getSlug(), dto.getSlug());
     assertEquals(entity.getBody(), dto.getBody());
     assertEquals(entity.getExcerpt(), dto.getExcerpt());
+    assertEquals(entity.getStatus(), dto.getStatus());
     assertNull(entity.getUuid());
   }
 
