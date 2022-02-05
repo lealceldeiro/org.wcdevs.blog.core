@@ -1,15 +1,11 @@
 package org.wcdevs.blog.core.rest;
 
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.io.IOException;
 import java.security.SecureRandom;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -19,22 +15,15 @@ import java.util.TimeZone;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.restdocs.payload.ResponseFieldsSnippet;
 import org.springframework.util.ResourceUtils;
 import org.wcdevs.blog.core.persistence.comment.CommentDto;
 import org.wcdevs.blog.core.persistence.post.PostDto;
 import org.wcdevs.blog.core.persistence.post.PostStatus;
 
 public final class TestsUtil {
-  public static final ResponseFieldsSnippet ERROR_RESPONSE_FIELDS
-      = responseFields(fieldWithPath("message").description("Error message"),
-                       fieldWithPath("context").description("Request context"),
-                       fieldWithPath("dateTime").description("Request date time"));
-
   private static final Random RANDOM = new SecureRandom();
 
   private static List<PostDto> SAMPLE_SLUG_DATA;
@@ -49,6 +38,8 @@ public final class TestsUtil {
                                                       .defaultTimeZone(TimeZone.getTimeZone("UTC"))
                                                       .build();
 
+  private static final String[] RANDOM_USERS = {"john", "susan", "edi", "sam", "peter", "jules"};
+
   static {
     try {
       SAMPLE_SLUG_DATA = readPosts("sample-post-slugs.json");
@@ -59,6 +50,10 @@ public final class TestsUtil {
     } catch (IOException e) {
       e.printStackTrace();
     }
+  }
+
+  public static String randomUsername() {
+    return RANDOM_USERS[RANDOM.nextInt(RANDOM_USERS.length)];
   }
 
   public static List<PostDto> readPosts(String file) throws IOException {
@@ -76,9 +71,7 @@ public final class TestsUtil {
   }
 
   public static PostDto samplePostTitleBody() {
-    var dto = nextElementFrom(SAMPLE_TITLE_BODY_DATA);
-    dto.setStatus(null);
-    return dto;
+    return nextElementFrom(SAMPLE_TITLE_BODY_DATA);
   }
 
   private static <T> T nextElementFrom(List<T> collection) {
@@ -178,17 +171,6 @@ public final class TestsUtil {
 
   public static <T> Page<T> pageOf(List<T> content) {
     return pageOf(content, Pageable.ofSize(10));
-  }
-
-  @SafeVarargs
-  public static <T> Page<T> pageOf(T element, T... elements) {
-    return pageOf(Stream.concat(Arrays.stream(elements),
-                                Stream.of(element))
-                        .collect(Collectors.toList()));
-  }
-
-  public static Pageable pageable() {
-    return Pageable.ofSize(10);
   }
 
   public static PostStatus aRandomPostStatus() {

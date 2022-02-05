@@ -2,7 +2,8 @@
 
 [![License: Apache](https://img.shields.io/badge/License-Apache%202.0-blue)](https://opensource.org/licenses/Apache-2.0) [![Java Style Checker](https://img.shields.io/badge/code%20style-checkstyle-blue?style=flat&logo=java&logoColor=f89820)](https://checkstyle.sourceforge.io/) [![Build and Publish](https://github.com/lealceldeiro/org.wcdevs.blog.core/actions/workflows/build-and-publish.yml/badge.svg)](https://github.com/lealceldeiro/org.wcdevs.blog.core/actions/workflows/build-and-publish.yml) [![codecov](https://codecov.io/gh/lealceldeiro/org.wcdevs.blog.core/branch/main/graph/badge.svg?token=CDXSJ1G7GE)](https://codecov.io/gh/lealceldeiro/org.wcdevs.blog.core) [![Core Application Deployment](https://github.com/lealceldeiro/org.wcdevs.blog.awsdeployer/actions/workflows/core-app-deployment.yml/badge.svg)](https://github.com/lealceldeiro/org.wcdevs.blog.awsdeployer/actions/workflows/core-app-deployment.yml)
 
-Holds `org.wcdevs.blog:core`, the core application (API) where all the back-end web-services live in.
+Holds `org.wcdevs.blog:core`, the core application (API) where all the back-end RESTful services
+live in.
 
 ## Contributing
 
@@ -13,37 +14,59 @@ Before start contributing to this project be sure you're familiar with our
 
 - Root (parent) module: `org.wcdevs.blog:core`
 - Submodules:
-  * `org.wcdevs.blog:common`: contains the common resources across the core application.
   * `org.wcdevs.blog:persistence`: contains all resources holding the logic to communicate with the persistence layer.
+  * `org.wcdevs.blog:common`: contains the common resources across the core application.
   * `org.wcdevs.blog:rest`: contains the exposed webservices.
 
-## Local development
+## Local setup
 
 ### Requirements
 
+#### Development (do active Java code development)
 - [Git](https://git-scm.com/)
 - [Java](https://jdk.java.net/) 11 (we use [SDKMAN](https://sdkman.io/) for Java versions management)
-- [Maven](https://maven.apache.org/index.html)
+- [Maven](https://maven.apache.org/index.html) (alternatively you can use the Maven wrapper by
+replacing all usages of the command `mvn` by `./mvnw`)
 - [Docker](https://www.docker.com/) (and [Docker Compose](https://docs.docker.com/compose/))
 - An IDE (such as [Intellij IDEA](https://www.jetbrains.com/idea/) or Eclipse)
 
-### Build the application image locally
-(scripts explained from a Unix environment perspective)
+#### Only running the API (run the whole stack to consume the API locally and view the API docs)
+- [Git](https://git-scm.com/)
+- [Docker](https://www.docker.com/) (and [Docker Compose](https://docs.docker.com/compose/))
 
-Run:
+### Debugging the application
 
-- `./mvnw clean package`
-- `docker build -t org.wcdevs.blog:core .` (*notice the dot (**.**) at the end*)
+- Clone the repo: `git clone https://github.com/lealceldeiro/org.wcdevs.blog.core.git`
+- Run `docker-compose up -d wcdevs_db keycloak.service` to start the database and the keycloak server
 
-For more info about docker run `docker --help`.
+  **Note**: macOS users must do instead `docker-compose -f docker-compose.yml -f docker-compose-override-mac.yml up -d wcdevs_db keycloak.service`
+- Run the Spring Boot application using your favorite IDE (use the `local` profile)
 
-### Running the whole stack with docker compose
+### Running the API (whole stack) with docker compose
 
-Run `docker-compose up -d`.
+- Clone the repo: `git clone https://github.com/lealceldeiro/org.wcdevs.blog.core.git`
+- Run
+```shell
+docker-compose -f docker-compose.yml -f docker-compose-override-keycloak-as-host.yml up -d wcdevs_db keycloak.service wcdevs_app
+```
+
+  **Note**: macOS users must do instead
+  ```shell
+docker-compose -f docker-compose.yml -f docker-compose-override-keycloak-as-host.yml -f docker-compose-override-mac.yml up -d wcdevs_db keycloak.service wcdevs_app
+```
 
 It can be stopped then using `docker-compose down`.
 
 For more info about docker compose run `docker-compose --help`.
+
+**Important:** If you want to do log-in using the started keycloak server you need to update the
+*hosts* file of the operating system by adding the following entry. This is needed for the browser
+to be able to resolve this URL to the localhost started server by docker-compose.
+```text
+127.0.0.1       keycloak.service
+```
+For more info about how to update the *hosts* file, please, check this
+[StackOverflow post](https://stackoverflow.com/a/19425153/5640649)
 
 #### Health check
 

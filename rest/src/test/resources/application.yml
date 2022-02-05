@@ -1,5 +1,4 @@
 spring:
-  # https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.external-config
   jpa:
     generate-ddl: false
     open-in-view: false
@@ -9,14 +8,19 @@ spring:
     properties:
       hibernate:
         globally_quoted_identifiers: "true"
+  datasource:
+    password: password
+    username: sa
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false
+    driver-class-name: org.h2.Driver
   flyway:
     connect-retries: 5
     create-schemas: true
     enabled: true
     driver-class-name: ${spring.datasource.driver-class-name}
     encoding: UTF-8
-    schemas: public
-    default-schema: public
+    schemas: PUBLIC
+    default-schema: PUBLIC
     password: ${spring.datasource.password}
     user: ${spring.datasource.username}
     url: ${spring.datasource.url}
@@ -30,21 +34,11 @@ spring:
     default-property-inclusion: non_null
     locale: en
 
-management:
-  endpoints:
-    web:
-      base-path: "/manage"
-  metrics:
-    export:
-      cloudwatch:
-        enabled: false
-
 core-app:
-  allowedOrigins: ${ALLOWED_ORIGINS}
+  allowedOrigins:
+    - "*"
 
-# https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.logging
 logging:
   level:
     root: info
-    # https://docs.awspring.io/spring-cloud-aws/docs/2.3.2/reference/html/index.html#amazon-sdk-configuration
     com.amazonaws.util.EC2MetadataUtils: error

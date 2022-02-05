@@ -2,7 +2,7 @@
 ==== Creating a new comment
 
 A `POST` request adds a new _Comment_ entry in the DB.
-This service is only available to users with enough permissions to create a new comments.
+This service is only available to users with enough permissions to create comments.
 
 include::__H_REQUEST.adoc[]
 

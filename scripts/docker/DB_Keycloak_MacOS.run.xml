@@ -1,8 +1,13 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="DB_Keycloak" type="docker-deploy" factoryName="docker-compose.yml" server-name="Docker">
+  <configuration default="false" name="DB_Keycloak_MacOS" type="docker-deploy" factoryName="docker-compose.yml" server-name="Docker">
     <deployment type="docker-compose.yml">
       <settings>
         <option name="envFilePath" value="" />
+        <option name="secondarySourceFiles">
+          <list>
+            <option value="docker-compose-override-mac.yml" />
+          </list>
+        </option>
         <option name="services">
           <list>
             <option value="wcdevs_db" />

@@ -9,4 +9,5 @@ open module org.wcdevs.blog.core.common {
   exports org.wcdevs.blog.core.common.post;
   exports org.wcdevs.blog.core.common.comment;
   exports org.wcdevs.blog.core.common.exception;
+  exports org.wcdevs.blog.core.common.util;
 }

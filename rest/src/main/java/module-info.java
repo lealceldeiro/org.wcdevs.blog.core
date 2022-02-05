@@ -20,8 +20,5 @@ open module org.wcdevs.blog.core.rest {
   requires org.slf4j;
   requires com.fasterxml.jackson.databind;
 
-  requires aws.java.sdk.cognitoidp;
-  requires aws.java.sdk.core;
-
   requires org.wcdevs.blog.core.common;
 }

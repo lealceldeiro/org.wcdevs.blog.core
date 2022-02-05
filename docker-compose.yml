@@ -9,7 +9,7 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
-        max_attempts: 10
+        max_attempts: 3
       replicas: 1
       resources:
         limits:
@@ -23,27 +23,29 @@ services:
       POSTGRES_USER: wcdevsu
       POSTGRES_DB: wcdevsdb
 
-  keycloak:
+  keycloak.service:
     image: jboss/keycloak:15.0.2
     ports:
-      - "8888:8080"
+      - "8888:8888"
     environment:
-      - PORT_KEYCLOAK=8080
       - KEYCLOAK_USER=keycloak
       - KEYCLOAK_PASSWORD=keycloak
       - DB_VENDOR=h2
-      - JAVA_OPTS= -Dkeycloak.migration.action=import -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.file=/tmp/wcdevs-realm.json
+      - JAVA_OPTS= -Djboss.http.port=8888 -Dkeycloak.migration.action=import -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.file=/tmp/wcdevs-realm.json
     volumes:
       - ./appmocks/wcdevs-realm.json:/tmp/wcdevs-realm.json
 
   wcdevs_app:
     image: org.wcdevs.blog:core
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "80:8080"
       - "82:8082"
     deploy:
       restart_policy:
-        max_attempts: 10
+        max_attempts: 5
         condition: on-failure
       replicas: 1
       resources:
@@ -52,14 +54,16 @@ services:
           memory: "1024M"
     depends_on:
       - wcdevs_db
-      - keycloak
+      - keycloak.service
     environment:
-      CORE_APP_DB_URL: jdbc:postgresql://wcdevs_db:5432/wcdevsdb
-      CORE_APP_DB_PASSWORD: wcdevspwd
-      CORE_APP_DB_USER: wcdevsu
-      CORE_APP_DB_DRIVER: org.postgresql.Driver
-      CORE_APP_LISTEN_PORT: 8080
-      CORE_APP_MANAGEMENT_PORT: 8082
+      SPRING_PROFILES_ACTIVE: local
+      SPRING_DATASOURCE_URL: jdbc:postgresql://wcdevs_db:5432/wcdevsdb
+      SPRING_DATASOURCE_DRIVERCLASSNAME: org.postgresql.Driver
+      SPRING_DATASOURCE_USERNAME: wcdevsu
+      SPRING_DATASOURCE_PASSWORD: wcdevspwd
+      # 8888: internal port exposed from WildFly server from service "keycloak.service"
+      SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_COGNITO_ISSUERURI: http://keycloak.service:8888/auth/realms/wcdevs
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUERURI: http://keycloak.service:8888/auth/realms/wcdevs
 
 volumes:
   wcdevs_db_data:

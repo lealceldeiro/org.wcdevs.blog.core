@@ -1,0 +1,8 @@
+# see https://docs.docker.com/compose/extends/#adding-and-overriding-configuration
+version: "3.9"
+
+services:
+
+  keycloak.service:
+    volumes:
+      - ./appmocks/runtime-wcdevs-realm.json:/tmp/wcdevs-realm.json
