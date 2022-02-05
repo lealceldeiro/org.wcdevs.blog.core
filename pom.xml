@@ -34,19 +34,6 @@
 
   <dependencyManagement>
     <dependencies>
-      <!-- https://docs.awspring.io/spring-cloud-aws/docs/2.3.2/reference/html/index.html#basic-setup -->
-      <dependency>
-        <groupId>io.awspring.cloud</groupId>
-        <artifactId>spring-cloud-aws-dependencies</artifactId>
-        <version>${spring-cloud-aws.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>io.awspring.cloud</groupId>
-        <artifactId>spring-cloud-starter-aws</artifactId>
-        <version>${spring-cloud-aws.version}</version>
-      </dependency>
       <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>servlet-api</artifactId>

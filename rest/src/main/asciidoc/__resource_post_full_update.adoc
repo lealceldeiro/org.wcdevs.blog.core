@@ -11,7 +11,7 @@ be set to `null` (probably causing some validations to fail).
 For those fields which are not wished to be changed there are two options:
 
 1. Send in the payload the same value, without change
-2. Use a partial <<resource-post-partial-update,update (`PATCH`)>> request
+2. Use a <<resource-post-partial-update,partial update (`PATCH`)>> request
 
 include::__H_REQUEST.adoc[]
 

@@ -1,4 +1,4 @@
-= wcDevs Blog API docs
+= wcdevs.org REST API docs
 Asiel Leal Celdeiro <lealceldeiro@gmail.com>
 :doctype: book
 :icons: font

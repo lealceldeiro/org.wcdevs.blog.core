@@ -4,7 +4,7 @@
 A `GET` request retrieves a list of the comments published for a given post.
 
 This endpoint should rarely be used since maybe it's more useful to retrieve the list of root
-comments (see <<resource-comment-list-root-by-post,retrieve root comments of a post>>) or child comments (see <<resource-comment-list-children,retrieve child comments>>) nested under another comment.
+comments (see <<resource-comment-list-root-by-post,retrieve root comments of a post>>) or child comments (see <<resource-comment-list-children,retrieve child comments>>), nested under another comment.
 
 include::__H_REQUEST.adoc[]
 

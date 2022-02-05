@@ -1,5 +1,11 @@
 package org.wcdevs.blog.core.common;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.wcdevs.blog.core.persistence.post.PartialPostDto;
+import org.wcdevs.blog.core.persistence.post.PostDto;
+import org.wcdevs.blog.core.persistence.post.PostStatus;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -7,11 +13,6 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.wcdevs.blog.core.persistence.post.PartialPostDto;
-import org.wcdevs.blog.core.persistence.post.PostDto;
 
 public final class TestsUtil {
 
@@ -40,17 +41,18 @@ public final class TestsUtil {
   public static PostDto buildDto(String title, String slug, String body, String excerpt,
                                  LocalDateTime publishedOn, LocalDateTime updatedOn,
                                  String publishedBy, String updatedBy) {
-    return dtoBuilder(title, slug, body, excerpt, publishedOn, updatedOn, publishedBy,
-                      updatedBy).build();
+    return dtoBuilder(title, slug, body, excerpt, PostStatus.PUBLISHED, publishedOn, updatedOn,
+                      publishedBy, updatedBy).build();
   }
 
   public static PostDto.PostDtoBuilder dtoBuilder() {
-    return dtoBuilder(aString(), aString(), aString(), aString(), LocalDateTime.now(),
-                      LocalDateTime.now(), aString(), aString());
+    return dtoBuilder(aString(), aString(), aString(), aString(), PostStatus.PUBLISHED,
+                      LocalDateTime.now(), LocalDateTime.now(), aString(), aString());
   }
 
   public static PostDto.PostDtoBuilder dtoBuilder(String title, String slug, String body,
-                                                  String excerpt, LocalDateTime publishedOn,
+                                                  String excerpt, PostStatus status,
+                                                  LocalDateTime publishedOn,
                                                   LocalDateTime updatedOn, String publishedBy,
                                                   String updatedBy) {
     return PostDto.builder()
@@ -58,6 +60,7 @@ public final class TestsUtil {
                   .slug(slug)
                   .body(body)
                   .excerpt(excerpt)
+                  .status(status)
                   .publishedOn(publishedOn)
                   .updatedOn(updatedOn)
                   .publishedBy(publishedBy)

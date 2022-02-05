@@ -21,7 +21,7 @@ public enum PostStatus {
    */
   SCHEDULED(2),
   /**
-   * The post is ready to be viewed, but only to those with a given password.
+   * The post is ready to be viewed, but only by those with a given password.
    */
   PROTECTED(3),
   /**

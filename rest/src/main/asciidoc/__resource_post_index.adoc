@@ -4,6 +4,8 @@
 The post resource is used to create, update, get and delete information related to the concept of
 a "Post".
 
+include::__resource_post_statuses.adoc[]
+
 include::__resource_post_create.adoc[]
 
 include::__resource_post_create_draft.adoc[]
@@ -17,6 +19,8 @@ include::__resource_post_full_update.adoc[]
 include::__resource_post_partial_update.adoc[]
 
 include::__resource_post_list.adoc[]
+
+include::__resource_post_list_by_status.adoc[]
 
 include::__resource_post_get.adoc[]
 

@@ -1,7 +1,7 @@
 [[resource-post-list-by-status]]
 ==== Listing posts with a given status
 
-A `GET` request retrieves a list of posts information by filtering by posts with a given status.
+A `GET` request retrieves a list of posts by filtering by posts with a given status.
 
 include::__H_REQUEST.adoc[]
 

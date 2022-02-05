@@ -4,24 +4,20 @@
 A `POST` request adds a new _Post_ entry in the DB with the status *DRAFT*.
 This service is only available to users with enough permissions to create a new post.
 
-This is different from creating a post using the regular (default)
-<<resource-post-create, create post>> request in that the values sent in this request don't
-necessarily need to be valid. For example: the `title` is a mandatory field to be able to have a
-post in _published_ status, but when this endpoint is called those values (like `title`) can have or
-not values.
+This is different from creating a post using the regular <<resource-post-create, create post>>
+request in that the values sent in this request don't necessarily need to be valid (according to the specified <<resource-post-create-constraints,constraints>>).
+For example: the `title` is a mandatory field to be able to have a post in _published_ status, but when this endpoint is called those values (like `title`) can have or not values.
 
-The point is that a draft is considered something temporal that will (and must) be changed later
-before being actually published, hence these values can be (temporarily) incorrect, until they're
-fixed later.
+The point is that a draft is considered something temporal that will (and must) be changed later before the post being actually published, hence these values can be (temporarily) incorrect, until they're fixed later.
 
 Posts created in draft mode won't be listed in the default
-<<resource-post-list, endpoint for listing posts>>. Instead, they're only visible from the
+<<resource-post-list, endpoint for listing posts>>.
+Instead, they're only visible from the
 <<resource-post-list-by-status, endpoint to request posts with a specific status>> (by using the
 `DRAFT` one in the request).
 
 Note: To turn a _draft_ post into a post with _published_ status, a
-<<resource-post-full-update, full update>> must be made (where the `status` is set to `PUBLISHED`,
-but it's optional in the payload).
+<<resource-post-full-update, full update>> must be made (where the `status` is set to `PUBLISHED`).
 
 include::__H_REQUEST.adoc[]
 

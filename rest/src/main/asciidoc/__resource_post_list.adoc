@@ -1,7 +1,7 @@
 [[resource-post-list]]
 ==== Listing posts
 
-A `GET` request retrieves a list of posts information.
+A `GET` request retrieves a list of posts.
 
 include::__H_REQUEST.adoc[]
 
