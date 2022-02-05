@@ -266,7 +266,9 @@ class PostControllerComponentTest {
                                               ),
                                  responseFields(
                                      fieldWithPath("slug")
-                                         .description("Post slug")
+                                         .description("Post slug"),
+                                     fieldWithPath("status")
+                                         .description("Post status")
                                                )
                                 )
                        );
@@ -299,7 +301,9 @@ class PostControllerComponentTest {
                                               ),
                                  responseFields(
                                      fieldWithPath("slug")
-                                         .description("Post slug. Used to identify the post")
+                                         .description("Post slug. Used to identify the post"),
+                                     fieldWithPath("status")
+                                         .description("Post status")
                                                )
                                 )
                        );
@@ -560,7 +564,9 @@ class PostControllerComponentTest {
                                               ),
                                  responseFields(
                                      fieldWithPath("slug")
-                                         .description("Post slug")
+                                         .description("Post slug"),
+                                     fieldWithPath("status")
+                                         .description("Post status")
                                                )
                                 )
                        );
@@ -615,7 +621,9 @@ class PostControllerComponentTest {
                                               ),
                                  responseFields(
                                      fieldWithPath("slug")
-                                         .description("Post slug")
+                                         .description("Post slug"),
+                                     fieldWithPath("status")
+                                         .description("Post status")
                                                )
                                 )
                        );
