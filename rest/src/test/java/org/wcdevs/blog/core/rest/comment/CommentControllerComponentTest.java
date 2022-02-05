@@ -203,7 +203,7 @@ class CommentControllerComponentTest {
                                  pathParameters(
                                      parameterWithName("parentAnchor")
                                          .description("Parent comment anchor: anchor of the comment"
-                                                      + " under which the current comment is "
+                                                      + " under which the child comments are "
                                                       + "nested")
                                                ),
                                  DocUtil.pageableFieldsWith(
@@ -230,7 +230,7 @@ class CommentControllerComponentTest {
   }
 
   @Test
-  void getChildrenCommentsPutMethodNotSupported() throws Exception {
+  void getChildCommentsPutMethodNotSupported() throws Exception {
     // given
     var parentPost = givenPostWith(POST_TITLE1, slug1(), POST_BODY1, POST_EXCERPT1);
 
@@ -289,7 +289,7 @@ class CommentControllerComponentTest {
                                  preprocessResponse(prettyPrint()),
                                  pathParameters(
                                      parameterWithName("commentAnchor")
-                                         .description("Comment anchor.")
+                                         .description("Comment anchor")
                                                ),
                                  requestFields(
                                      fieldWithPath("body")

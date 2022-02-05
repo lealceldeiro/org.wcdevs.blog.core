@@ -1,8 +1,9 @@
 [[resource-post-create]]
 ==== Creating a new post
 
-A `POST` request adds a new _Post_ entry in the DB (with *_PUBLISHED_* status by default if it's not specified otherwise).
+A `POST` request adds a new _Post_ entry in the DB.
 This service is only available to users with enough permissions to create a new post.
+Also, there are certain <<resource-post-create-constraints,constraints>> when creating a post.
 
 include::__H_REQUEST.adoc[]
 
