@@ -49,6 +49,8 @@ public final class TestsUtil {
                                                       .defaultTimeZone(TimeZone.getTimeZone("UTC"))
                                                       .build();
 
+  private static final String[] RANDOM_USERS = {"john", "susan", "edi", "sam", "peter", "jules"};
+
   static {
     try {
       SAMPLE_SLUG_DATA = readPosts("sample-post-slugs.json");
@@ -59,6 +61,10 @@ public final class TestsUtil {
     } catch (IOException e) {
       e.printStackTrace();
     }
+  }
+
+  public static String randomUsername() {
+    return RANDOM_USERS[RANDOM.nextInt(RANDOM_USERS.length)];
   }
 
   public static List<PostDto> readPosts(String file) throws IOException {
@@ -76,9 +82,7 @@ public final class TestsUtil {
   }
 
   public static PostDto samplePostTitleBody() {
-    var dto = nextElementFrom(SAMPLE_TITLE_BODY_DATA);
-    dto.setStatus(null);
-    return dto;
+    return nextElementFrom(SAMPLE_TITLE_BODY_DATA);
   }
 
   private static <T> T nextElementFrom(List<T> collection) {
