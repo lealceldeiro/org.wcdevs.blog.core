@@ -1,0 +1,44 @@
+spring:
+  jpa:
+    generate-ddl: false
+    open-in-view: false
+    show-sql: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        globally_quoted_identifiers: "true"
+  datasource:
+    password: password
+    username: sa
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false
+    driver-class-name: org.h2.Driver
+  flyway:
+    connect-retries: 5
+    create-schemas: true
+    enabled: true
+    driver-class-name: ${spring.datasource.driver-class-name}
+    encoding: UTF-8
+    schemas: PUBLIC
+    default-schema: PUBLIC
+    password: ${spring.datasource.password}
+    user: ${spring.datasource.username}
+    url: ${spring.datasource.url}
+    locations: classpath:db/migration/{vendor}
+  sql:
+    init:
+      mode: never
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: UTC
+    default-property-inclusion: non_null
+    locale: en
+
+core-app:
+  allowedOrigins:
+    - "*"
+
+logging:
+  level:
+    root: info
+    com.amazonaws.util.EC2MetadataUtils: error

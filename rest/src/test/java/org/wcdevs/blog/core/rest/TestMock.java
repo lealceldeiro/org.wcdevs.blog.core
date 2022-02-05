@@ -21,6 +21,16 @@ public final class TestMock {
       = "Orci varius natoque penatibus et magnis dis parturient montes.";
   public static final String POST_EXCERPT3 = "Penatibus et magnis dis parturient montes.";
 
+  public static final String COMMENT_BODY1 = "Est aut consequatur ad nisi est est vero iste. Quia "
+                                             + "nulla nulla dolorem dignissimos doloribus maiores.";
+
+  public static final String COMMENT_BODY2 = "Aliquid et aspernatur eligendi porro minus amet. "
+                                             + "Ut esse assumenda maiores et incidunt.";
+
+  public static String anchor1() {
+    return slug(COMMENT_BODY1);
+  }
+
   public static String slug1() {
     return slug(POST_TITLE1);
   }
