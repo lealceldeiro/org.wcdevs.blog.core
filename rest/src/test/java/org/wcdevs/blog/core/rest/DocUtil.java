@@ -14,14 +14,7 @@ import org.wcdevs.blog.core.persistence.post.PostStatus;
 public final class DocUtil {
   public static final String BASE_URL = "/comment/";
 
-  public static final String POST_STATUS = "status";
-  public static final String POST_STATUS_DESC
-      = "Status of the post. Optional (default " + PostStatus.PUBLISHED + "). It must be one of "
-        + Arrays.stream(PostStatus.values()).map(Enum::name).collect(Collectors.joining(", "));
-
   public static final String POST_SLUG = "postSlug";
-  public static final String POST_SLUG_DESC
-      = "The slug of the post where the comment is published";
 
   public static final String BODY = "body";
   public static final String BODY_DESC = "Content of the comment";
@@ -40,9 +33,6 @@ public final class DocUtil {
         + "is nested";
 
   public static final String PARENT_COMMENT_ANCHOR = "parentCommentAnchor";
-  public static final String PARENT_COMMENT_ANCHOR_DESC
-      = "Anchor of the parent comment. This will be null for root comments (those not nested under"
-        + " any other comment)";
 
   public static final String LAST_UPDATED = "lastUpdated";
   public static final String LAST_UPDATED_DESC = "Last time the comment was updated";
