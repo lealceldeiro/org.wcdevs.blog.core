@@ -54,8 +54,8 @@ public class PostDto {
   private String excerpt;
 
   @Setter
-  @Builder.Default
-  private PostStatus status = PostStatus.PUBLISHED;
+  @NotNull
+  private PostStatus status;
 
   // only to be sent to clients
   @Setter
