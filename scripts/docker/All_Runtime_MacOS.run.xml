@@ -5,6 +5,7 @@
         <option name="envFilePath" value="" />
         <option name="secondarySourceFiles">
           <list>
+            <option value="docker-compose-override-keycloak-as-host.yml" />
             <option value="docker-compose-override-mac.yml" />
           </list>
         </option>

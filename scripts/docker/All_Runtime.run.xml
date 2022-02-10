@@ -3,6 +3,11 @@
     <deployment type="docker-compose.yml">
       <settings>
         <option name="envFilePath" value="" />
+        <option name="secondarySourceFiles">
+          <list>
+            <option value="docker-compose-override-keycloak-as-host.yml" />
+          </list>
+        </option>
         <option name="services">
           <list>
             <option value="wcdevs_db" />
