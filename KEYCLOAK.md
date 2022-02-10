@@ -15,7 +15,7 @@ Also, there's a client registration configuration with initial access token:
 eyJhbGciOiJIUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIxMmMyMTQ3Yi1iM2NiLTQ3YWUtOTY0Zi1mMGM4MDIzMjZhYTUifQ.eyJleHAiOjE2Njg4NTAwMjYsImlhdCI6MTYzNzMxNDAyNiwianRpIjoiNTIxNDk0ZjMtYzAyOS00ZTE1LWI1OTItYzM2M2JmNjQ0OGFkIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDozMDAwL3JlYWxtcy93Y2RldnMiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAvcmVhbG1zL3djZGV2cyIsInR5cCI6IkluaXRpYWxBY2Nlc3NUb2tlbiJ9.d2_SDmbCAFXtEQPiud5fxSeoBAMh6e0T_veOh8KJncQ
 ```
 
-And two clients already configured with the following data:
+And three clients already configured with the following data:
 
 #### Front-end client
 
@@ -40,6 +40,19 @@ And two clients already configured with the following data:
 - Secret: `857964ff-674c-4892-a31f-50a6df8c319e`
 - Issuer URL: `http://localhost:8888/auth/realms/wcdevs` (or `http://keycloak.service:8888/auth/realms/wcdevs` if the **runtime** mock data is loaded)
 - Root Url: `http://localhost:8888` (or `http://keycloak.service:8888` if the **runtime** mock data is loaded)
+- Web origins: `*`
+
+#### Public client
+
+- Client ID: `public-client`
+- Access type: `public`
+- Name: `wcDevs public client`
+- Description: `A public client for getting tokens directly from keycloak`
+- Client Protocol: `openid-connect`
+- Implicit Flow Enabled: `enabled`
+- Issuer URL: `http://localhost:8888/auth/realms/wcdevs` (or `http://keycloak.service:8888/auth/realms/wcdevs` if the **runtime** mock data is loaded)
+- Root Url: `http://localhost:8888` (or `http://keycloak.service:8888` if the **runtime** mock data is loaded)
+- Valid redirect URIs: `*`
 - Web origins: `*`
 
 ##### If any of this mocked data needs to be updated do the following, from the root project directory:
