@@ -11,4 +11,6 @@ include::__introduction.adoc[]
 
 include::__overview_index.adoc[]
 
+include::_auth_index.adoc[]
+
 include::_resource_index.adoc[]
