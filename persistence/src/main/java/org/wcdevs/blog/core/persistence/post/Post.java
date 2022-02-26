@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.Type;
 
 /**
  * Entity class that represents a DB table abstraction containing a post information.
@@ -45,6 +46,7 @@ public class Post {
   private String slug;
 
   @Lob
+  @Type(type = "org.hibernate.type.TextType")
   @Column(name = "body", nullable = false)
   private String body;
 
