@@ -1,0 +1,24 @@
+[[auth]]
+== Authentication/Authorization
+
+The project is configured to have support for authentication, authorization, and protection against
+common exploits, provided by the https://docs.spring.io/spring-security/reference/index.html[Spring Security]
+project.
+
+=== Secured resources
+
+When a request is performed to any protected endpoint a JWT token must be sent along with the
+request.
+
+When there's an unauthenticated/unauthorized request a `401` Http response code will be returned.
+
+=== Amazon Cognito
+
+Behind scenes the REST API uses cognito as an identity provider along with OAuth2. This means that a
+valid JTW must be retrieved from _Cognito_ and provided along the proper _authentication_ header in
+the API requests which require it.
+
+To learn how to retrieve a JWT from cognito, please follow the official AWS instructions here:
+
+- https://aws.amazon.com/blogs/mobile/understanding-amazon-cognito-user-pool-oauth-2-0-grants/[Understanding Amazon Cognito user pool OAuth 2.0 grants].
+- https://medium.com/codefully-io/authentication-with-aws-cognito-react-and-express-b3acf17d37e6[Medium Article: Authentication with AWS Cognito, React and express]
