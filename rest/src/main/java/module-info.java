@@ -15,6 +15,8 @@ open module org.wcdevs.blog.core.rest {
   requires spring.security.oauth2.jose;
   requires spring.tx;
 
+  requires org.apache.tomcat.embed.core;
+
   requires lombok;
 
   requires org.slf4j;
