@@ -25,7 +25,7 @@ class AbstractExceptionHandlerTest {
       }
     };
 
-    var actualErrorEntity = defaultHandler.handle(mock(Throwable.class), mock(WebRequest.class));
+    var actualErrorEntity = defaultHandler.handle(new Throwable(), mock(WebRequest.class));
     assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, actualErrorEntity.getStatusCode());
     assertNotNull(actualErrorEntity.getBody());
     assertNotNull(actualErrorEntity.getBody().dateTime);
