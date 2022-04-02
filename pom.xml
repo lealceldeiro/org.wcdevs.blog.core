@@ -23,7 +23,7 @@
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
     <!--versions-->
-    <spring.version>2.5.6</spring.version>
+    <spring.version>2.6.5</spring.version>
     <maven-checkstyle-plugin.version>3.1.2</maven-checkstyle-plugin.version>
     <spring-cloud-aws.version>2.3.2</spring-cloud-aws.version>
 
@@ -54,7 +54,7 @@
           <dependency>
             <groupId>com.puppycrawl.tools</groupId>
             <artifactId>checkstyle</artifactId>
-            <version>8.44</version>
+            <version>10.1</version>
           </dependency>
         </dependencies>
         <configuration>

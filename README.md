@@ -34,7 +34,9 @@ replacing all usages of the command `mvn` by `./mvnw`)
 - [Git](https://git-scm.com/)
 - [Docker](https://www.docker.com/) (and [Docker Compose](https://docs.docker.com/compose/))
 
-### Debugging the application
+### Running the application
+
+#### Development mode
 
 - Clone the repo: `git clone https://github.com/lealceldeiro/org.wcdevs.blog.core.git`
 - Run `docker-compose up -d wcdevs_db keycloak.service` to start the database and the keycloak server
@@ -42,7 +44,7 @@ replacing all usages of the command `mvn` by `./mvnw`)
   **Note**: macOS users must do instead `docker-compose -f docker-compose.yml -f docker-compose-override-mac.yml up -d wcdevs_db keycloak.service`
 - Run the Spring Boot application using your favorite IDE (use the `local` profile)
 
-### Running the API (whole stack) with docker compose
+#### Running the API (whole stack) with docker compose
 
 - Clone the repo: `git clone https://github.com/lealceldeiro/org.wcdevs.blog.core.git`
 - Run
