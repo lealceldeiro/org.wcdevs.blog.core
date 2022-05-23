@@ -14,7 +14,8 @@ Before start contributing to this project be sure you're familiar with our
 
 - Root (parent) module: `org.wcdevs.blog:core`
 - Submodules:
-  * `org.wcdevs.blog:persistence`: contains all resources holding the logic to communicate with the persistence layer.
+  * `org.wcdevs.blog:persistence`: contains all resources holding the logic to communicate with the
+persistence layer.
   * `org.wcdevs.blog:common`: contains the common resources across the core application.
   * `org.wcdevs.blog:rest`: contains the exposed webservices.
 
@@ -98,6 +99,7 @@ http://localhost/docs/index.html
 
 #### Keycloak
 
-To access the keycloak admin console navigate to `http://localhost:8888` and login using as a username and password `keycloak`.
+To access the keycloak admin console navigate to `http://localhost:8888` and login using as a
+username and password `keycloak`.
 
 For more info see the [keycloak docs](./KEYCLOAK.md)
