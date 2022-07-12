@@ -66,7 +66,7 @@ jobs:
       - name: Build with Maven
         # -B,--batch-mode
         # see mvn --help for more info
-        run: mvn -B clean test --file pom.xml
+        run: ./mvnw -B clean test --file pom.xml
 
       - name: Codecov
         uses: codecov/codecov-action@v2
