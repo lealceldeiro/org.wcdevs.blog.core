@@ -1,5 +1,5 @@
 # general ref: https://docs.spring.io/spring-boot/docs/2.6.4/reference/htmlsingle/#container-images
-FROM openjdk:11-jdk-slim as BUILD_STAGE
+FROM eclipse-temurin:17-jdk-alpine as BUILD_STAGE
 
 ARG app_jar_name="org.wcdevs.blog-rest"
 
@@ -24,7 +24,7 @@ RUN ./mvnw -B clean package
 # ref: http://www.gnu.org/software/coreutils/mkdir
 RUN mkdir -p dependencies && (cd dependencies; jar -xf ../rest/target/${app_jar_name}.jar)
 
-FROM openjdk:11-jre-slim as RUN_STAGE
+FROM eclipse-temurin:17-jre-alpine as RUN_STAGE
 LABEL author="Asiel Leal Celdeiro"
 
 ARG app_port=8080
@@ -36,9 +36,9 @@ EXPOSE ${management_port}
 RUN mkdir -p "/wcd_app"
 
 # ref: https://spring.io/guides/gs/spring-boot-docker/
-RUN adduser --system --group wcdevs
-RUN chown -R wcdevs /wcd_app
-USER wcdevs:wcdevs
+RUN addgroup -S wcdevs && adduser -S wcdevsuser -G wcdevs
+RUN chown -R wcdevsuser /wcd_app
+USER wcdevsuser
 
 COPY --from=BUILD_STAGE /workspace/dependencies/BOOT-INF/lib /wcd_app/lib
 COPY --from=BUILD_STAGE /workspace/dependencies/META-INF /wcd_app/META-INF
