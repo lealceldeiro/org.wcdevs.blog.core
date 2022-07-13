@@ -20,9 +20,9 @@
 
   <properties>
     <!-- platform -->
-    <java.version>11</java.version>
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
+    <java.version>17</java.version>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
     <!--versions-->
     <spring.version>2.7.1</spring.version>
     <maven-checkstyle-plugin.version>3.1.2</maven-checkstyle-plugin.version>
@@ -83,8 +83,8 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>11</source>
-          <target>11</target>
+          <source>17</source>
+          <target>17</target>
           <parameters>true</parameters>
           <annotationProcessorPaths>
             <path>
@@ -119,6 +119,13 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+      <!-- TODO: use inherited plugin version when springboot starter uses this or newer version:-->
+      <!-- TODO: Java 17 not supported by version provided by the starter-->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.0.0-M5</version>
       </plugin>
     </plugins>
   </build>

@@ -25,7 +25,7 @@ persistence layer.
 
 #### Development (do active Java code development)
 - [Git](https://git-scm.com/)
-- [Java](https://jdk.java.net/) 11 (we use [SDKMAN](https://sdkman.io/) for Java versions management)
+- [Java](https://jdk.java.net/) 17 (we use [SDKMAN](https://sdkman.io/) for Java versions management)
 - [Maven](https://maven.apache.org/index.html) (alternatively you can use the Maven wrapper by
 replacing all usages of the command `mvn` by `./mvnw`)
 - [Docker](https://www.docker.com/) (and [Docker Compose](https://docs.docker.com/compose/))
