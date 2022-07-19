@@ -281,10 +281,12 @@ class PostControllerComponentTest {
     var optional = " Not mandatory while creating a draft.";
 
     // language=JSON
-    var payload = "{\n"
-                  + "  \"title\": \"\",\n"
-                  + "  \"body\": \"A draft for an idea... but even without a title yet\"\n"
-                  + "}";
+    var payload = """
+                  {
+                    "title": "",
+                    "body": "A draft for an idea... but even without a title yet"
+                  }
+                  """;
 
     // when
     var resultActions = mockMvc.perform(post(POST_URL + "/status/DRAFT")
