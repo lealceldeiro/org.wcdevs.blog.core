@@ -173,13 +173,13 @@ jobs:
             -c accountId=${{ secrets.AWS_ACCOUNT_ID }} \
             -c region=${{ secrets.AWS_DEFAULT_REGION }} \
             -c allowedOrigins=${{ secrets.CORE_APP_ALLOWED_ORIGINS }} \
-            -c environmentName=${ DEPLOY_ENV } \
+            -c environmentName=${{ env.DEPLOY_ENV }} \
             -c applicationName=${{ env.APP_NAME }} \
             -c dockerRepositoryName=${{ env.ECR_REPO_NAME }} \
-            -c dockerImageTag=${ DOCKER_IMAGE }
+            -c dockerImageTag=${{ env.DOCKER_IMAGE }}
 
       - name: AWS Clean Up
         if: ${{ env.DEPLOY_ENV == 'staging' || env.DEPLOY_ENV == 'prod' }}
         run: |
-          aws cloudformation describe-stacks --region ${{ secrets.AWS_DEFAULT_REGION }} --query "Stacks[].StackName" --output text | sed -e "s/\s\+/\n/g" | grep -e "${ DEPLOY_ENV }-${{ env.APP_NAME }}-parameters-be-service-stack-.*" | sort -r | tail -n+2 > stacks_to_delete.txt
+          aws cloudformation describe-stacks --region ${{ secrets.AWS_DEFAULT_REGION }} --query "Stacks[].StackName" --output text | sed -e "s/\s\+/\n/g" | grep -e "${{ env.DEPLOY_ENV }}-${{ env.APP_NAME }}-parameters-be-service-stack-.*" | sort -r | tail -n+2 > stacks_to_delete.txt
           for stack in $(cat stacks_to_delete.txt); do aws cloudformation delete-stack --stack-name $stack --region ${{ secrets.AWS_DEFAULT_REGION }};  done
