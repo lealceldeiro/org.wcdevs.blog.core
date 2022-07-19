@@ -59,6 +59,7 @@ class JwtCognitoConverterTest {
   }
 
   @Test
+  @SuppressWarnings("unchecked")
   void providerAuthoritiesClassCastException() {
     // given
     JwtCognitoConverter converter = new JwtCognitoConverter();

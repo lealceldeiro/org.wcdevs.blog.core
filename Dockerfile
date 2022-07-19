@@ -10,17 +10,18 @@ COPY mvnw .
 COPY .mvn .mvn
 
 COPY pom.xml .
+COPY awsdeployer/pom.xml ./awsdeployer/pom.xml
 COPY persistence/pom.xml ./persistence/pom.xml
 COPY common/pom.xml ./common/pom.xml
 COPY rest/pom.xml ./rest/pom.xml
 
-RUN ./mvnw -B -f pom.xml dependency:go-offline
+RUN ./mvnw -pl '!awsdeployer' -B -f pom.xml dependency:go-offline
 
 COPY persistence/src ./persistence/src/
 COPY common/src ./common/src/
 COPY rest/src ./rest/src/
 
-RUN ./mvnw -B clean package
+RUN ./mvnw -pl '!awsdeployer' -B clean package
 # ref: http://www.gnu.org/software/coreutils/mkdir
 RUN mkdir -p dependencies && (cd dependencies; jar -xf ../rest/target/${app_jar_name}.jar)
 

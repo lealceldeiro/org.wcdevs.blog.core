@@ -71,9 +71,9 @@ class CommentServiceImplTest {
     when(savedComment.getAnchor()).thenReturn(savedCommentAnchor);
 
     when(postRepository.findPostUuidWithSlug(postSlug)).thenReturn(uuiStub);
-    when(postRepository.getById(uuiStub.get())).thenReturn(post);
+    when(postRepository.getReferenceById(uuiStub.get())).thenReturn(post);
     when(commentRepository.getCommentUuidWithAnchor(parentCommentAnchor)).thenReturn(uuiStub);
-    when(commentRepository.getById(uuiStub.get())).thenReturn(parentComment);
+    when(commentRepository.getReferenceById(uuiStub.get())).thenReturn(parentComment);
     when(commentRepository.save(savedComment)).thenReturn(savedComment);
     when(commentTransformer.newEntityFromDto(dtoArg)).thenReturn(savedComment);
 
@@ -81,9 +81,9 @@ class CommentServiceImplTest {
 
     assertNotNull(returnedDto);
     verify(postRepository, times(1)).findPostUuidWithSlug(postSlug);
-    verify(postRepository, times(1)).getById(uuiStub.get());
+    verify(postRepository, times(1)).getReferenceById(uuiStub.get());
     verify(commentRepository, times(1)).getCommentUuidWithAnchor(parentCommentAnchor);
-    verify(commentRepository, times(1)).getById(uuiStub.get());
+    verify(commentRepository, times(1)).getReferenceById(uuiStub.get());
     verify(dtoArg, times(1)).setPost(post);
     verify(dtoArg, times(1)).setParentComment(parentComment);
     verify(commentRepository, times(1)).save(savedComment);

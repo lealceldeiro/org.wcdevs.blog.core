@@ -27,6 +27,7 @@
     <spring.version>2.7.1</spring.version>
     <maven-checkstyle-plugin.version>3.1.2</maven-checkstyle-plugin.version>
     <spring-cloud-aws.version>2.3.2</spring-cloud-aws.version>
+    <cdk-construct-version>3.0.1</cdk-construct-version>
 
     <!-- custom props -->
     <checkstyle-skip>false</checkstyle-skip>
@@ -34,6 +35,11 @@
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>org.wcdevs.blog</groupId>
+        <artifactId>cdk</artifactId>
+        <version>${cdk-construct-version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -41,6 +47,7 @@
     <module>persistence</module>
     <module>common</module>
     <module>rest</module>
+    <module>awsdeployer</module>
   </modules>
 
   <build>

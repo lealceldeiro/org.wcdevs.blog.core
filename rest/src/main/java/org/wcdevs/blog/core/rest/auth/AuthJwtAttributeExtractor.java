@@ -17,8 +17,8 @@ public class AuthJwtAttributeExtractor implements AuthAttributeExtractor {
   @Override
   @Nullable
   public <R> R extract(Object principal, String property) {
-    if (principal instanceof Jwt) {
-      var claims = ((Jwt) principal).getClaims();
+    if (principal instanceof Jwt jwt) {
+      var claims = jwt.getClaims();
 
       @SuppressWarnings("unchecked")
       var attr = (R) claims.get(property);

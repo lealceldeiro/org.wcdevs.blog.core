@@ -56,3 +56,6 @@ hs_err_pid*
 target/
 !**/src/main/**/target/
 !**/src/test/**/target/
+
+# node
+awsdeployer/node_modules/

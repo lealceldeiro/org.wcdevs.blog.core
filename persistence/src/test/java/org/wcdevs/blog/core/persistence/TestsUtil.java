@@ -6,7 +6,7 @@ import java.util.UUID;
 import org.wcdevs.blog.core.persistence.post.PostStatus;
 
 public final class TestsUtil {
-  private static Random RANDOM = new SecureRandom();
+  private static final Random RANDOM = new SecureRandom();
 
   private TestsUtil() {
   }
