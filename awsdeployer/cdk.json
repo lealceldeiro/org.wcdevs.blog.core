@@ -1,5 +1,5 @@
 {
-  "app": "./mvnw -e -q compile exec:java -pl awsdeployer",
+  "app": ".././mvnw -e -q compile exec:java",
   "context": {
     "@aws-cdk/aws-apigateway:usagePlanKeyOrderInsensitiveId": true,
     "aws-cdk:enableDiffNoFail": "true",
