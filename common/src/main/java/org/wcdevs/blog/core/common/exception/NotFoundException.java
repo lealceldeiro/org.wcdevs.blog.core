@@ -1,5 +1,7 @@
 package org.wcdevs.blog.core.common.exception;
 
+import java.io.Serial;
+
 /**
  * Exception thrown when an entity is not found.
  */
