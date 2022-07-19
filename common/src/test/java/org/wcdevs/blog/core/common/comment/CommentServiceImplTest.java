@@ -71,9 +71,9 @@ class CommentServiceImplTest {
     when(savedComment.getAnchor()).thenReturn(savedCommentAnchor);
 
     when(postRepository.findPostUuidWithSlug(postSlug)).thenReturn(uuiStub);
-    when(postRepository.getById(uuiStub.get())).thenReturn(post);
+    when(postRepository.getReferenceById(uuiStub.get())).thenReturn(post);
     when(commentRepository.getCommentUuidWithAnchor(parentCommentAnchor)).thenReturn(uuiStub);
-    when(commentRepository.getById(uuiStub.get())).thenReturn(parentComment);
+    when(commentRepository.getReferenceById(uuiStub.get())).thenReturn(parentComment);
     when(commentRepository.save(savedComment)).thenReturn(savedComment);
     when(commentTransformer.newEntityFromDto(dtoArg)).thenReturn(savedComment);
 
