@@ -6,7 +6,7 @@
     "aws-cdk": "2.31.1"
   },
   "scripts": {
-    "service:deploy:be": "cdk deploy --app \"./mvnw -e -q compile exec:java -pl awsdeployer -Dexec.mainClass=org.wcdevs.blog.awsdeployer.EcsDeployer\" -c healthCheckPath=/manage/health -c healthCheckPort=8082 --require-approval never --all",
-    "service:destroy:be": "cdk destroy --app \"./mvnw -e -q compile exec:java -pl awsdeployer -Dexec.mainClass=org.wcdevs.blog.awsdeployer.EcsDeployer\" -c healthCheckPath=/manage/health -c healthCheckPort=8082 --force --require-approval never --all"
+    "service:deploy:be": "cdk deploy --app \".././mvnw -e -q compile exec:java -Dexec.mainClass=org.wcdevs.blog.awsdeployer.EcsDeployer\" -c healthCheckPath=/manage/health -c healthCheckPort=8082 --require-approval never --all",
+    "service:destroy:be": "cdk destroy --app \".././mvnw -e -q compile exec:java -Dexec.mainClass=org.wcdevs.blog.awsdeployer.EcsDeployer\" -c healthCheckPath=/manage/health -c healthCheckPort=8082 --force --require-approval never --all"
   }
 }
