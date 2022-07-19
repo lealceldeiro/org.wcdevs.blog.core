@@ -1,5 +1,6 @@
 package org.wcdevs.blog.core.common.post;
 
+import java.io.Serial;
 import org.wcdevs.blog.core.common.exception.NotFoundException;
 
 /**
