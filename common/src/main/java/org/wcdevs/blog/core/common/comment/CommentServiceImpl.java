@@ -27,10 +27,10 @@ public class CommentServiceImpl implements CommentService {
   public CommentDto createComment(String postSlug, CommentDto dto) {
     // use lighter query, to later get entity reference
     var post = postRepository.findPostUuidWithSlug(postSlug)
-                             .map(postRepository::getById)
+                             .map(postRepository::getReferenceById)
                              .orElseThrow(PostNotFoundException::new);
     var parentComment = commentRepository.getCommentUuidWithAnchor(dto.getParentCommentAnchor())
-                                         .map(commentRepository::getById)
+                                         .map(commentRepository::getReferenceById)
                                          .orElse(null);
     dto.setPost(post);
     dto.setParentComment(parentComment);

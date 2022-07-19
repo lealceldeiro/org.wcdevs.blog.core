@@ -81,9 +81,9 @@ class CommentServiceImplTest {
 
     assertNotNull(returnedDto);
     verify(postRepository, times(1)).findPostUuidWithSlug(postSlug);
-    verify(postRepository, times(1)).getById(uuiStub.get());
+    verify(postRepository, times(1)).getReferenceById(uuiStub.get());
     verify(commentRepository, times(1)).getCommentUuidWithAnchor(parentCommentAnchor);
-    verify(commentRepository, times(1)).getById(uuiStub.get());
+    verify(commentRepository, times(1)).getReferenceById(uuiStub.get());
     verify(dtoArg, times(1)).setPost(post);
     verify(dtoArg, times(1)).setParentComment(parentComment);
     verify(commentRepository, times(1)).save(savedComment);
