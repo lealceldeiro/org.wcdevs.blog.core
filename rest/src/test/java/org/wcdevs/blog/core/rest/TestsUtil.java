@@ -84,10 +84,6 @@ public final class TestsUtil {
     return dto;
   }
 
-  public static List<PostDto> samplePostsLiteData() {
-    return samplePostsLiteData(null);
-  }
-
   public static List<PostDto> samplePostsLiteData(PostStatus status) {
     return elements(SAMPLE_POST_LITE_DATA)
         .stream()
@@ -101,10 +97,6 @@ public final class TestsUtil {
 
   public static PostDto sampleFullPost() {
     return nextElementFrom(SAMPLE_FULL_POST_DATA);
-  }
-
-  public static PostDto.PostDtoBuilder sampleFullPostBuilder() {
-    return builderFrom(nextElementFrom(SAMPLE_FULL_POST_DATA));
   }
 
   public static PostDto.PostDtoBuilder builderFrom(PostDto proto) {
