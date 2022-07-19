@@ -1,22 +1,22 @@
 package org.wcdevs.blog.core.rest.auth;
 
+import static java.util.Arrays.stream;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.when;
+
+import java.security.SecureRandom;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.wcdevs.blog.core.rest.TestsUtil;
-import java.security.SecureRandom;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import static java.util.Arrays.stream;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.when;
 
 class SecurityContextAuthCheckerTest {
   @Test
@@ -27,10 +27,9 @@ class SecurityContextAuthCheckerTest {
       // Collection<capture#1 of ? extends GrantedAuthority>
       // cannot be converted to
       // Collection<capture#2 of ? extends GrantedAuthority>
-      Collection simpleGrantedAuths = stream(expectedAuthorities)
-          .map(Objects::toString)
-          .map(SimpleGrantedAuthority::new)
-          .collect(Collectors.toSet());
+      Collection simpleGrantedAuths = stream(expectedAuthorities).map(Objects::toString)
+                                                                 .map(SimpleGrantedAuthority::new)
+                                                                 .collect(Collectors.toSet());
 
       var authentication = mock(Authentication.class);
       when(authentication.getAuthorities()).thenReturn(simpleGrantedAuths);

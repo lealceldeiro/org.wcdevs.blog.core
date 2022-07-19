@@ -24,7 +24,6 @@ class CommentDtoTest {
     var body = aString();
     var publishedBy = aString();
     var parentCommentAnchor = aString();
-    var postSlug = aString();
 
     var dto = CommentDto.builder()
                         .anchor(anchor)
@@ -81,7 +80,6 @@ class CommentDtoTest {
 
   @Test
   void toStringContainsFields() {
-    var postSlug = aString();
     var parentCommentAnchor = aString();
     var publishedBy = aString();
     var anchor = aString();
